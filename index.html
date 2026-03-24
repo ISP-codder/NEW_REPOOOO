@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="stylesheet" href="./src/styles/styles.css" />
+	</head>
+	<body>
+		<nav class="tab-menu">
+			<button onclick="loadView('claims')">Претензии</button>
+			<button onclick="loadView('lawsuits')">Иски</button>
+			<button onclick="loadView('reports')">Отчет</button>
+			<button onclick="loadView('notices')">Уведомления</button>
+			<button onclick="loadView('settlements')">Мировое соглашение</button>
+		</nav>
+
+		<div id="content-viewport"></div>
+
+		<script src="./renderer.js"></script>
+	</body>
+	<div id="errorToast" class="error-toast">
+		Пожалуйста, заполните выделенные поля
+	</div>
+</html>

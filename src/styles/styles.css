@@ -1,0 +1,146 @@
+/* Общие настройки шрифтов и сетки */
+* {
+	font-family: 'Segoe UI', sans-serif;
+	color: #333;
+}
+.view-container {
+	padding: 20px;
+}
+
+h2 {
+	font-size: 18px;
+	border-bottom: 1px solid #ccc;
+	margin-top: 25px;
+	padding-bottom: 5px;
+}
+
+/* Сетка для инпутов (3 колонки) */
+.input-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: 20px;
+	margin-bottom: 20px;
+}
+
+.input-field {
+	display: flex;
+	flex-direction: column;
+}
+
+.input-field label {
+	font-size: 12px;
+	margin-bottom: 5px;
+	color: #666;
+}
+
+input[type='text'],
+input[type='date'],
+input[type='number'] {
+	padding: 8px;
+	border: 1px solid #999;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+/* Блок для фото */
+.photo-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 30px;
+	margin-top: 20px;
+}
+
+.photo-box {
+	border: 1px solid #999;
+	height: 250px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+	position: relative;
+}
+
+.photo-box input {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	cursor: pointer;
+}
+
+.photo-label {
+	font-size: 14px;
+	color: #444;
+	margin-bottom: 10px;
+}
+
+/* Кнопка генерации */
+.generate-btn-container {
+	display: flex;
+	justify-content: center;
+	margin-top: 40px;
+	padding-bottom: 40px;
+}
+
+.btn-main {
+	background: #d9d9d9;
+	border: none;
+	padding: 15px 80px;
+	border-radius: 30px;
+	font-size: 18px;
+	cursor: pointer;
+	transition: background 0.3s;
+}
+
+.btn-main:hover {
+	background: #bfbfbf;
+}
+/* Стили для индикации загрузки */
+.photo-box.has-file {
+	border: 2px solid #4caf50; /* Зеленая рамка */
+	background: #e8f5e9;
+}
+
+.photo-box.has-file .photo-label::after {
+	content: ' ✅ (Выбрано)';
+	color: #2e7d32;
+	font-weight: bold;
+}
+
+/* Эффект при наведении */
+.photo-box:hover {
+	border-color: #666;
+	background: #f0f0f0;
+}
+
+/* Стили для контейнера фото при ошибке */
+.photo-box.invalid {
+	border: 2px solid #ff4d4d !important;
+	background-color: #fff5f5 !important;
+}
+.error-toast {
+	position: fixed;
+	top: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: #ff4d4d;
+	color: white;
+	padding: 12px 24px;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 10000;
+	font-weight: bold;
+	display: none; /* Скрыто по умолчанию */
+}
+
+/* Принудительно разрешаем клики на инпуты */
+input {
+	pointer-events: auto !important;
+	user-select: text !important;
+}
+
+input.invalid {
+	border: 2px solid #ff4d4d !important;
+	background-color: #fff5f5 !important;
+}

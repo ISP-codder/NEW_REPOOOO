@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="../styles/styles.css" />
+	</head>
+	<body>
+		<div class="view-container">
+			<h2>Суд</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Наименование суда</label
+					><input type="text" id="courtNameLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>Истец</label><input type="text" id="plaintiff" />
+				</div>
+				<div class="input-field">
+					<label>Представитель истцов</label
+					><input type="text" id="representative" />
+				</div>
+				<div class="input-field">
+					<label>Адрес суда</label><input type="text" id="courtAddress" />
+				</div>
+				<div class="input-field">
+					<label>Соистец</label><input type="text" id="coPlaintiff" />
+				</div>
+			</div>
+
+			<h2>Магазин</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Название</label><input type="text" id="shopNameLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>Страна, Город</label><input type="text" id="shopCityLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>Улица</label><input type="text" id="shopStreetLawsuit" />
+				</div>
+			</div>
+
+			<h2>Реквизиты продавца</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Наименование</label
+					><input type="text" id="sellerNameLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>ОГРН</label><input type="text" id="sellerOgrnLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>ИНН</label><input type="text" id="sellerInnLawsuit" />
+				</div>
+			</div>
+			<div class="input-field" style="width: 32%">
+				<label>Юридический адрес</label
+				><input type="text" id="sellerAddressLawsuit" />
+			</div>
+
+			<h2>Информация о закупке</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Дата закупки</label
+					><input type="date" id="purchaseDateLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>Категория</label><input type="text" id="categoryLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>Стоимость</label><input type="number" id="priceLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>Количество</label><input type="number" id="countLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>Товарный знак</label><input type="text" id="tmLawsuit" />
+				</div>
+				<div class="input-field">
+					<label>Правообладатель</label><input type="text" id="holderLawsuit" />
+				</div>
+			</div>
+
+			<div class="photo-grid">
+				<div class="photo-box">
+					<span class="photo-label">Фото товара</span>
+					<input type="file" id="productPhotoInputLawsuit" />
+				</div>
+				<div class="photo-box">
+					<span class="photo-label">Фото чека/слип-чека</span>
+					<input type="file" id="receiptPhotoInputLawsuit" />
+				</div>
+			</div>
+
+			<div class="generate-btn-container">
+				<button class="btn-main" id="generateLawsuitBtn">Сгенерировать</button>
+			</div>
+		</div>
+	</body>
+</html>
