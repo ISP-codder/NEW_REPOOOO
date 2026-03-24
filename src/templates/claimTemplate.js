@@ -58,11 +58,11 @@ async function claimTemplate(data, photos) {
 					break: 1
 				}),
 				new TextRun({
-					text: `\nВ ходе закупки (${data.purchaseDate || '12.12.2025г.'}) по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName || 'Планета'}" зафиксирована продажа товара (${data.productCategory || 'футболка(категория)'}), в количестве ${data.productQuantity || '1 шт.'} стоимостью ${data.productPrice || '1500'} рублей маркированного обозначением, используемым без законных оснований.`,
+					text: `\nВ ходе закупки (${data.purchaseDate || '12.12.2025г.'}) по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName}" зафиксирована продажа товара (${data.productCategory || 'футболка(категория)'}), в количестве ${data.productQuantity || '1 шт.'} стоимостью ${data.productPrice || '1500'} рублей маркированного обозначением, используемым без законных оснований.`,
 					break: 1
 				}),
 				new TextRun({
-					text: `\nДоказательства нарушения имеются у правообладателя (${data.plaintiffName || 'Пума СЕ'}).`,
+					text: `\nДоказательства нарушения имеются у правообладателя (${data.plaintiffName}).`,
 					break: 1
 				})
 			],

@@ -6,6 +6,7 @@ const path = require('path')
 const DocGenerator = require('./src/services/docGenerator')
 const claimTemplate = require('./src/templates/claimTemplate')
 const lawsuitTemplate = require('./src/templates/lawsuitTemplate')
+const reportTemplate = require('./src/templates/reportTemplate')
 
 // --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
 async function getFileBuffer(id) {
@@ -52,6 +53,9 @@ async function loadView(viewName) {
 		initClaimsLogic()
 	} else if (viewName === 'lawsuits') {
 		initLawsuitLogic()
+	} else if (viewName === 'reports') {
+		// Добавлено
+		initReportLogic()
 	}
 }
 
@@ -163,6 +167,56 @@ function initLawsuitLogic() {
 			showError('Ошибка: ' + e.message)
 		} finally {
 			btn.disabled = false
+		}
+	}
+}
+
+function initReportLogic() {
+	const btn = document.querySelector('.btn-generate')
+	if (!btn) return
+
+	btn.onclick = async () => {
+		const cont = document.getElementById('content-viewport')
+
+		if (!validateForm(cont)) {
+			showError('Пожалуйста, заполните все поля отчета')
+			return
+		}
+
+		try {
+			btn.disabled = true
+			btn.innerText = 'Генерация...'
+
+			// Сопоставляем ID из HTML (lost-cases) с ключами для шаблона (lostCount)
+			const data = {
+				reportDate: document.getElementById('report-date').value,
+				settlementsCount: document.getElementById('settlements-count').value,
+				claimsCount: document.getElementById('claims-count').value,
+				lawsuitsCount: document.getElementById('lawsuits-count').value,
+				lostCount: document.getElementById('lost-cases').value, // Исправлено
+				wonCount: document.getElementById('won-cases').value, // Исправлено
+				settlementsSum: document.getElementById('settlements-sum').value,
+				compensationSum: document.getElementById('compensation-sum').value,
+				totalProfit: document.getElementById('monthly-profit').value // Исправлено
+			}
+
+			const children = await reportTemplate(data)
+			const buf = await DocGenerator.createDocument(children)
+
+			const savePath = await ipcRenderer.invoke(
+				'save-dialog',
+				`Отчет_за_${data.reportDate.replace(/\./g, '_')}.docx`
+			)
+
+			if (savePath) {
+				fs.writeFileSync(savePath, buf)
+			}
+		} catch (e) {
+			console.error(e)
+			showError('Ошибка генерации: ' + e.message)
+		} finally {
+			btn.disabled = false
+			btn.innerText = 'Сгенерировать'
 		}
 	}
 }

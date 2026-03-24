@@ -11,9 +11,11 @@ async function lawsuitTemplate(data, photos) {
 			alignment: AlignmentType.LEFT,
 			children: [
 				new TextRun({
-					text: `Арбитражный суд Ростовской области ${data.courtName}`,
-					break: 2,
+					text: 'Арбитражный суд Ростовской области ',
 					bold: true
+				}),
+				new TextRun({
+					text: data.courtName
 				}),
 				new TextRun({
 					text: `Адрес суда: ${data.courtAddress}`,
@@ -35,12 +37,16 @@ async function lawsuitTemplate(data, photos) {
 				}),
 				// Добавлены ИНН/ОГРН ответчика из скриншота [cite: 34]
 				new TextRun({
-					text: `ИНН: ${data.sellerInn}), (ОГРН: ${data.sellerOgrn}`,
+					text: `ИНН: ${data.sellerInn}, ОГРН: ${data.sellerOgrn}`,
 					break: 1
 				}),
 				new TextRun({
-					text: `Юридический адрес: ${data.sellerLegalAddress}`,
+					text: `Юридический адрес: `,
+					bold: true,
 					break: 1
+				}),
+				new TextRun({
+					text: `${data.sellerLegalAddress}`
 				})
 			]
 		})
