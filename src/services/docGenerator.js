@@ -28,7 +28,8 @@ class DocGenerator {
 			logoRun = new ImageRun({
 				data: fs.readFileSync(logoPath),
 				transformation: { width: 150, height: 50 },
-				type: 'png'
+				type: 'png',
+				alignment: VerticalAlign.BOTTOM
 			})
 		}
 
@@ -46,24 +47,40 @@ class DocGenerator {
 				new TableRow({
 					children: [
 						new TableCell({
-							width: { size: 50, type: WidthType.PERCENTAGE },
-							children: [new Paragraph({ children: [logoRun] })]
-						}),
-						new TableCell({
-							width: { size: 50, type: WidthType.PERCENTAGE },
+							width: { size: 30, type: WidthType.PERCENTAGE },
 							children: [
 								new Paragraph({
-									alignment: AlignmentType.RIGHT,
+									VerticalAlign: VerticalAlign.BOTTOM,
+									children: [logoRun],
+									spacing: { before: 0, after: 0 }
+								})
+							]
+						}),
+
+						new TableCell({
+							width: { size: 70, type: WidthType.PERCENTAGE },
+							children: [
+								new Paragraph({
+									alignment: AlignmentType.CENTER,
+									spacing: { before: 0, after: 0 },
 									children: [
-										new TextRun({ text: 'ООО «ЮК ШИП»', bold: true, size: 16 }),
 										new TextRun({
-											text: '\nИНН 6164118059',
-											size: 14,
+											text: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ»',
+											size: 24
+										}),
+										new TextRun({
+											text: '\n«ЮРИДИЧЕСКАЯ КОМПАНИЯ «ШЕВЧЕНКО И ПАРТНЕРЫ»',
+											size: 24,
 											break: 1
 										}),
 										new TextRun({
-											text: '\nг. Ростов-на-Дону',
-											size: 14,
+											text: '\nИНН 6164118059 КПП 616101001 344082,',
+											size: 24,
+											break: 1
+										}),
+										new TextRun({
+											text: '\nг. Ростов-на-Дону, ул. Максима Горького 44 «б», к. 1',
+											size: 24,
 											break: 1
 										})
 									]
@@ -74,6 +91,16 @@ class DocGenerator {
 				})
 			]
 		})
+
+		const headerChildren = [
+			// Создаем "пустое пространство" сверху.
+			// Увеличивай line, если нужно опустить таблицу еще ниже к тексту.
+			new Paragraph({
+				text: '',
+				spacing: { before: 800 }
+			}),
+			headerTable
+		]
 
 		const doc = new Document({
 			sections: [

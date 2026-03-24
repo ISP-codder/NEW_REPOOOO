@@ -1,56 +1,45 @@
-const {
-	Paragraph,
-	TextRun,
-	AlignmentType,
-	ImageRun,
-	Table,
-	TableRow,
-	TableCell,
-	WidthType,
-	BorderStyle
-} = require('docx')
+const { Paragraph, TextRun, AlignmentType, ImageRun } = require('docx')
 const { processImage } = require('../utils/imageProcessor')
 
 async function lawsuitTemplate(data, photos) {
 	const children = []
 
-	// --- 1. ШАПКА (Справа) ---
+	// --- 1. ШАПКА ПО ОБРАЗЦУ (Справа) ---
+	// Добавлены полные реквизиты вашей компании из скриншота
 	children.push(
 		new Paragraph({
-			alignment: AlignmentType.RIGHT,
+			alignment: AlignmentType.LEFT,
 			children: [
 				new TextRun({
-					text: `В ${data.courtName || '[Наименование суда]'}`,
-					bold: true
-				}),
-				new TextRun({
-					text: `\n${data.courtAddress || '[Адрес суда]'}`,
-					break: 1
-				}),
-				new TextRun({ text: `\nИстец: ООО ЮК ШИП`, break: 2, bold: true }),
-				new TextRun({
-					text: `\nАдрес: г. Москва, ул. Примерная, д. 1`,
-					break: 1
-				}), // Замени на реальный
-				new TextRun({
-					text: `\nИНН/ОГРН: 7712345678 / 1234567890123`,
-					break: 1
-				}),
-				new TextRun({
-					text: `\nТел: +7 (999) 000-00-00, e-mail: info@ukship.ru`,
-					break: 1
-				}),
-				new TextRun({
-					text: `\nОтветчик: ${data.sellerName || '[Наименование ответчика]'}`,
+					text: `Арбитражный суд Ростовской области ${data.courtName}`,
 					break: 2,
 					bold: true
 				}),
 				new TextRun({
-					text: `\nАдрес: ${data.sellerAddress || '[Адрес]'}`,
+					text: `Адрес суда: ${data.courtAddress}`,
 					break: 1
 				}),
 				new TextRun({
-					text: `\nОГРН/ИНН: ${data.sellerOgrn || '-'} / ${data.sellerInn || '-'}`,
+					text: `Истец: ${data.plaintiffName}`,
+					break: 2,
+					bold: true
+				}),
+				new TextRun({
+					text: `Представитель истца: ${data.representativeName}`,
+					break: 1
+				}),
+				new TextRun({
+					text: `Ответчик: ${data.sellerName}`,
+					break: 2,
+					bold: true
+				}),
+				// Добавлены ИНН/ОГРН ответчика из скриншота [cite: 34]
+				new TextRun({
+					text: `ИНН: ${data.sellerInn}), (ОГРН: ${data.sellerOgrn}`,
+					break: 1
+				}),
+				new TextRun({
+					text: `Юридический адрес: ${data.sellerLegalAddress}`,
 					break: 1
 				})
 			]
@@ -63,96 +52,91 @@ async function lawsuitTemplate(data, photos) {
 			alignment: AlignmentType.CENTER,
 			spacing: { before: 400, after: 200 },
 			children: [
-				new TextRun({ text: 'ИСКОВОЕ ЗАЯВЛЕНИЕ', bold: true, size: 28 }),
+				new TextRun({ text: 'Исковое заявление', bold: true, size: 28 }),
 				new TextRun({
-					text: '\nо защите исключительного права на товарный знак',
+					text: '\nо пресечении незаконного использования товарного знака и взыскании компенсации',
 					break: 1,
 					bold: true,
-					size: 24
+					size: 20
 				})
 			]
 		})
 	)
 
-	// --- 3. ОПИСАТЕЛЬНАЯ ЧАСТЬ ---
+	// --- 3. ОПИСАТЕЛЬНАЯ ЧАСТЬ (ПО ОБРАЗЦУ 1-в-1) ---
 	const bodyStyle = {
 		alignment: AlignmentType.JUSTIFY,
 		spacing: { before: 120 },
 		indent: { firstLine: 450 }
 	}
 
+	// Добавлена отсутствующая строка из скриншота [cite: 38]
 	children.push(
 		new Paragraph({
 			...bodyStyle,
 			children: [
 				new TextRun(
-					`Ответчик осуществляет реализацию ${data.productCategory || '[описание товара]'} с маркировкой Товарным знаком, исключительное право на который принадлежит ${data.rightHolder || '[правообладатель]'}, что подтверждается материалами фиксации нарушения и документами приобретения.`
+					`Истец является правообладателем товарный знак ${data.tmNumbers}.`
 				)
 			]
 		})
 	)
 
-	const facts = [
-		`1. Сведения о приобретении: ${data.purchaseDate || '[дата]'}, ${data.shopName || '[магазин]'}, ${data.shopLocation || '[адрес]'}.`,
-		`2. Товар: ${data.productCategory || '[наименование]'}, ${data.productModel || '[артикул/модель]'}.`,
-		`3. Проявления нарушения: ${data.productDetails || '[незаконное использование обозначения]'}.`,
-		`4. Доказательства: чек №${data.claimNumber || '-'} от ${data.claimDate || '-'}, фото/видео материалы.`
-	]
-
-	facts.forEach(text =>
-		children.push(
-			new Paragraph({ ...bodyStyle, children: [new TextRun(text)] })
-		)
-	)
-
+	// Добавлен полный текст из скриншота [cite: 39]
 	children.push(
 		new Paragraph({
 			...bodyStyle,
 			children: [
 				new TextRun(
-					`“${data.claimDate || '[дата]'}” Истец направил Ответчику претензию № ${data.claimNumber || '[ ]'}. `
+					`Из материалов дела следует, что ${data.purchaseDate} в торговой точке Ответчика ${data.shopName}, адрес: ${data.shopLocation}, ${data.shopStreet} реализовывался товар ${data.productCategory}, в количестве ${data.productCount}, стоимостью ${data.productPrice} рублей с признаками контрафактности.`
 				),
+				new TextRun({
+					text: ' Использование спорного обозначения осуществлялось без разрешения Истца, чем нарушено исключительное право правообладателя.',
+					break: 0
+				})
+			]
+		})
+	)
+
+	// Добавлена отсутствующая строка из скриншота [cite: 41]
+	children.push(
+		new Paragraph({
+			...bodyStyle,
+			children: [
 				new TextRun(
-					`Ответ на претензию: ${data.claimResponse || 'не получен'}.`
+					'Нарушение подтверждается документами, прилагаемыми к иску. Ранее Истец направлял досудебную претензию, однако требования добровольно не исполнены.'
 				)
 			]
 		})
 	)
 
 	// --- 4. ПРАВОВОЕ ОБОСНОВАНИЕ ---
-	const lawTexts = [
-		'Согласно ст. 1252 ГК РФ защита исключительных прав включает пресечение нарушений и взыскание компенсации/убытков.',
-		'В силу ст. 1484 ГК РФ использование товарного знака без надлежащих прав является нарушением исключительного права.',
-		'Ответственность за нарушение исключительного права на товарный знак установлена ст. 1515 ГК РФ.'
-	]
-
-	lawTexts.forEach(text =>
-		children.push(
-			new Paragraph({
-				...bodyStyle,
-				children: [new TextRun({ text, italic: true })]
-			})
-		)
-	)
-
-	// --- 5. ПРОСИТЕЛЬНАЯ ЧАСТЬ ---
 	children.push(
 		new Paragraph({
-			spacing: { before: 300, after: 100 },
+			...bodyStyle,
 			children: [
 				new TextRun({
-					text: 'На основании изложенного и руководствуясь ст. 1252, 1484, 1515 ГК РФ, прошу суд:',
-					bold: true
+					text: 'С учетом ст. 1229, 1252, 1484, 1515 ГК РФ, а также процессуальных норм ст. 131–132 ГПК РФ (или ст. 125–126 АПК РФ),',
+					italic: true
 				})
 			]
 		})
 	)
 
+	// --- 5. ТРЕБУЕМ ---
+	children.push(
+		new Paragraph({
+			spacing: { before: 300, after: 100 },
+			children: [new TextRun({ text: 'ТРЕБУЕМ:', bold: true })]
+		})
+	)
+
 	const requests = [
-		'1. Признать действия Ответчика по реализации товара с незаконным использованием Товарного знака нарушающими исключительное право.',
-		'2. Обязать Ответчика прекратить нарушение исключительного права на Товарный знак (запретить реализацию, изъять товары из оборота).',
-		`3. Взыскать с Ответчика в пользу Истца компенсацию в размере ${data.totalSum || '0'} руб.`,
-		`4. Взыскать судебные расходы в размере ${data.courtExpenses || '0'} руб. (в т.ч. расходы на фиксацию и представителя).`
+		'1. Признать действия Ответчика нарушающими исключительные права Истца на товарный знак.',
+		'2. Обязать Ответчика прекратить незаконное использование обозначения.',
+		'3. Изъять из оборота и уничтожить контрафактный товар, а также предъявить доказательство уничтожения товара.',
+		`4. Взыскать компенсацию в сумме ${data.productPrice * 10 || '1000000'} руб.`,
+		'5. Взыскать судебные расходы, включая госпошлину и расходы на представителя.'
 	]
 
 	requests.forEach(text =>
@@ -161,78 +145,24 @@ async function lawsuitTemplate(data, photos) {
 		)
 	)
 
-	// --- 6. ПРИЛОЖЕНИЯ И ФОТО ---
+	// Добавлена отсутствующая строка из скриншота
 	children.push(
 		new Paragraph({
-			spacing: { before: 300 },
-			children: [new TextRun({ text: 'Приложения:', bold: true })]
-		})
-	)
-
-	const apps = [
-		'1) Документы, подтверждающие направление претензии.',
-		'2) Копии чека и доказательств приобретения.',
-		'3) Фотоматериалы (см. ниже).',
-		'4) Доверенность представителя.'
-	]
-	apps.forEach(text =>
-		children.push(
-			new Paragraph({ spacing: { before: 50 }, children: [new TextRun(text)] })
-		)
-	)
-
-	// Вставка уменьшенных фото (как в Приложении)
-	for (const [title, buffer] of Object.entries(photos)) {
-		if (buffer && buffer.length > 0) {
-			const cleanImg = await processImage(buffer)
-			if (cleanImg) {
-				children.push(
-					new Paragraph({
-						text: `Приложение: ${title}`,
-						bold: true,
-						spacing: { before: 200 }
-					})
-				)
-				children.push(
-					new Paragraph({
-						alignment: AlignmentType.CENTER,
-						children: [
-							new ImageRun({
-								data: cleanImg,
-								transformation: { width: 300, height: 225 },
-								type: 'jpg'
-							})
-						]
-					})
-				)
-			}
-		}
-	}
-
-	children.push(
-		new Paragraph({
-			spacing: { before: 600 },
+			...bodyStyle,
 			children: [
-				new TextRun({ text: `“${new Date().toLocaleDateString('ru-RU')}”` }),
-				new TextRun({
-					text: '\t\t\t\t_____________________ /Петров П.П./',
-					break: 0
-				})
+				new TextRun(
+					'Истец предпринимал меры досудебного урегулирования, включая предложение добровольной оплаты (в том числе с использованием QR-кода), что подтверждает добросовестность поведения Истца.'
+				)
 			]
 		})
 	)
 
 	children.push(
 		new Paragraph({
-			spacing: { before: 200 },
+			spacing: { before: 600 },
 			children: [
-				new TextRun({ text: 'С уважением, ООО ЮК ШИП', bold: true }),
-				new TextRun({
-					text: '\n_____________________ /Иванов И.И./',
-					break: 1
-				}),
-				new TextRun({ text: '\nГенеральный директор', break: 1 }),
-				new TextRun({ text: '\nМ.П.', break: 1 })
+				new TextRun({ text: 'С уважением,' }),
+				new TextRun({ text: '\nООО «ЮК ШИП»', break: 1, bold: true })
 			]
 		})
 	)
