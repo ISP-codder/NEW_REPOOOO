@@ -75,24 +75,6 @@ class DocGenerator {
 			]
 		})
 
-		// --- QR-КОД (Только для Претензий и Уведомлений) ---
-		const needsQR = ['claim', 'notification'].includes(docType)
-		if (needsQR && fs.existsSync(qrPath)) {
-			children.push(new Paragraph({ spacing: { before: 400 } }))
-			children.push(
-				new Paragraph({
-					alignment: AlignmentType.CENTER,
-					children: [
-						new ImageRun({
-							data: fs.readFileSync(qrPath),
-							transformation: { width: 75, height: 75 },
-							type: 'png'
-						})
-					]
-				})
-			)
-		}
-
 		const doc = new Document({
 			sections: [
 				{

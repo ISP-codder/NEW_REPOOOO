@@ -1,4 +1,6 @@
 const { Paragraph, TextRun, AlignmentType, ImageRun } = require('docx')
+const fs = require('fs')
+const path = require('path')
 const { processImage } = require('../utils/imageProcessor')
 
 async function claimTemplate(data, photos) {
@@ -52,7 +54,7 @@ async function claimTemplate(data, photos) {
 					text: `Уважаемый(ая) ${data.sellerName || 'ИП Иванов Иван Иванович'},`
 				}),
 				new TextRun({
-					text: `\nНастоящей претензией заявляем о факте нарушения исключительных прав правообладателя на товарный знак (${data.tmNumbers || '11111, 22222, 33333'})`,
+					text: `\nНастоящей претензией заявляем о факте нарушения исключительных прав правообладателя на товарный знак (${data.trademark})`,
 					break: 1
 				}),
 				new TextRun({
@@ -104,7 +106,7 @@ async function claimTemplate(data, photos) {
 		)
 	})
 
-	// 6. Информация об оплате и последствиях [cite: 43-45]
+	// 6. Информация об оплате и ВСТАВКА QR-КОДА [cite: 43-44]
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -112,10 +114,46 @@ async function claimTemplate(data, photos) {
 				new TextRun({
 					text: '\nОплату компенсации можно произвести банковским переводом либо по QR-коду, приложенному к претензии.',
 					break: 1
-				}),
+				})
+			],
+			spacing: { before: 200 }
+		})
+	)
+
+	// Вставка QR-кода сразу после текста об оплате
+	try {
+		const qrPath = path.join(
+			__dirname,
+			'..',
+			'assets',
+			'images',
+			'static-qr.png'
+		)
+		if (fs.existsSync(qrPath)) {
+			children.push(
+				new Paragraph({
+					alignment: AlignmentType.CENTER,
+					children: [
+						new ImageRun({
+							data: fs.readFileSync(qrPath),
+							transformation: { width: 100, height: 100 },
+							type: 'png'
+						})
+					],
+					spacing: { before: 200, after: 200 }
+				})
+			)
+		}
+	} catch (e) {
+		console.error('Ошибка вставки QR-кода:', e)
+	}
+
+	children.push(
+		new Paragraph({
+			alignment: AlignmentType.JUSTIFY,
+			children: [
 				new TextRun({
-					text: '\nПри неисполнении требований правообладатель обратится в суд за взысканием компенсации, судебных расходов и применением мер пресечения нарушения.',
-					break: 1
+					text: 'При неисполнении требований правообладатель обратится в суд за взысканием компенсации, судебных расходов и применением мер пресечения нарушения.'
 				})
 			],
 			spacing: { before: 200 }
@@ -166,7 +204,7 @@ async function claimTemplate(data, photos) {
 						children: [
 							new ImageRun({
 								data: cleanImg,
-								transformation: { width: 450, height: 337 }, // Увеличил размер для наглядности
+								transformation: { width: 450, height: 337 },
 								type: 'jpg'
 							})
 						]
