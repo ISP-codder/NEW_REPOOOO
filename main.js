@@ -1,4 +1,5 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+// 1. Добавьте session в деструктуризацию
+const { app, BrowserWindow, ipcMain, dialog, session } = require('electron')
 const path = require('path')
 
 function createWindow() {
@@ -16,8 +17,22 @@ function createWindow() {
 
 app.whenReady().then(createWindow)
 
-app.on('window-all-closed', () => {
-	if (process.platform !== 'darwin') app.quit()
+// 2. Исправленная логика закрытия
+app.on('window-all-closed', async () => {
+	try {
+		// Сначала очищаем хранилище
+		await session.defaultSession.clearStorageData({
+			storages: ['localstorage']
+		})
+		console.log('Session storage cleared')
+	} catch (e) {
+		console.error('Failed to clear storage:', e)
+	}
+
+	// Потом выходим
+	if (process.platform !== 'darwin') {
+		app.quit()
+	}
 })
 
 ipcMain.handle('save-dialog', async (event, suggestedName) => {

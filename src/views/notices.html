@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Генерация документов</title>
+		<link rel="stylesheet" href="../styles/styles.css" />
+	</head>
+	<body>
+		<div class="view-container">
+			<h2>Магазин</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Название</label>
+					<input type="text" id="shopName" value="Магазин «Планета»" />
+				</div>
+				<div class="input-field">
+					<label>Область, город</label>
+					<input type="text" id="shopLocation" value="г. Ростов-на-Дону" />
+				</div>
+				<div class="input-field">
+					<label>Улица</label>
+					<input
+						type="text"
+						id="shopStreet"
+						value="ул. Социалистическая, д. 1" />
+				</div>
+			</div>
+
+			<h2>Реквизиты продавца</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Наименование</label>
+					<input type="text" id="sellerName" value="ИП Иванов Иван Иванович" />
+				</div>
+				<div class="input-field">
+					<label>ОГРН</label>
+					<input type="text" id="sellerOgrn" value="314619600000000" />
+				</div>
+				<div class="input-field">
+					<label>ИНН</label>
+					<input type="text" id="sellerInn" value="616400000000" />
+				</div>
+			</div>
+			<div class="input-field" style="width: 32%">
+				<label>Юридический адрес</label>
+				<input
+					type="text"
+					id="sellerLegalAddress"
+					value="344007, г. Ростов-на-Дону, ул. Мира, д. 9" />
+			</div>
+
+			<h2>Информация о закупке</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Дата закупки</label>
+					<input type="date" id="purchaseDate" value="2026-03-25" />
+				</div>
+				<div class="input-field">
+					<label>Товарный знак</label>
+					<input type="text" id="trademark" value="PUMA" />
+				</div>
+				<div class="input-field">
+					<label>Правообладатель</label>
+					<input type="text" id="rightHolder" value="Puma SE" />
+				</div>
+			</div>
+
+			<h2>Компенсация</h2>
+			<div class="input-field" style="width: 100%; margin-bottom: 20px">
+				<label>Сумма компенсации</label>
+				<input type="text" id="compensationAmount" value="100 000" />
+			</div>
+			<div class="input-field" style="width: 100%">
+				<label>Досудебная компенсации</label>
+				<input type="text" id="preTrialCompensation" value="50 000" />
+			</div>
+
+			<div class="generate-btn-container">
+				<button class="btn-main" id="generateBtn">Сгенерировать</button>
+			</div>
+		</div>
+	</body>
+</html>

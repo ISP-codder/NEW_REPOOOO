@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Мировое соглашение</title>
+		<link rel="stylesheet" href="../styles/styles.css" />
+	</head>
+	<body>
+		<div class="view-container">
+			<h2>Суд</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Наименование суда</label>
+					<input
+						type="text"
+						id="courtName"
+						value="Арбитражный суд Ростовской области" />
+				</div>
+				<div class="input-field">
+					<label>Истец</label>
+					<input
+						type="text"
+						id="plaintiffName"
+						value="ООО «Юридическая компания «Шевченко и партнеры»" />
+				</div>
+				<div class="input-field">
+					<label>Ответчик</label>
+					<input
+						type="text"
+						id="defendantName"
+						value="ИП Иванов Иван Иванович" />
+				</div>
+				<div class="input-field">
+					<label>Адрес суда</label>
+					<input
+						type="text"
+						id="courtAddress"
+						value="344002, г. Ростов-на-Дону, ул. Станиславского, 8а" />
+				</div>
+				<div class="input-field">
+					<label>Товарный знак</label>
+					<input
+						type="text"
+						id="trademarkSettlement"
+						value="PUMA (свидетельство №123456)" />
+				</div>
+			</div>
+
+			<h2>Сумма компенсации</h2>
+			<div class="input-grid">
+				<div class="input-field">
+					<label>Сумма</label>
+					<input
+						type="text"
+						id="settlementSum"
+						value="50 000 рублей 00 копеек" />
+				</div>
+				<div class="input-field">
+					<label>Срок оплаты</label>
+					<input
+						type="text"
+						id="paymentDeadline"
+						value="в течение 10 рабочих дней с даты подписания" />
+				</div>
+			</div>
+
+			<h2>Дата мирового соглашения</h2>
+			<div class="input-field" style="width: 100%">
+				<input type="date" id="settlementDate" value="2026-03-25" />
+			</div>
+
+			<div class="generate-btn-container">
+				<button class="btn-main" id="generateBtn">Сгенерировать</button>
+			</div>
+		</div>
+
+		<div id="errorToast" class="error-toast"></div>
+	</body>
+</html>

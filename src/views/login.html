@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<div class="login-page">
+			<div class="login-header">
+				<img
+					src="../assets/images/logo-white.png"
+					alt="YUKSH"
+					class="login-logo" />
+			</div>
+
+			<div class="login-container">
+				<h1>Войдите в аккаунт</h1>
+
+				<div class="login-form">
+					<div class="input-field">
+						<input
+							type="text"
+							id="loginInput"
+							placeholder="Логин"
+							autocomplete="off" />
+					</div>
+
+					<div class="input-field">
+						<input type="password" id="passwordInput" placeholder="Пароль" />
+					</div>
+
+					<div class="login-footer">
+						<span class="forgot-password">Забыли пароль?</span>
+					</div>
+
+					<div class="generate-btn-container">
+						<button class="btn-main" id="loginBtn">Войти</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../services/auth.js"></script>
+</html>
