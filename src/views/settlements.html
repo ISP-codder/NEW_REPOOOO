@@ -5,71 +5,161 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Мировое соглашение</title>
 		<link rel="stylesheet" href="../styles/styles.css" />
+		<style>
+			.st-section {
+				margin-bottom: 25px;
+			}
+			.st-header-container {
+				border-bottom: 2px solid black;
+				margin-bottom: 10px;
+			}
+			/* Заголовок с черной линией во всю ширину */
+			.st-header {
+				font-size: 24px;
+				font-weight: bold;
+				color: #1a2a3a;
+				padding-bottom: 5px;
+				margin-left: 10px;
+			}
+
+			/* Сетка полей (3 колонки) */
+			.st-grid {
+				margin-left: 10px;
+				margin-right: 10px;
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: 15px;
+			}
+
+			.st-field {
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 10px;
+			}
+
+			/* Поле даты на всю ширину (как на макете) */
+			.st-full-width {
+				margin-left: 10px;
+				margin-right: 10px;
+				margin-top: 10px;
+				border-radius: 9px;
+				font-size: 14px;
+				background-color: #ffffff;
+				transition: border-color 0.2s;
+				font-family: 'Times New Roman', serif;
+			}
+
+			.st-field label {
+				font-size: 16px;
+				color: #1f2937;
+				margin-left: 10px;
+				margin-bottom: 5px;
+				margin-top: 10px;
+			}
+
+			/* Инпуты: черная рамка 2px, закругление 9px */
+			.st-field input {
+				padding: 8px;
+				border: 2px solid black;
+				border-radius: 9px;
+				font-size: 14px;
+				background-color: #ffffff;
+				transition: border-color 0.2s;
+				font-family: 'Times New Roman', serif;
+			}
+
+			/* Состояние при вводе */
+			.st-field input:focus {
+				border-color: #6d272c; /* Бордовый при клике */
+				outline: none;
+			}
+			.st-field input.invalid {
+				border: 2px solid #ff0011 !important;
+				background-color: #fff5f5 !important;
+			}
+			/* Стилизация длинного поля для даты */
+			.st-full-width input {
+				border-radius: 10px;
+				width: 100%;
+				box-sizing: border-box;
+			}
+		</style>
 	</head>
-	<body>
-		<div class="view-container">
-			<h2>Суд</h2>
-			<div class="input-grid">
-				<div class="input-field">
-					<label>Наименование суда</label>
-					<input
-						type="text"
-						id="courtName"
-						value="Арбитражный суд Ростовской области" />
+	<body class="app-body">
+		<div class="st-container">
+			<section class="st-section">
+				<div class="st-header-container">
+					<h2 class="st-header">Суд</h2>
 				</div>
-				<div class="input-field">
-					<label>Истец</label>
-					<input
-						type="text"
-						id="plaintiffName"
-						value="ООО «Юридическая компания «Шевченко и партнеры»" />
+				<div class="st-grid st-3-cols">
+					<div class="st-field">
+						<label>Наименование суда</label>
+						<input
+							type="text"
+							id="courtName"
+							value="Арбитражный суд Ростовской области" />
+					</div>
+					<div class="st-field">
+						<label>Истец</label>
+						<input
+							type="text"
+							id="plaintiffName"
+							value="ООО «Юридическая компания «Шевченко и партнеры»" />
+					</div>
+					<div class="st-field">
+						<label>Ответчик</label>
+						<input
+							type="text"
+							id="defendantName"
+							value="ИП Иванов Иван Иванович" />
+					</div>
+					<div class="st-field">
+						<label>Адрес суда</label>
+						<input
+							type="text"
+							id="courtAddress"
+							value="344002, г. Ростов-на-Дону, ул. Станиславского, 8а" />
+					</div>
+					<div class="st-field">
+						<label>Товарный знак</label>
+						<input
+							type="text"
+							id="trademarkSettlement"
+							value="PUMA (свидетельство №123456)" />
+					</div>
 				</div>
-				<div class="input-field">
-					<label>Ответчик</label>
-					<input
-						type="text"
-						id="defendantName"
-						value="ИП Иванов Иван Иванович" />
-				</div>
-				<div class="input-field">
-					<label>Адрес суда</label>
-					<input
-						type="text"
-						id="courtAddress"
-						value="344002, г. Ростов-на-Дону, ул. Станиславского, 8а" />
-				</div>
-				<div class="input-field">
-					<label>Товарный знак</label>
-					<input
-						type="text"
-						id="trademarkSettlement"
-						value="PUMA (свидетельство №123456)" />
-				</div>
-			</div>
+			</section>
 
-			<h2>Сумма компенсации</h2>
-			<div class="input-grid">
-				<div class="input-field">
-					<label>Сумма</label>
-					<input
-						type="text"
-						id="settlementSum"
-						value="50 000 рублей 00 копеек" />
+			<section class="st-section">
+				<div class="st-header-container">
+					<h2 class="st-header">Сумма компенсации</h2>
 				</div>
-				<div class="input-field">
-					<label>Срок оплаты</label>
-					<input
-						type="text"
-						id="paymentDeadline"
-						value="в течение 10 рабочих дней с даты подписания" />
+				<div class="st-grid st-3-cols">
+					<div class="st-field">
+						<label>Сумма</label>
+						<input
+							type="text"
+							id="settlementSum"
+							value="50 000 рублей 00 копеек" />
+					</div>
+					<div class="st-field">
+						<label>Срок оплаты</label>
+						<input
+							type="text"
+							id="paymentDeadline"
+							value="в течение 10 рабочих дней с даты подписания" />
+					</div>
 				</div>
-			</div>
+			</section>
 
-			<h2>Дата мирового соглашения</h2>
-			<div class="input-field" style="width: 100%">
-				<input type="date" id="settlementDate" />
-			</div>
-
+			<section class="st-section">
+				<div class="st-header-container">
+					<h2 class="st-header">Дата мирового соглашения</h2>
+				</div>
+				<div class="st-full-width">
+					<input type="date" id="settlementDate" />
+				</div>
+			</section>
 			<div class="generate-btn-container">
 				<button class="btn-main" id="generateBtn">Сгенерировать</button>
 			</div>

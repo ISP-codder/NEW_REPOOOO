@@ -5,70 +5,177 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
 		<link rel="stylesheet" href="../styles/styles.css" />
+		<style>
+			.cl-section {
+				margin-bottom: 25px;
+			}
+			.cl-title-container {
+				border-bottom: 2px solid black;
+				margin-bottom: 10px;
+			}
+			.cl-title {
+				font-size: 24px;
+				padding-bottom: 5px;
+				color: #333;
+				margin-left: 10px;
+			}
+			.cl-grid {
+				margin-left: 10px;
+				margin-right: 10px;
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: 15px;
+			}
+
+			.cl-field {
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 10px;
+			}
+
+			.cl-label {
+				font-size: 16px;
+				color: #1f2937;
+				margin-left: 10px;
+				margin-bottom: 5px;
+				margin-top: 10px;
+			}
+
+			.cl-input {
+				padding: 10px;
+				border: 2px solid black;
+				border-radius: 9px; /* Как на макете */
+				font-size: 14px;
+				width: 100%;
+			}
+
+			/* Состояния валидации */
+			.cl-input.invalid {
+				border: 2px solid #ff0011 !important;
+				background-color: #fff5f5 !important;
+			}
+
+			.cl-input:focus {
+				border-color: #6d272c;
+				outline: none;
+			}
+		</style>
 	</head>
-	<body>
-		<div class="view-container">
-			<h2>Магазин</h2>
-			<div class="input-grid">
-				<div class="input-field">
-					<label>Название</label>
-					<input type="text" id="shopName" value="rerere" />
+	<body style="background-color: #faf7f3">
+		<div class="cl-container">
+			<div class="cl-section">
+				<div class="cl-title-container">
+					<h2 class="cl-title">Магазин</h2>
 				</div>
-				<div class="input-field">
-					<label>Область, Город</label>
-					<input type="text" id="shopLocation" value="rerere" />
-				</div>
-				<div class="input-field">
-					<label>Улица</label>
-					<input type="text" id="shopStreet" value="rerere" />
-				</div>
-			</div>
-
-			<h2>Реквизиты продавца</h2>
-			<div class="input-grid">
-				<div class="input-field">
-					<label>Наименование</label>
-					<input type="text" id="sellerName" value="rerere" />
-				</div>
-				<div class="input-field">
-					<label>ОГРН</label>
-					<input type="text" id="sellerOgrn" value="123456789" />
-				</div>
-				<div class="input-field">
-					<label>ИНН</label>
-					<input type="text" id="sellerInn" value="123456789" />
-				</div>
-				<div class="input-field">
-					<label>Юридический адрес</label>
-					<input type="text" id="sellerLegalAddress" value="rerere" />
+				<div class="cl-grid">
+					<div class="cl-field">
+						<label class="cl-label">Название</label>
+						<input type="text" class="cl-input" id="shopName" value="rerere" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Область, город</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="shopLocation"
+							value="rerere" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Улица</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="shopStreet"
+							value="rerere" />
+					</div>
 				</div>
 			</div>
 
-			<h2>Информация о закупке</h2>
-			<div class="input-grid">
-				<div class="input-field">
-					<label>Дата закупки</label>
-					<input type="date" id="purchaseDate" value="2026-03-24" />
+			<div class="cl-section">
+				<div class="cl-title-container">
+					<h2 class="cl-title">Реквизиты продавца</h2>
 				</div>
-				<div class="input-field">
-					<label>Категория</label>
-					<input type="text" id="productCategory" value="rerere" />
+				<div class="cl-grid">
+					<div class="cl-field">
+						<label class="cl-label">Наименование</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="sellerName"
+							value="rerere" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">ОГРН</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="sellerOgrn"
+							value="123456789" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">ИНН</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="sellerInn"
+							value="123456789" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Юридический адрес</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="sellerLegalAddress"
+							value="rerere" />
+					</div>
 				</div>
-				<div class="input-field">
-					<label>Стоимость</label>
-					<input type="number" id="productPrice" value="1500" />
+			</div>
+
+			<div class="cl-section">
+				<div class="cl-title-container">
+					<h2 class="cl-title">Информация о закупке</h2>
 				</div>
-				<div class="input-field">
-					<label>Количество</label>
-					<input type="number" id="productCount" value="1" />
-				</div>
-				<div class="input-field">
-					<label>Товарный знак</label>
-					<input type="text" id="trademark" value="rerere" />
-				</div>
-				<div class="input-field">
-					<label>Правообладатель</label>
-					<input type="text" id="rightHolder" value="rerere" />
+				<div class="cl-grid">
+					<div class="cl-field">
+						<label class="cl-label">Дата закупки</label>
+						<input
+							type="date"
+							class="cl-input"
+							id="purchaseDate"
+							value="2026-03-24" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Категория</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="productCategory"
+							value="rerere" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Стоимость</label>
+						<input
+							type="number"
+							class="cl-input"
+							id="productPrice"
+							value="1500" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Количество</label>
+						<input type="number" class="cl-input" id="productCount" value="1" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Товарный знак</label>
+						<input type="text" class="cl-input" id="trademark" value="rerere" />
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Правообладатель</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="rightHolder"
+							value="rerere" />
+					</div>
 				</div>
 			</div>
 

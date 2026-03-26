@@ -3,80 +3,197 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Генерация документов</title>
+		<title>Уведомления</title>
+		<style>
+			.nt-section {
+				margin-bottom: 25px;
+			}
+
+			.nt-header-container {
+				border-bottom: 2px solid black;
+				margin-bottom: 10px;
+			}
+			/* Заголовок с черной линией */
+			.nt-header {
+				font-size: 24px;
+				font-weight: bold;
+				color: #1a2a3a;
+				padding-bottom: 5px;
+				margin-left: 10px;
+			}
+
+			/* Сетка для полей (3 колонки) */
+			.nt-grid {
+				margin-left: 10px;
+				margin-right: 10px;
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: 15px;
+			}
+
+			/* Вертикальный стек для широких полей (Компенсация) */
+			.nt-stack {
+				display: flex;
+				flex-direction: column;
+				gap: 15px;
+			}
+
+			.nt-field {
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 10px;
+			}
+
+			/* Поле на всю строку в сетке */
+			.nt-full-row {
+				grid-column: span 1; /* Если нужно как на макете, оставляем в колонке */
+			}
+
+			.nt-field label {
+				font-size: 16px;
+				color: #1f2937;
+				margin-left: 10px;
+				margin-bottom: 5px;
+				margin-top: 10px;
+			}
+
+			/* Инпуты с закруглением 9px и черной рамкой */
+			.nt-field input {
+				padding: 8px;
+				border: 2px solid black;
+				border-radius: 9px;
+				font-size: 14px;
+				background-color: #ffffff;
+				transition: border-color 0.2s;
+				font-family: 'Times New Roman', serif;
+			}
+
+			.nt-field input:focus {
+				border-color: #6d272c; /* Бордовый при клике */
+				outline: none;
+			}
+
+			.nt-field input.invalid {
+				border: 2px solid #ff0011 !important;
+				background-color: #fff5f5 !important;
+			}
+
+			/* Стили для широких инпутов компенсации (на весь экран) */
+			.nt-stack .nt-field input {
+				width: 100%;
+			}
+
+			.nt-btn-main {
+				background-color: #c9a27a; /* Бежевый с макета */
+				border: none;
+				padding: 15px 80px;
+				border-radius: 12px;
+				font-size: 32px;
+				font-weight: bold;
+				color: #333;
+				cursor: pointer;
+				box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			}
+
+			.nt-btn-main:hover {
+				background-color: #b58f66;
+			}
+		</style>
 	</head>
-	<body>
-		<div class="view-container">
-			<h2>Магазин</h2>
-			<div class="input-grid">
-				<div class="input-field">
-					<label>Название</label>
-					<input type="text" id="shopName" value="Магазин «Планета»" />
+	<body class="app-body">
+		<div class="nt-container">
+			<div class="nt-section">
+				<div class="nt-header-container">
+					<h2 class="nt-header">Магазин</h2>
 				</div>
-				<div class="input-field">
-					<label>Область, город</label>
-					<input type="text" id="shopLocation" value="г. Ростов-на-Дону" />
-				</div>
-				<div class="input-field">
-					<label>Улица</label>
-					<input
-						type="text"
-						id="shopStreet"
-						value="ул. Социалистическая, д. 1" />
+
+				<div class="nt-grid nt-3-cols">
+					<div class="nt-field">
+						<label>Название</label>
+						<input type="text" id="shopName" value="Магазин «Планета»" />
+					</div>
+					<div class="nt-field">
+						<label>Область, город</label>
+						<input type="text" id="shopLocation" value="г. Ростов-на-Дону" />
+					</div>
+					<div class="nt-field">
+						<label>Улица</label>
+						<input
+							type="text"
+							id="shopStreet"
+							value="ул. Социалистическая, д. 1" />
+					</div>
 				</div>
 			</div>
 
-			<h2>Реквизиты продавца</h2>
-			<div class="input-grid">
-				<div class="input-field">
-					<label>Наименование</label>
-					<input type="text" id="sellerName" value="ИП Иванов Иван Иванович" />
+			<div class="nt-section">
+				<div class="nt-header-container">
+					<h2 class="nt-header">Реквизиты продавца</h2>
 				</div>
-				<div class="input-field">
-					<label>ОГРН</label>
-					<input type="text" id="sellerOgrn" value="314619600000000" />
-				</div>
-				<div class="input-field">
-					<label>ИНН</label>
-					<input type="text" id="sellerInn" value="616400000000" />
-				</div>
-				<div class="input-field">
-					<label>Юридический адрес</label>
-					<input
-						type="text"
-						id="sellerLegalAddress"
-						value="344007, г. Ростов-на-Дону, ул. Мира, д. 9" />
-				</div>
-			</div>
-
-			<h2>Информация о закупке</h2>
-			<div class="input-grid">
-				<div class="input-field">
-					<label>Дата закупки</label>
-					<input type="date" id="purchaseDate" value="2026-03-25" />
-				</div>
-				<div class="input-field">
-					<label>Товарный знак</label>
-					<input type="text" id="trademark" value="PUMA" />
-				</div>
-				<div class="input-field">
-					<label>Правообладатель</label>
-					<input type="text" id="rightHolder" value="Puma SE" />
+				<div class="nt-grid nt-3-cols">
+					<div class="nt-field">
+						<label>Наименование</label>
+						<input
+							type="text"
+							id="sellerName"
+							value="ИП Иванов Иван Иванович" />
+					</div>
+					<div class="nt-field">
+						<label>ОГРН</label>
+						<input type="text" id="sellerOgrn" value="314619600000000" />
+					</div>
+					<div class="nt-field">
+						<label>ИНН</label>
+						<input type="text" id="sellerInn" value="616400000000" />
+					</div>
+					<div class="nt-field nt-full-row">
+						<label>Юридический адрес</label>
+						<input
+							type="text"
+							id="sellerLegalAddress"
+							value="344007, г. Ростов-на-Дону, ул. Мира, д. 9" />
+					</div>
 				</div>
 			</div>
 
-			<h2>Компенсация</h2>
-			<div class="input-field" style="width: 100%; margin-bottom: 20px">
-				<label>Сумма компенсации</label>
-				<input type="text" id="compensationAmount" value="100 000" />
+			<div class="nt-section">
+				<div class="nt-header-container">
+					<h2 class="nt-header">Информация о закупке</h2>
+				</div>
+				<div class="nt-grid nt-3-cols">
+					<div class="nt-field">
+						<label>Дата закупки</label>
+						<input type="date" id="purchaseDate" value="2026-03-25" />
+					</div>
+					<div class="nt-field">
+						<label>Товарный знак</label>
+						<input type="text" id="trademark" value="PUMA" />
+					</div>
+					<div class="nt-field">
+						<label>Правообладатель</label>
+						<input type="text" id="rightHolder" value="Puma SE" />
+					</div>
+				</div>
 			</div>
-			<div class="input-field" style="width: 100%">
-				<label>Досудебная компенсация</label>
-				<input type="text" id="preTrialCompensation" value="50 000" />
+
+			<div class="nt-section">
+				<div class="nt-header-container">
+					<h2 class="nt-header">Компенсация</h2>
+				</div>
+				<div class="nt-stack">
+					<div class="nt-field" style="margin-right: 10px; margin-left: 10px">
+						<label>Сумма компенсации</label>
+						<input type="text" id="compensationAmount" value="100 000" />
+					</div>
+					<div class="nt-field" style="margin-right: 10px; margin-left: 10px">
+						<label>Досудебная компенсация</label>
+						<input type="text" id="preTrialCompensation" value="50 000" />
+					</div>
+				</div>
 			</div>
 
 			<div class="generate-btn-container">
-				<button class="btn-main" id="generateBtn">Сгенерировать</button>
+				<button class="nt-btn-main" id="generateBtn">Сгенерировать</button>
 			</div>
 		</div>
 	</body>

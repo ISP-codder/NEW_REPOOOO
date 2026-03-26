@@ -9,7 +9,7 @@ const RecoveryService = {
 			const p2 = document.getElementById('confirmPass').value.trim()
 
 			if (login !== 'admin') {
-				showErrorCallback('Логин "admin" не найден')
+				showErrorCallback('Логин не найден')
 				return
 			}
 

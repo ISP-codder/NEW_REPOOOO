@@ -172,7 +172,7 @@ function initClaimsLogic() {
 				if (box) box.style.border = '2px dashed #731a20'
 			}
 
-			showError('Обязательно выберите фото товара и чека!')
+			showError('Обязательно выберите фото товара!')
 			return
 		}
 
@@ -197,8 +197,6 @@ function initClaimsLogic() {
 			const photos = {}
 			const prodPhoto = await getFileBuffer('productPhotoInput')
 			if (prodPhoto) photos['ФОТО ТОВАРА'] = prodPhoto
-			const recPhoto = await getFileBuffer('receiptPhotoInput')
-			if (recPhoto) photos['ФОТО ЧЕКА'] = recPhoto
 
 			const children = await claimTemplate(data, photos)
 			const buf = await DocGenerator.createDocument(children)

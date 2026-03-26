@@ -5,101 +5,204 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Иски - ЮК ШИП</title>
 		<link rel="stylesheet" href="../styles/styles.css" />
+		<style>
+			/* Основной контейнер */
+			.ls-header-container {
+				border-bottom: 2px solid black;
+				margin-bottom: 10px;
+			}
+			/* Секция с заголовком и сеткой */
+			.ls-section {
+				margin-bottom: 25px;
+			}
+
+			/* Заголовок с жирной черной линией во всю ширину */
+			.ls-header {
+				font-size: 24px;
+				padding-bottom: 5px;
+				color: #333;
+				margin-left: 10px;
+			}
+
+			/* Сетка полей (3 колонки) */
+			.ls-grid {
+				margin-left: 10px;
+				margin-right: 10px;
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: 15px;
+			}
+
+			/* Контейнер одного поля */
+			.ls-field {
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 10px;
+			}
+
+			/* Поле на всю ширину (для Юр. адреса) */
+			.ls-full {
+				grid-column: span 3;
+			}
+
+			/* Подпись к инпуту */
+			.ls-field label {
+				font-size: 16px;
+				color: #1f2937;
+				margin-left: 10px;
+				margin-bottom: 5px;
+				margin-top: 10px;
+			}
+
+			/* Инпуты с черной рамкой и закруглением 9px */
+			.ls-field input {
+				padding: 8px;
+				border: 2px solid black;
+				border-radius: 9px;
+				font-size: 14px;
+				background-color: #ffffff;
+				transition: border-color 0.2s;
+				font-family: 'Times New Roman', serif;
+			}
+
+			/* Фокус и валидация */
+			.ls-field input:focus {
+				border-color: #6d272c; /* Бордовый при клике */
+				outline: none;
+			}
+
+			.ls-field input.invalid {
+				border: 2px solid #ff0011 !important;
+				background-color: #fff5f5 !important;
+			}
+
+			/* Контейнер и кнопка генерации */
+			.ls-btn-wrap {
+				display: flex;
+				justify-content: center;
+				margin-top: 30px;
+				padding-bottom: 40px;
+			}
+
+			.ls-btn-main {
+				background-color: #c9a27a; /* Бежевый цвет из макета */
+				border: none;
+				padding: 15px 80px;
+				border-radius: 10px;
+				font-size: 32px;
+				font-weight: bold;
+				color: #333;
+				cursor: pointer;
+				transition: background 0.3s;
+			}
+
+			.ls-btn-main:hover {
+				background-color: #b58f66;
+			}
+		</style>
 	</head>
 	<body class="app-body">
-		<main class="view-container">
-			<section class="form-section">
-				<h2 class="section-title">Суд</h2>
-				<div class="input-grid three-cols">
-					<div class="input-field">
+		<main class="ls-container">
+			<section class="ls-section">
+				<div class="ls-header-container">
+					<h2 class="ls-header">Суд</h2>
+				</div>
+				<div class="ls-grid ls-3-cols">
+					<div class="ls-field">
 						<label>Наименование суда</label>
 						<input type="text" id="courtName" value="rerere" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Истец</label>
 						<input type="text" id="plaintiffName" value="rerere" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Представитель истца</label>
 						<input type="text" id="representativeName" value="rerere" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Адрес суда</label>
 						<input type="text" id="courtAddress" value="rerere" />
 					</div>
 				</div>
 			</section>
 
-			<section class="form-section">
-				<h2 class="section-title">Магазин</h2>
-				<div class="input-grid three-cols">
-					<div class="input-field">
+			<section class="ls-section">
+				<div class="ls-header-container">
+					<h2 class="ls-header">Магазин</h2>
+				</div>
+				<div class="ls-grid ls-3-cols">
+					<div class="ls-field">
 						<label>Название</label>
 						<input type="text" id="shopName" value="rerere" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Область, город</label>
 						<input type="text" id="shopLocation" value="rerere" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Улица</label>
 						<input type="text" id="shopStreet" value="rerere" />
 					</div>
 				</div>
 			</section>
 
-			<section class="form-section">
-				<h2 class="section-title">Реквизиты продавца</h2>
-				<div class="input-grid three-cols">
-					<div class="input-field">
+			<section class="ls-section">
+				<div class="ls-header-container">
+					<h2 class="ls-header">Реквизиты продавца</h2>
+				</div>
+				<div class="ls-grid ls-3-cols">
+					<div class="ls-field">
 						<label>Наименование</label>
 						<input type="text" id="sellerName" value="rerere" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>ОГРН</label>
 						<input type="text" id="sellerOgrn" value="123456789" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>ИНН</label>
 						<input type="text" id="sellerInn" value="123456789" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Юридический адрес</label>
 						<input type="text" id="sellerLegalAddress" value="rerere" />
 					</div>
 				</div>
 			</section>
 
-			<section class="form-section">
-				<h2 class="section-title">Информация о закупке</h2>
-				<div class="input-grid three-cols">
-					<div class="input-field">
+			<section class="ls-section">
+				<div class="ls-header-container">
+					<h2 class="ls-header">Информация о закупке</h2>
+				</div>
+				<div class="ls-grid ls-3-cols">
+					<div class="ls-field">
 						<label>Дата закупки</label>
 						<input type="date" id="purchaseDate" value="2026-03-24" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Категория</label>
 						<input type="text" id="productCategory" value="rerere" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Стоимость</label>
 						<input type="number" id="productPrice" value="1500" />
 					</div>
-				</div>
-				<div class="input-grid two-cols width-66">
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Количество</label>
 						<input type="number" id="productCount" value="1" />
 					</div>
-					<div class="input-field">
+					<div class="ls-field">
 						<label>Товарный знак</label>
 						<input type="text" id="trademark" value="rerere" />
 					</div>
 				</div>
 			</section>
 
-			<div class="generate-btn-container">
-				<button class="btn-main" id="generateLawsuitBtn">Сгенерировать</button>
+			<div class="ls-btn-wrap">
+				<button class="ls-btn-main" id="generateLawsuitBtn">
+					Сгенерировать
+				</button>
 			</div>
 		</main>
 	</body>
