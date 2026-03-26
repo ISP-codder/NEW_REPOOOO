@@ -13,7 +13,7 @@ async function settlementTemplate(data) {
 			alignment: AlignmentType.LEFT,
 			children: [
 				new TextRun({
-					text: `Дата мирового соглашения:  ${data.date || '25.12.2025г.'}.`,
+					text: `Дата мирового соглашения:  ${data.date}.`,
 					bold: true
 				})
 			],

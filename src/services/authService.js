@@ -1,67 +1,78 @@
+const { log } = require('console')
 const fs = require('fs')
 const path = require('path')
 
-// Константы (в идеале их стоит получать из main процесса через IPC для безопасности)
-const ADMIN_LOGIN = 'admin'
-const ADMIN_PASS = '1234'
+const AuthService = {
+	// Проверка: залогинен ли юзер (вызывается в renderer.js)
+	check: function () {
+		return localStorage.getItem('is_authenticated') === 'true'
+	},
 
-class AuthService {
-	constructor() {
-		// this.isAuthorized = localStorage.getItem('isAuthorized') === 'true'
-		this.isAuthorized = localStorage.getItem('isAuthorized') === 'true'
-	}
+	// Логика сверки логина/пароля
+	login: function (login, password) {
+		// ИСПРАВЛЕНИЕ: Проверяем наличие пароля строго через null.
+		// Если там уже есть измененный пароль, это условие просто пропустится.
+		if (localStorage.getItem('user_password') === null) {
+			localStorage.setItem('user_password', '1234')
+		}
 
-	// Проверка текущего статуса
-	check() {
-		return localStorage.getItem('isAuthorized') === 'true'
-	}
+		const correctPassword = localStorage.getItem('user_password')
 
-	// Логика входа
-	login(login, password) {
-		if (login === ADMIN_LOGIN && password === ADMIN_PASS) {
-			localStorage.setItem('isAuthorized', 'true')
+		if (login.trim() === 'admin' && password.trim() === correctPassword) {
+			localStorage.setItem('is_authenticated', 'true')
 			return true
 		}
 		return false
-	}
+	},
 
-	// Выход из системы
-	logout() {
-		localStorage.removeItem('isAuthorized')
-		window.location.reload() // Перезагружаем интерфейс
-	}
-
-	// Загрузка экрана логина
+	// Отрисовка формы логина
 	async renderLogin(container, onLoginSuccess, showErrorCallback) {
+		// ВНИМАНИЕ: Путь от этого файла до папки views
 		const loginPath = path.join(__dirname, '..', 'views', 'login.html')
-		container.innerHTML = fs.readFileSync(loginPath, 'utf8')
 
-		const btn = document.getElementById('loginBtn')
-		const loginInput = document.getElementById('loginInput')
-		const passInput = document.getElementById('passwordInput')
+		try {
+			const html = fs.readFileSync(loginPath, 'utf8')
+			container.innerHTML = html
 
-		btn.onclick = () => {
-			const success = this.login(loginInput.value, passInput.value)
-			if (success) {
-				onLoginSuccess()
-			} else {
-				showErrorCallback('Неверный логин или пароль')
-				loginInput.classList.add('invalid')
-				passInput.classList.add('invalid')
+			const btn = document.getElementById('loginBtn')
+			const loginInput = document.getElementById('loginInput')
+			const passInput = document.getElementById('passwordInput')
+			const toRecover = document.getElementById('toRecover') // Ссылка "Забыли пароль"
+			if (toRecover) {
+				toRecover.onclick = e => {
+					e.preventDefault()
+					// Используем твою функцию из renderer.js
+					if (typeof window.loadView === 'function') {
+						console.log('Вызываю loadView для forgot-password')
+						window.loadView('forgot-password')
+					} else {
+						console.error('Ошибка: window.loadView не определена!')
+					}
+				}
 			}
+			// Кнопка входа
+			btn.onclick = () => {
+				// Вызываем login, который теперь корректно берет данные из localStorage
+				if (this.login(loginInput.value, passInput.value)) {
+					onLoginSuccess()
+				} else {
+					showErrorCallback('Неверный логин или пароль')
+					loginInput.classList.add('invalid')
+					passInput.classList.add('invalid')
+				}
+			}
+
+			// Переход на восстановление БЕЗ перезагрузки страницы
+		} catch (err) {
+			console.error('Ошибка загрузки login.html:', err)
+			container.innerHTML = `<h2>Ошибка загрузки формы входа</h2><p>${err.message}</p>`
 		}
-	}
+	},
 
-	clearSession() {
-		localStorage.removeItem('isAuthorized')
-		// Если есть другие данные (например, имя пользователя), чистим и их
-		// localStorage.clear(); // Можно использовать это для полной очистки всех ключей
-	}
-
-	logout() {
-		this.clearSession()
-		window.location.reload()
+	logout: function () {
+		localStorage.removeItem('is_authenticated')
+		location.reload()
 	}
 }
 
-module.exports = new AuthService()
+module.exports = AuthService

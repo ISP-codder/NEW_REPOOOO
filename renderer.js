@@ -2,6 +2,10 @@ const { ipcRenderer } = require('electron')
 const fs = require('fs')
 const path = require('path')
 
+// При каждом запуске сбрасываем флаг авторизации, чтобы требовать пароль,
+// но сам пароль в localStorage не трогаем.
+localStorage.removeItem('is_authenticated')
+
 // --- ИМПОРТЫ СЕРВИСОВ ---
 const DocGenerator = require('./src/services/docGenerator')
 const AuthService = require('./src/services/authService')
@@ -24,13 +28,15 @@ function initApp() {
 	} else {
 		document.body.classList.remove('authenticated')
 		const viewport = document.getElementById('content-viewport')
-		AuthService.renderLogin(viewport, initApp, showError)
+		// Передаем функции уведомлений в сервис авторизации
+		AuthService.renderLogin(viewport, initApp, window.showError)
 	}
 }
 
-// Измененная функция loadView
+// --- НАВИГАЦИЯ И ЗАГРУЗКА ВЬЮХ ---
 async function loadView(viewName) {
-	if (!AuthService.check()) {
+	// Исключение для страницы восстановления пароля (доступна без логина)
+	if (!AuthService.check() && viewName !== 'forgot-password') {
 		initApp()
 		return
 	}
@@ -45,8 +51,13 @@ async function loadView(viewName) {
 
 	container.innerHTML = fs.readFileSync(viewPath, 'utf8')
 
-	// Инициализация логики в зависимости от вкладки
+	// Инициализация логики для каждой конкретной вкладки
 	const logicMap = {
+		'forgot-password': () => {
+			const RecoveryService = require('./src/services/forgotPassword')
+			// Передаем showError и showSuccess для красивых уведомлений
+			RecoveryService.init(window.showError, window.showSuccess)
+		},
 		claims: initClaimsLogic,
 		lawsuits: initLawsuitLogic,
 		reports: initReportLogic,
@@ -59,48 +70,45 @@ async function loadView(viewName) {
 	}
 }
 
-function setupInputValidationCleanup() {
-	document.addEventListener('input', e => {
-		if (e.target.tagName === 'INPUT') {
-			// Убираем класс ошибки, как только пользователь начал вводить текст
-			e.target.classList.remove('invalid')
-
-			// Если была глобальная ошибка (toast), можно её тоже скрыть
-			const toast = document.getElementById('errorToast')
-			if (toast) toast.style.display = 'none'
-		}
-	})
-}
-
-// --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
-async function getFileBuffer(id) {
-	const input = document.getElementById(id)
-	if (!input || !input.files[0]) return null
-	return Buffer.from(await input.files[0].arrayBuffer())
-}
-
-function showError(message) {
+// --- УВЕДОМЛЕНИЯ (TOASTS) ---
+function showToast(message, type = 'error') {
 	const toast = document.getElementById('errorToast')
 	if (!toast) {
-		console.error(message)
+		console.log(`${type.toUpperCase()}: ${message}`)
 		return
 	}
 
 	toast.innerText = message
 	toast.style.display = 'block'
+	toast.style.opacity = '1'
 
-	// Плавное скрытие через 3 секунды
+	// Зеленый для успеха, Бордовый для ошибок ЮК ШИП
+	if (type === 'success') {
+		toast.style.backgroundColor = '#28a745'
+	} else {
+		toast.style.backgroundColor = '#731a20'
+	}
+
+	// Плавное исчезновение через 3 секунды
 	setTimeout(() => {
-		toast.style.display = 'none'
+		toast.style.transition = 'opacity 0.5s'
+		toast.style.opacity = '0'
+		setTimeout(() => {
+			toast.style.display = 'none'
+			toast.style.opacity = '1'
+		}, 500)
 	}, 3000)
 }
 
+window.showError = msg => showToast(msg, 'error')
+window.showSuccess = msg => showToast(msg, 'success')
+
+// --- ВАЛИДАЦИЯ ФОРМ ---
 function validateForm(container) {
 	let isValid = true
 	const inputs = container.querySelectorAll(
-		'input[type="text"], input[type="date"]'
+		'input[type="text"], input[type="date"], input[type="number"]'
 	)
-
 	inputs.forEach(input => {
 		if (!input.value.trim()) {
 			input.classList.add('invalid')
@@ -111,25 +119,60 @@ function validateForm(container) {
 	})
 
 	if (!isValid) {
-		// Находим первое пустое поле и принудительно ставим на него фокус
 		const firstError = container.querySelector('.invalid')
-		if (firstError) {
-			firstError.focus()
-		}
+		if (firstError) firstError.focus()
 	}
-
 	return isValid
 }
 
+function setupInputValidationCleanup() {
+	document.addEventListener('input', e => {
+		if (e.target.tagName === 'INPUT') {
+			e.target.classList.remove('invalid')
+		}
+	})
+	document.addEventListener('change', e => {
+		if (e.target.type === 'file') {
+			const box = e.target.closest('.photo-box')
+			if (box) box.style.border = '2px solid lightGreen' // Убираем красную рамку
+		}
+	})
+}
+
+async function getFileBuffer(id) {
+	const input = document.getElementById(id)
+	if (!input || !input.files[0]) return null
+	return Buffer.from(await input.files[0].arrayBuffer())
+}
+
 // --- ЛОГИКА ПРЕТЕНЗИЙ ---
+// --- ЛОГИКА ПРЕТЕНЗИЙ (ИСПРАВЛЕННАЯ) ---
 function initClaimsLogic() {
 	const btn = document.getElementById('generateClaimsBtn')
 	if (!btn) return
 
 	btn.onclick = async () => {
 		const cont = document.getElementById('content-viewport')
+
+		// 1. Сначала стандартная проверка текстовых полей
 		if (!validateForm(cont)) {
-			showError('Заполните все поля')
+			showError('Заполните все текстовые поля')
+			return
+		}
+
+		// 2. ПРОВЕРКА ФОТО (Твоя правка здесь)
+		const prodPhotoInput = document.getElementById('productPhotoInput')
+
+		const isProdPhotoOk = prodPhotoInput?.files?.[0]
+
+		if (!isProdPhotoOk) {
+			// Ищем родительский контейнер (photo-box), чтобы подсветить его
+			if (!isProdPhotoOk) {
+				const box = prodPhotoInput.closest('.photo-box')
+				if (box) box.style.border = '2px dashed #731a20'
+			}
+
+			showError('Обязательно выберите фото товара и чека!')
 			return
 		}
 
@@ -157,15 +200,16 @@ function initClaimsLogic() {
 			const recPhoto = await getFileBuffer('receiptPhotoInput')
 			if (recPhoto) photos['ФОТО ЧЕКА'] = recPhoto
 
-			// ГЕНЕРАЦИЯ
 			const children = await claimTemplate(data, photos)
 			const buf = await DocGenerator.createDocument(children)
 
-			const savePath = await ipcRenderer.invoke(
-				'save-dialog',
-				`Претензия_${data.sellerInn}.docx`
-			)
-			if (savePath) fs.writeFileSync(savePath, buf)
+			const fileName = `Претензия_${data.sellerInn}.docx`
+			const savePath = await ipcRenderer.invoke('save-dialog', fileName)
+
+			if (savePath) {
+				fs.writeFileSync(savePath, buf)
+				window.showSuccess(`Документ "${fileName}" успешно создан!`)
+			}
 		} catch (e) {
 			console.error(e)
 			showError('Ошибка: ' + e.message)
@@ -189,7 +233,6 @@ function initLawsuitLogic() {
 
 		try {
 			btn.disabled = true
-			// ID приведены в соответствие с твоей версткой "Исков"
 			const data = {
 				courtName: document.getElementById('courtName').value,
 				courtAddress: document.getElementById('courtAddress').value,
@@ -215,17 +258,17 @@ function initLawsuitLogic() {
 			const recPhoto = await getFileBuffer('receiptPhotoInput')
 			if (recPhoto) photos['ФОТО ЧЕКА'] = recPhoto
 
-			// ГЕНЕРАЦИЯ
 			const children = await lawsuitTemplate(data, photos)
 			const buf = await DocGenerator.createDocument(children)
 
-			const savePath = await ipcRenderer.invoke(
-				'save-dialog',
-				`Иск_${data.sellerName}.docx`
-			)
-			if (savePath) fs.writeFileSync(savePath, buf)
+			const fileName = `Иск_${data.sellerName.replace(/["']/g, '')}.docx`
+			const savePath = await ipcRenderer.invoke('save-dialog', fileName)
+
+			if (savePath) {
+				fs.writeFileSync(savePath, buf)
+				window.showSuccess(`Документ "${fileName}" успешно создан!`)
+			}
 		} catch (e) {
-			console.error(e)
 			showError('Ошибка: ' + e.message)
 		} finally {
 			btn.disabled = false
@@ -233,25 +276,20 @@ function initLawsuitLogic() {
 	}
 }
 
+// --- ЛОГИКА ОТЧЕТОВ ---
 function initReportLogic() {
-	// 1. Ищем кнопку по ID, который указан в HTML
 	const btn = document.getElementById('generateBtn')
 	if (!btn) return
 
 	btn.onclick = async () => {
 		const cont = document.getElementById('content-viewport')
-
-		// 2. ВАЖНО: Обновляем validateForm, чтобы она видела и type="number"
-		if (!validateReportForm(cont)) {
+		if (!validateForm(cont)) {
 			showError('Пожалуйста, заполните все поля отчета')
 			return
 		}
 
 		try {
 			btn.disabled = true
-			btn.innerText = 'Генерация...'
-
-			// 3. Сопоставляем ID строго по вашему HTML (reportDate, settlementsCount и т.д.)
 			const data = {
 				reportDate: document.getElementById('reportDate').value,
 				settlementsCount: document.getElementById('settlementsCount').value,
@@ -268,54 +306,28 @@ function initReportLogic() {
 			const children = await reportTemplate(data)
 			const buf = await DocGenerator.createDocument(children)
 
-			const savePath = await ipcRenderer.invoke(
-				'save-dialog',
-				`Отчет_за_${data.reportDate.replace(/-/g, '_')}.docx`
-			)
+			const fileName = `Отчет_за_${data.reportDate.replace(/-/g, '_')}.docx`
+			const savePath = await ipcRenderer.invoke('save-dialog', fileName)
 
 			if (savePath) {
 				fs.writeFileSync(savePath, buf)
+				window.showSuccess(`Отчет за ${data.reportDate} успешно создан!`)
 			}
 		} catch (e) {
-			console.error(e)
 			showError('Ошибка генерации: ' + e.message)
 		} finally {
 			btn.disabled = false
-			btn.innerText = 'Сгенерировать'
 		}
 	}
-}
-
-// Вспомогательная функция валидации специально для отчетов (включая числа)
-function validateReportForm(container) {
-	let isValid = true
-	const inputs = container.querySelectorAll('input') // Проверяем все инпуты во вьюхе
-
-	inputs.forEach(input => {
-		if (!input.value.trim()) {
-			input.classList.add('invalid')
-			isValid = false
-		} else {
-			input.classList.remove('invalid')
-		}
-	})
-
-	if (!isValid) {
-		const firstError = container.querySelector('.invalid')
-		if (firstError) firstError.focus()
-	}
-	return isValid
 }
 
 // --- ЛОГИКА УВЕДОМЛЕНИЙ ---
 function initNoticeLogic() {
-	const btn = document.getElementById('generateBtn') // ID кнопки из нашей верстки
+	const btn = document.getElementById('generateBtn')
 	if (!btn) return
 
 	btn.onclick = async () => {
 		const cont = document.getElementById('content-viewport')
-
-		// Валидация всех полей ввода
 		if (!validateForm(cont)) {
 			showError('Заполните все поля уведомления')
 			return
@@ -323,9 +335,6 @@ function initNoticeLogic() {
 
 		try {
 			btn.disabled = true
-			btn.innerText = 'Генерация...'
-
-			// Сбор данных из полей (используем ID из созданного HTML)
 			const data = {
 				shopName: document.getElementById('shopName').value,
 				shopLocation: document.getElementById('shopLocation').value,
@@ -342,40 +351,31 @@ function initNoticeLogic() {
 					.value
 			}
 
-			// Уведомление обычно не требует фото товара, но если нужно — можно добавить по аналогии с претензиями
-			const photos = {}
-
-			// ГЕНЕРАЦИЯ с использованием созданного ранее шаблона
-			const children = await noticeTemplate(data, photos)
+			const children = await noticeTemplate(data, {})
 			const buf = await DocGenerator.createDocument(children)
 
-			// Вызов диалога сохранения через IPC Electron
-			const savePath = await ipcRenderer.invoke(
-				'save-dialog',
-				`Уведомление_${data.sellerName.replace(/["']/g, '')}.docx`
-			)
+			const fileName = `Уведомление_${data.sellerName.replace(/["']/g, '')}.docx`
+			const savePath = await ipcRenderer.invoke('save-dialog', fileName)
 
 			if (savePath) {
 				fs.writeFileSync(savePath, buf)
+				window.showSuccess(`Уведомление для "${data.sellerName}" создано!`)
 			}
 		} catch (e) {
-			console.error(e)
-			showError('Ошибка при генерации уведомления: ' + e.message)
+			showError('Ошибка: ' + e.message)
 		} finally {
 			btn.disabled = false
-			btn.innerText = 'Сгенерировать'
 		}
 	}
 }
 
+// --- ЛОГИКА МИРОВЫХ СОГЛАШЕНИЙ ---
 function initSettlementLogic() {
 	const btn = document.getElementById('generateBtn')
 	if (!btn) return
 
 	btn.onclick = async () => {
 		const cont = document.getElementById('content-viewport')
-
-		// Валидация: проверяем, чтобы все текстовые поля были заполнены
 		if (!validateForm(cont)) {
 			showError('Заполните все поля мирового соглашения')
 			return
@@ -383,9 +383,6 @@ function initSettlementLogic() {
 
 		try {
 			btn.disabled = true
-			btn.innerText = 'Генерация...'
-
-			// Сбор данных из полей (ID соответствуют верстке)
 			const data = {
 				courtName: document.getElementById('courtName').value,
 				plaintiffName: document.getElementById('plaintiffName').value,
@@ -397,30 +394,25 @@ function initSettlementLogic() {
 				date: document.getElementById('settlementDate').value
 			}
 
-			// 1. Создаем структуру документа через шаблон
 			const children = await settlementTemplate(data)
-
-			// 2. Генерируем Buffer (DocGenerator уже настроен на разные колонтитулы)
 			const buf = await DocGenerator.createDocument(children)
 
-			// 3. Диалог сохранения файла
-			const savePath = await ipcRenderer.invoke(
-				'save-dialog',
-				`Мировое_соглашение_${data.defendantName.replace(/["']/g, '')}.docx`
-			)
+			const fileName = `Мировое_соглашение_${data.defendantName.replace(/["']/g, '')}.docx`
+			const savePath = await ipcRenderer.invoke('save-dialog', fileName)
 
 			if (savePath) {
 				fs.writeFileSync(savePath, buf)
+				window.showSuccess(
+					`Мировое соглашение с "${data.defendantName}" создано!`
+				)
 			}
 		} catch (e) {
-			console.error(e)
-			showError('Ошибка при генерации: ' + e.message)
+			showError('Ошибка: ' + e.message)
 		} finally {
 			btn.disabled = false
-			btn.innerText = 'Сгенерировать'
 		}
 	}
 }
 
-// --- ГЛОБАЛЬНЫЙ ЗАПУСК ---
+// Делаем функцию доступной глобально для AuthService и ссылок
 window.loadView = loadView

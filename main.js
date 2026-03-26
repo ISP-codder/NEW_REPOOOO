@@ -18,18 +18,7 @@ function createWindow() {
 app.whenReady().then(createWindow)
 
 // 2. Исправленная логика закрытия
-app.on('window-all-closed', async () => {
-	try {
-		// Сначала очищаем хранилище
-		await session.defaultSession.clearStorageData({
-			storages: ['localstorage']
-		})
-		console.log('Session storage cleared')
-	} catch (e) {
-		console.error('Failed to clear storage:', e)
-	}
-
-	// Потом выходим
+app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit()
 	}
