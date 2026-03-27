@@ -1,8 +1,18 @@
-const { Paragraph, TextRun, AlignmentType, HeadingLevel } = require('docx')
+const {
+	Paragraph,
+	TextRun,
+	AlignmentType,
+	HeadingLevel,
+	TabStopType
+} = require('docx')
 
 async function reportTemplate(data) {
 	const children = []
-
+	const formatDate = dateStr => {
+		if (!dateStr) return ''
+		const [year, month, day] = dateStr.split('-')
+		return `${day}.${month}.${year}`
+	}
 	// Настройки шрифта
 	const font = 'Times New Roman'
 	const sizeTitle = 28 // ~14pt
@@ -14,44 +24,17 @@ async function reportTemplate(data) {
 		new Paragraph({
 			alignment: options.align || AlignmentType.JUSTIFY,
 			spacing: { before: 120, after: 120 },
-			indent: options.noIndent ? {} : { firstLine: 450 },
-			children: [
-				new TextRun({ text, font, size: sizeMain, bold: options.bold })
-			]
-		})
-
-	// --- 1. ШАПКА (Справа) ---
-	children.push(
-		new Paragraph({
-			alignment: AlignmentType.RIGHT,
+			// Убираем firstLine, чтобы текст шел от края
+			indent: { firstLine: 0 },
 			children: [
 				new TextRun({
-					text: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ',
-					size: sizeHeader,
-					font
-				}),
-				new TextRun({
-					text: '\n«ЮРИДИЧЕСКАЯ КОМПАНИЯ «ШЕВЧЕНКО И ПАРТНЕРЫ»',
-					bold: true,
-					size: sizeHeader,
-					break: 1,
-					font
-				}),
-				new TextRun({
-					text: '\nИНН 6164118059 КПП 616101001 344082,',
-					size: sizeHeader,
-					break: 1,
-					font
-				}),
-				new TextRun({
-					text: '\nг. Ростов-на-Дону, ул. Максима Горького 44 «б», к. 1',
-					size: sizeHeader,
-					break: 1,
-					font
+					text,
+					font: 'Times New Roman',
+					size: sizeMain,
+					bold: options.bold
 				})
 			]
 		})
-	)
 
 	// --- 2. ЗАГОЛОВОК ---
 	children.push(
@@ -69,8 +52,7 @@ async function reportTemplate(data) {
 		new Paragraph({
 			children: [
 				new TextRun({
-					text: `Дата отчета: (${data.reportDate || '30.12.2025 г.'}).`,
-					font,
+					text: `Дата отчета: ${formatDate(data.reportDate)}г.`,
 					size: sizeMain
 				})
 			]
@@ -87,14 +69,14 @@ async function reportTemplate(data) {
 	// --- 5. МИРОВЫЕ СОГЛАШЕНИЯ ---
 	children.push(
 		createPara(
-			`В рамках урегулирования споров во внесудебном порядке за отчетный период заключено (${data.settlementsCount || '0'}) мировых соглашений. Общая сумма поступлений по указанным соглашениям составила (${data.settlementsSum || '0'}) руб., что подтверждает эффективность досудебного механизма защиты прав и снижение судебных издержек.`
+			`В рамках урегулирования споров во внесудебном порядке за отчетный период заключено ${data.settlementsCount} мировых соглашений. Общая сумма поступлений по указанным соглашениям составила ${data.settlementsSum} руб., что подтверждает эффективность досудебного механизма защиты прав и снижение судебных издержек.`
 		)
 	)
 
 	// --- 6. ПРЕТЕНЗИИ И ИСКИ ---
 	children.push(
 		createPara(
-			`Одновременно с этим в целях пресечения продолжающихся нарушений и взыскания компенсации были подготовлены и направлены нарушителям претензионные материалы. Количество претензий, по которым инициировано судебное производство, составило (${data.claimsCount || '0'}). По делам, где досудебное урегулирование не привело к результату, в суд подано (${data.lawsuitsCount || '0'}) исковых заявлений о защите исключительных прав, запрете реализации контрафактного товара, изъятии продукции из оборота и взыскании компенсации.`
+			`Одновременно с этим в целях пресечения продолжающихся нарушений и взыскания компенсации были подготовлены и направлены нарушителям претензионные материалы. Количество претензий, по которым инициировано судебное производство, составило ${data.claimsCount}. По делам, где досудебное урегулирование не привело к результату, в суд подано ${data.lawsuitsCount} исковых заявлений о защите исключительных прав, запрете реализации контрафактного товара, изъятии продукции из оборота и взыскании компенсации.`
 		)
 	)
 
@@ -107,18 +89,22 @@ async function reportTemplate(data) {
 	)
 
 	const listItems = [
-		`Количество дел, завершившихся не в пользу правообладателя (проигрыши), — (${data.lostCount || '0'});`,
-		`Количество дел, завершившихся в пользу правообладателя (победы), — (${data.wonCount || '0'}).`
+		`Количество дел, завершившихся не в пользу правообладателя (проигрыши), — ${data.lostCount};`,
+		`Количество дел, завершившихся в пользу правообладателя (победы), — ${data.wonCount}.`
 	]
 
 	listItems.forEach((text, index) => {
 		children.push(
 			new Paragraph({
-				indent: { left: 720, hanging: 360 },
+				alignment: AlignmentType.JUSTIFY,
+				// left: 360 дает небольшой отступ для текста после цифры
+				// hanging: 360 выносит цифру в самый левый край (в 0)
+				indent: { left: 360, hanging: 360 },
+				tabStops: [{ type: TabStopType.LEFT, position: 360 }],
 				children: [
 					new TextRun({
-						text: `${index + 1}.    ${text}`,
-						font,
+						text: `${index + 1}.\t${text}`, // Добавили \t для ровного отступа от цифры
+						font: 'Times New Roman',
 						size: sizeMain
 					})
 				]
@@ -129,13 +115,13 @@ async function reportTemplate(data) {
 	// --- 8. КОМПЕНСАЦИЯ И ПРИБЫЛЬ ---
 	children.push(
 		createPara(
-			`Сумма присужденной/взысканной моральной компенсации за отчетный период составила (${data.compensationSum || '0'}) руб. (при наличии соответствующих судебных актов и/или соглашений сторон).`
+			`Сумма присужденной/взысканной моральной компенсации за отчетный период составила ${data.compensationSum || '0'} руб. (при наличии соответствующих судебных актов и/или соглашений сторон).`
 		)
 	)
 
 	children.push(
 		createPara(
-			`Исходя из совокупных финансовых показателей (поступления по мировым соглашениям, взысканные суммы и иные подтвержденные доходы за вычетом сопутствующих расходов), прибыль за месяц составила ${data.totalProfit || '0'} руб.`
+			`Исходя из совокупных финансовых показателей (поступления по мировым соглашениям, взысканные суммы и иные подтвержденные доходы за вычетом сопутствующих расходов), прибыль за месяц составила ${data.totalProfit} руб.`
 		)
 	)
 
@@ -153,8 +139,7 @@ async function reportTemplate(data) {
 			children: [
 				new TextRun({ text: 'С уважением,', font, size: sizeMain }),
 				new TextRun({
-					text: '\nООО «ЮК ШИП»',
-					bold: true,
+					text: 'ООО «ЮК ШИП»',
 					break: 1,
 					font,
 					size: sizeMain
