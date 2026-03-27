@@ -4,7 +4,6 @@ const {
 	Paragraph,
 	ImageRun,
 	AlignmentType,
-	Header,
 	Table,
 	TableRow,
 	TableCell,
@@ -20,19 +19,18 @@ class DocGenerator {
 	static async createDocument(children, docType = 'other') {
 		const assetsPath = path.join(__dirname, '..', 'assets', 'images')
 		const logoPath = path.join(assetsPath, 'black_logo.png')
-		const qrPath = path.join(assetsPath, 'static-qr.png')
 
-		// --- КОЛОНТИТУЛ (Всегда с логотипом) ---
+		// 1. ПОДГОТОВКА ЛОГОТИПА
 		let logoRun = new TextRun('')
 		if (fs.existsSync(logoPath)) {
 			logoRun = new ImageRun({
 				data: fs.readFileSync(logoPath),
 				transformation: { width: 150, height: 50 },
-				type: 'png',
-				alignment: VerticalAlign.BOTTOM
+				type: 'png'
 			})
 		}
 
+		// 2. СОЗДАНИЕ ТАБЛИЦЫ-ШАПКИ (Теперь это часть основного контента)
 		const headerTable = new Table({
 			width: { size: 100, type: WidthType.PERCENTAGE },
 			borders: {
@@ -48,15 +46,25 @@ class DocGenerator {
 					children: [
 						new TableCell({
 							width: { size: 30, type: WidthType.PERCENTAGE },
+							verticalAlign: VerticalAlign.CENTER,
+							borders: {
+								right: {
+									style: BorderStyle.SINGLE,
+									size: 4, // толщина линии
+									color: 'A6A6A6' // светло-серый цвет как на скрине
+								},
+								top: { style: BorderStyle.NONE },
+								bottom: { style: BorderStyle.NONE },
+								left: { style: BorderStyle.NONE }
+							},
 							children: [
 								new Paragraph({
-									VerticalAlign: VerticalAlign.BOTTOM,
 									children: [logoRun],
+									alignment: AlignmentType.CENTER, // Центрируем лого в своей колонке
 									spacing: { before: 0, after: 0 }
 								})
 							]
 						}),
-
 						new TableCell({
 							width: { size: 70, type: WidthType.PERCENTAGE },
 							children: [
@@ -65,22 +73,22 @@ class DocGenerator {
 									spacing: { before: 0, after: 0 },
 									children: [
 										new TextRun({
-											text: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ»',
-											size: 24
+											text: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ',
+											size: 20 // Немного уменьшил размер, чтобы влезло красиво
 										}),
 										new TextRun({
-											text: '\n«ЮРИДИЧЕСКАЯ КОМПАНИЯ «ШЕВЧЕНКО И ПАРТНЕРЫ»',
-											size: 24,
+											text: '«ЮРИДИЧЕСКАЯ КОМПАНИЯ «ШЕВЧЕНКО И ПАРТНЕРЫ»',
+											size: 20,
 											break: 1
 										}),
 										new TextRun({
-											text: '\nИНН 6164118059 КПП 616101001 344082,',
-											size: 24,
+											text: 'ИНН 6164118059 КПП 616101001 344082,',
+											size: 18,
 											break: 1
 										}),
 										new TextRun({
-											text: '\nг. Ростов-на-Дону, ул. Максима Горького 44 «б», к. 1',
-											size: 24,
+											text: 'г. Ростов-на-Дону, ул. Максима Горького 44 «б», к. 1',
+											size: 18,
 											break: 1
 										})
 									]
@@ -92,21 +100,19 @@ class DocGenerator {
 			]
 		})
 
-		const headerChildren = [
-			// Создаем "пустое пространство" сверху.
-			// Увеличивай line, если нужно опустить таблицу еще ниже к тексту.
-			new Paragraph({
-				text: '',
-				spacing: { before: 800 }
-			}),
-			headerTable
+		// 3. СОБИРАЕМ ДОКУМЕНТ
+		// Вставляем шапку в самое начало массива children
+		const finalChildren = [
+			headerTable,
+			new Paragraph({ text: '', spacing: { after: 400 } }), // Отступ после шапки
+			...children
 		]
 
 		const doc = new Document({
 			sections: [
 				{
-					headers: { default: new Header({ children: [headerTable] }) },
-					children: children
+					// headers: { default: ... } <-- УБРАЛИ КОЛОНТИТУЛ
+					children: finalChildren
 				}
 			]
 		})
