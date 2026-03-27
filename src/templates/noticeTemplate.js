@@ -3,7 +3,8 @@ const {
 	TextRun,
 	AlignmentType,
 	ImageRun,
-	HorizontalPositionAlign
+	HorizontalPositionAlign,
+	TabStopType
 } = require('docx')
 const fs = require('fs')
 const path = require('path')
@@ -11,26 +12,44 @@ const { processImage } = require('../utils/imageProcessor')
 
 async function notificationTemplate(data, photos) {
 	const children = []
-
+	const formatDate = dateStr => {
+		if (!dateStr) return ''
+		const [year, month, day] = dateStr.split('-')
+		return `${day}.${month}.${year}`
+	}
 	// 1. Блок "Кому" (выравнивание по правому краю)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
 			children: [
 				new TextRun({
-					text: `Кому: ${data.sellerName || '(ФИО ИП/организация)'}`,
-					bold: true
+					text: 'Кому: ',
+					bold: true,
+					size: 24,
+					font: 'Times New Roman'
+				}),
+				// 2. Имя продавца — обычный
+				new TextRun({
+					text: `${data.sellerName || '(ФИО ИП/организация)'}`,
+					bold: false,
+					size: 24,
+					font: 'Times New Roman'
+				}),
+
+				new TextRun({
+					text: `ИНН: ${data.sellerInn}, ОГРН: ${data.sellerOgrn}`,
+					break: 1,
+					size: 24
 				}),
 				new TextRun({
-					text: `\nИНН: ${data.sellerInn}, ОГРН: ${data.sellerOgrn}`,
-					break: 1
+					text: `Куда: `,
+					bold: true,
+					break: 1,
+					size: 24
 				}),
 				new TextRun({
-					text: `\nКуда: `,
-					break: 1
-				}),
-				new TextRun({
-					text: `${data.sellerLegalAddress}`
+					text: `${data.sellerLegalAddress}`,
+					size: 24
 				})
 			],
 			spacing: { after: 400 }
@@ -42,11 +61,11 @@ async function notificationTemplate(data, photos) {
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
 			children: [
-				new TextRun({ text: 'Уведомление', bold: true, size: 28 }),
+				new TextRun({ text: 'Уведомление', bold: true, size: 32 }),
 				new TextRun({
 					text: '\nо выявлении факта реализации контрафактного товара',
 					bold: true,
-					size: 20,
+					size: 24,
 					break: 1
 				})
 			],
@@ -60,11 +79,13 @@ async function notificationTemplate(data, photos) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: `Уважаемый(ая) ${data.sellerName || 'ИП Иванов Иван Иванович'},`
+					text: `Уважаемый ${data.sellerName},`,
+					size: 24
 				}),
 				new TextRun({
-					text: `\nУведомляем Вас о том, что в ходе мониторинга рынка/контрольной закупки выявлен факт реализации товара с признаками контрафактности.`,
-					break: 1
+					text: `Уведомляем Вас о том, что в ходе мониторинга рынка/контрольной закупки выявлен факт реализации товара с признаками контрафактности.`,
+					break: 1,
+					size: 24
 				})
 			],
 			spacing: { line: 360, before: 200 }
@@ -75,26 +96,35 @@ async function notificationTemplate(data, photos) {
 	children.push(
 		new Paragraph({
 			children: [
-				new TextRun({ text: 'Сведения о выявленном факте:', bold: true })
+				new TextRun({
+					text: 'Сведения о выявленном факте:',
+					bold: true,
+					size: 24
+				})
 			],
 			spacing: { before: 200 }
 		})
 	)
 
 	const facts = [
-		`Торговая точка: ${data.shopName || '(Название)'}.`,
-		`Адрес торговой точки: ${data.shopLocation || ''}, ${data.shopStreet || ''}.`,
-		`Дата выявления/приобретения товара: ${data.purchaseDate || '(дата)'}.`,
-		`Признаки контрафактности: ${data.trademark || '(товарный знак)'}.`,
-		`Правообладатель: ${data.rightHolder || '(Наименование)'}.`
+		`Торговая точка: ${data.shopName}.`,
+		`Адрес торговой точки: ${data.shopLocation}, ${data.shopStreet}.`,
+		`Дата выявления/приобретения товара: ${formatDate(data.purchaseDate)}.`, // Не забывай про формат даты
+		`Признаки контрафактности: ${data.trademark}.`,
+		`Правообладатель: ${data.rightHolder}.` // Исправил опечатку HoЫlder
 	]
 
 	facts.forEach(fact => {
 		children.push(
 			new Paragraph({
-				text: fact,
 				spacing: { before: 100 },
-				break: 1
+				children: [
+					new TextRun({
+						text: fact,
+						size: 24, // 24 полупункта = 12 кегль
+						font: 'Times New Roman' // Чтобы точно по ГОСТу
+					})
+				]
 			})
 		)
 	})
@@ -105,8 +135,9 @@ async function notificationTemplate(data, photos) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: '\nРеализация указанного товара нарушает исключительные права правообладателя и противоречит законодательству Российской Федерации, в том числе:',
-					break: 1
+					text: 'Реализация указанного товара нарушает исключительные права правообладателя и противоречит законодательству Российской Федерации, в том числе:',
+					break: 1,
+					size: 24
 				})
 			],
 			spacing: { before: 200 }
@@ -114,20 +145,29 @@ async function notificationTemplate(data, photos) {
 	)
 
 	const laws = [
-		'~ст. 1484 ГК РФ (исключительное право на товарный знак);',
-		'~ст. 1515 ГК РФ (ответственность за незаконное использование товарного знака);',
-		'~ст. 1252 ГК РФ (защита исключительных прав);',
-		'~ст. 1229 ГК РФ (содержание исключительного права);',
-		'~ст. 14.10 КоАП РФ (незаконное использование средств индивидуализации);',
-		'~ст. 180 УК РФ (незаконное использование средств индивидуализации — при наличии признаков состава преступления).'
+		'ст. 1484 ГК РФ (исключительное право на товарный знак);',
+		'ст. 1515 ГК РФ (ответственность за незаконное использование товарного знака);',
+		'ст. 1252 ГК РФ (защита исключительных прав);',
+		'ст. 1229 ГК РФ (содержание исключительного права);',
+		'ст. 14.10 КоАП РФ (незаконное использование средств индивидуализации);',
+		'ст. 180 УК РФ (незаконное использование средств индивидуализации — при наличии признаков состава преступления).'
 	]
 
 	laws.forEach(law => {
 		children.push(
 			new Paragraph({
-				children: [new TextRun({ text: law, size: 18 })],
+				alignment: AlignmentType.JUSTIFY,
+				// Настройка отступов: тире слева, текст ровным блоком
+				indent: { left: 360, hanging: 360 },
+				tabStops: [{ type: TabStopType.LEFT, position: 360 }],
 				spacing: { before: 80 },
-				break: 1
+				children: [
+					new TextRun({
+						text: `—\t${law}`,
+						size: 24, // 12 кегль
+						font: 'Times New Roman'
+					})
+				]
 			})
 		)
 	})
@@ -136,7 +176,9 @@ async function notificationTemplate(data, photos) {
 	children.push(
 		new Paragraph({
 			alignment: HorizontalPositionAlign.CENTER,
-			children: [new TextRun({ text: '\nТРЕБУЕМ:', bold: true, break: 1 })],
+			children: [
+				new TextRun({ text: '\nТРЕБУЕМ:', bold: true, break: 1, size: 32 })
+			],
 			spacing: { before: 200 }
 		})
 	)
@@ -152,8 +194,15 @@ async function notificationTemplate(data, photos) {
 	requirements.forEach((req, index) => {
 		children.push(
 			new Paragraph({
-				text: `${index + 1}. ${req}`,
-				spacing: { before: 100 }
+				alignment: AlignmentType.JUSTIFY, // Выравнивание по ширине
+				spacing: { before: 120, after: 120 }, // Чуть больше отступа для читаемости
+				children: [
+					new TextRun({
+						text: `${index + 1}. ${req}`,
+						size: 24, // 12 кегль (24 полупункта)
+						font: 'Times New Roman'
+					})
+				]
 			})
 		)
 	})
@@ -170,7 +219,7 @@ async function notificationTemplate(data, photos) {
 		if (fs.existsSync(qrPath)) {
 			children.push(
 				new Paragraph({
-					alignment: AlignmentType.CENTER,
+					alignment: AlignmentType.LEFT,
 					children: [
 						new ImageRun({
 							data: fs.readFileSync(qrPath),
@@ -192,7 +241,8 @@ async function notificationTemplate(data, photos) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: 'В случае неисполнения указанных требований в установленный срок мы будем вынуждены обратиться в суд, а также в правоохранительные и контролирующие органы для привлечения виновных лиц к ответственности, включая взыскание компенсации, судебных расходов и иных убытков.'
+					text: 'В случае неисполнения указанных требований в установленный срок мы будем вынуждены обратиться в суд, а также в правоохранительные и контролирующие органы для привлечения виновных лиц к ответственности, включая взыскание компенсации, судебных расходов и иных убытков.',
+					size: 24
 				})
 			],
 			spacing: { before: 200 }
@@ -202,43 +252,14 @@ async function notificationTemplate(data, photos) {
 	// 9. Подпись
 	children.push(
 		new Paragraph({
-			alignment: AlignmentType.RIGHT,
+			alignment: AlignmentType.LEFT,
 			children: [
-				new TextRun({ text: '\nС уважением,', break: 1 }),
-				new TextRun({ text: '\nООО «ЮК ШИП»', bold: true, break: 1 })
+				new TextRun({ text: 'С уважением,', break: 1, size: 24 }),
+				new TextRun({ text: 'ООО «ЮК ШИП»', break: 1, size: 24 })
 			],
-			spacing: { before: 400 }
+			spacing: { before: 100 }
 		})
 	)
-
-	// 10. Фотографии (если переданы)
-	for (const [title, buffer] of Object.entries(photos)) {
-		if (buffer && buffer.length > 0) {
-			const cleanImg = await processImage(buffer)
-			if (cleanImg) {
-				children.push(
-					new Paragraph({
-						text: title,
-						bold: true,
-						spacing: { before: 400, after: 100 },
-						alignment: AlignmentType.CENTER
-					})
-				)
-				children.push(
-					new Paragraph({
-						alignment: AlignmentType.CENTER,
-						children: [
-							new ImageRun({
-								data: cleanImg,
-								transformation: { width: 450, height: 337 },
-								type: 'jpg'
-							})
-						]
-					})
-				)
-			}
-		}
-	}
 
 	return children
 }
