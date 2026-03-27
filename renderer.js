@@ -162,16 +162,11 @@ function initClaimsLogic() {
 
 		// 2. ПРОВЕРКА ФОТО (Твоя правка здесь)
 		const prodPhotoInput = document.getElementById('productPhotoInput')
+		const receiptPhotoInput = document.getElementById('receiptPhotoInput')
 
-		const isProdPhotoOk = prodPhotoInput?.files?.[0]
-
-		if (!isProdPhotoOk) {
-			// Ищем родительский контейнер (photo-box), чтобы подсветить его
-			if (!isProdPhotoOk) {
-				const box = prodPhotoInput.closest('.photo-box')
-				if (box) box.style.border = '2px dashed #731a20'
-			}
-
+		if (!prodPhotoInput?.files?.[0]) {
+			const box = prodPhotoInput.closest('.photo-box')
+			if (box) box.style.border = '2px dashed #731a20'
 			showError('Обязательно выберите фото товара!')
 			return
 		}
@@ -189,14 +184,17 @@ function initClaimsLogic() {
 				purchaseDate: document.getElementById('purchaseDate').value,
 				productCategory: document.getElementById('productCategory').value,
 				productPrice: document.getElementById('productPrice').value,
-				productCount: document.getElementById('productCount').value,
-				tmNumbers: document.getElementById('trademark').value,
+				productQuantity: document.getElementById('productCount').value,
+				trademark: document.getElementById('trademark').value,
 				plaintiffName: document.getElementById('rightHolder').value
 			}
 
 			const photos = {}
 			const prodPhoto = await getFileBuffer('productPhotoInput')
-			if (prodPhoto) photos['ФОТО ТОВАРА'] = prodPhoto
+			if (prodPhoto) photos['Фото товара'] = prodPhoto
+
+			const recPhoto = await getFileBuffer('receiptPhotoInput')
+			if (recPhoto) photos['Фото чека'] = recPhoto
 
 			const children = await claimTemplate(data, photos)
 			const buf = await DocGenerator.createDocument(children)

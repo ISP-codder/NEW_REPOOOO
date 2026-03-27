@@ -126,14 +126,6 @@ input[type='number'] {
 	font-weight: bold;
 }
 
-/* Эффект при наведении */
-.photo-box:hover {
-	border-color: #666;
-	background: #f0f0f0;
-}
-.photo-label:hover {
-	background: #f0f0f0;
-}
 /* Стили для контейнера фото при ошибке */
 .photo-box.invalid {
 	border: 2px solid #ff0000 !important;

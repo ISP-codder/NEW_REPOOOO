@@ -5,22 +5,26 @@ const { processImage } = require('../utils/imageProcessor')
 
 async function claimTemplate(data, photos) {
 	const children = []
-
+	const formatDate = dateStr => {
+		if (!dateStr) return ''
+		const [year, month, day] = dateStr.split('-')
+		return `${day}.${month}.${year}`
+	}
 	// 1. Блок "Кому" (выравнивание по правому краю) [cite: 25-27]
 	children.push(
 		new Paragraph({
-			alignment: AlignmentType.RIGHT,
+			alignment: AlignmentType.LEFT, // Теперь слева, как на первом скрине
 			children: [
 				new TextRun({
 					text: `Кому: ${data.sellerName}`,
 					bold: true
 				}),
 				new TextRun({
-					text: `\n(ИНН: ${data.sellerInn}), (ОГРН: ${data.sellerOgrn})`,
+					text: `(ИНН: ${data.sellerInn}), (ОГРН: ${data.sellerOgrn})`,
 					break: 1
 				}),
 				new TextRun({
-					text: `\nКуда: ${data.sellerLegalAddress}`,
+					text: `Куда: ${data.sellerLegalAddress}`,
 					break: 1
 				})
 			],
@@ -41,7 +45,7 @@ async function claimTemplate(data, photos) {
 					break: 1
 				})
 			],
-			spacing: { after: 400 }
+			spacing: { before: 200, after: 200 }
 		})
 	)
 
@@ -51,18 +55,18 @@ async function claimTemplate(data, photos) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: `Уважаемый(ая) ${data.sellerName || 'ИП Иванов Иван Иванович'},`
+					text: `Уважаемый ${data.sellerName},`
 				}),
 				new TextRun({
-					text: `\nНастоящей претензией заявляем о факте нарушения исключительных прав правообладателя на товарный знак (${data.trademark})`,
+					text: `Настоящей претензией заявляем о факте нарушения исключительных прав правообладателя на товарный знак (${data.trademark})`,
 					break: 1
 				}),
 				new TextRun({
-					text: `\nВ ходе закупки (${data.purchaseDate || '12.12.2025г.'}) по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName}" зафиксирована продажа товара (${data.productCategory || 'футболка(категория)'}), в количестве ${data.productQuantity || '1 шт.'} стоимостью ${data.productPrice || '1500'} рублей маркированного обозначением, используемым без законных оснований.`,
+					text: `В ходе закупки (${formatDate(data.purchaseDate)}) по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName}" зафиксирована продажа товара (${data.productCategory}), в количестве ${data.productQuantity} стоимостью ${data.productPrice} рублей маркированного обозначением, используемым без законных оснований.`,
 					break: 1
 				}),
 				new TextRun({
-					text: `\nДоказательства нарушения имеются у правообладателя (${data.plaintiffName}).`,
+					text: `Доказательства нарушения имеются у правообладателя ${data.plaintiffName}.`,
 					break: 1
 				})
 			],
@@ -76,23 +80,27 @@ async function claimTemplate(data, photos) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: 'Правовая квалификация нарушения: ст. 1484 и ст. 1515 ГК РФ, в системной связи со ст. 1229 и ст. 1252 ГК РФ; также применима ст. 14.10 КоАП РФ.',
-					italics: true
+					text: 'Правовая квалификация нарушения: ст. 1484 и ст. 1515 ГК РФ, в системной связи со ст. 1229 и ст. 1252 ГК РФ; также применима ст. 14.10 КоАП РФ.'
 				})
 			],
-			spacing: { after: 200 }
+			spacing: { after: 100 }
 		})
 	)
 
 	// 5. Требования [cite: 36-42]
 	children.push(
-		new Paragraph({ children: [new TextRun({ text: 'ТРЕБУЕМ:', bold: true })] })
+		new Paragraph({
+			alignment: AlignmentType.CENTER,
+			children: [
+				new TextRun({ text: 'ТРЕБУЕМ:', bold: true, size: 28, break: 1 })
+			]
+		})
 	)
 
 	const requirements = [
 		'Прекратить использование обозначения, сходного до степени смешения с товарным знаком правообладателя.',
 		'Изъять контрафактный товар из оборота и исключить его повторное поступление в продажу.',
-		`Выплатить компенсацию в размере ${data.compensationAmount || '1000000'} руб.`,
+		`Выплатить компенсацию в размере ${data.compensationAmount} руб.`,
 		'Сообщить данные поставщика и представить подтверждающие документы происхождения товара.',
 		'Направить мотивированный письменный ответ.'
 	]
@@ -112,11 +120,10 @@ async function claimTemplate(data, photos) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: '\nОплату компенсации можно произвести банковским переводом либо по QR-коду, приложенному к претензии.',
+					text: 'Оплату компенсации можно произвести банковским переводом либо по QR-коду, приложенному к претензии.',
 					break: 1
 				})
-			],
-			spacing: { before: 200 }
+			]
 		})
 	)
 
@@ -136,7 +143,7 @@ async function claimTemplate(data, photos) {
 					children: [
 						new ImageRun({
 							data: fs.readFileSync(qrPath),
-							transformation: { width: 100, height: 100 },
+							transformation: { width: 80, height: 80 },
 							type: 'png'
 						})
 					],
@@ -181,7 +188,7 @@ async function claimTemplate(data, photos) {
 				new TextRun({ text: '\nС уважением,', break: 1 }),
 				new TextRun({ text: '\nООО «ЮК ШИП»', bold: true, break: 1 })
 			],
-			spacing: { before: 400 }
+			spacing: { before: 100 }
 		})
 	)
 
