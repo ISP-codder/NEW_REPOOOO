@@ -1,40 +1,50 @@
-const { Paragraph, TextRun, AlignmentType, UnderlineType } = require('docx')
-
+const {
+	Paragraph,
+	TextRun,
+	AlignmentType,
+	TabStopType,
+	TabStopPosition
+} = require('docx')
 /**
  * Шаблон Мирового соглашения
  * Воспроизводит структуру документа text_mirovoe_soglashenie.docx
  */
 async function settlementTemplate(data) {
 	const children = []
+	const formatDate = dateStr => {
+		if (!dateStr) return ''
+		const [year, month, day] = dateStr.split('-')
+		return `${day}.${month}.${year}`
+	}
+
+	// В блоке формирования docx:
 
 	// 1. Дата и Суд (Верхняя часть)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
 			children: [
-				new TextRun({
-					text: `Дата мирового соглашения:  ${data.date}.`,
-					bold: true
-				})
+				new TextRun({ text: 'Дата мирового соглашения: ', bold: true }),
+				new TextRun({ text: `${formatDate(data.date)}г.`, bold: false })
 			],
-			spacing: { after: 200 }
+			spacing: { before: 200, after: 100 }
 		})
 	)
 
+	// 2. Суд и Адрес (разделяем на разные параграфы для четкости)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
+			children: [new TextRun({ text: `${data.courtName}`, bold: true })],
+			spacing: { after: 50 }
+		}),
+		new Paragraph({
+			alignment: AlignmentType.LEFT,
 			children: [
-				new TextRun({
-					text: `${data.courtName || 'Арбитражный суд Ростовской области'}`,
-					bold: true
-				}),
-				new TextRun({
-					text: `\nАдрес суда:  ${data.courtAddress || '344002, (г.Ростов-на-Дону, ул.Станиславского, 8 «а»)'}`,
-					break: 1
-				})
+				new TextRun({ text: 'Адрес суда: ', bold: true }),
+				new TextRun({ text: `${data.courtAddress}`, bold: false })
 			],
-			spacing: { after: 300 }
+			spacing: { after: 200 }
 		})
 	)
 
@@ -43,23 +53,34 @@ async function settlementTemplate(data) {
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
 			children: [
-				new TextRun({
-					text: `Истец:  ${data.plaintiffName || '(Пума СЕ)'}`,
-					bold: true
-				}),
-				new TextRun({
-					text: `\nОтветчик: ${data.defendantName || '(ИП Иванов Иван Иванович)'}`,
-					bold: true,
-					break: 1
-				}),
-				new TextRun({
-					text: `\n(ИНН: ${data.sellerInn || '000000'}), (ОГРН: ${data.sellerOgrn || '0000000'})`,
-					break: 1
-				})
+				new TextRun({ text: 'Истец: ', bold: true }),
+				new TextRun({ text: `${data.plaintiffName}`, bold: false })
 			],
-			spacing: { after: 400 }
+			spacing: { after: 50 }
+		}),
+		new Paragraph({
+			alignment: AlignmentType.LEFT,
+			children: [
+				new TextRun({ text: 'Ответчик: ', bold: true }),
+				new TextRun({ text: `${data.defendantName}`, bold: false })
+			],
+			spacing: { after: 600 }
 		})
 	)
+
+	// // 4. Реквизиты ответчика (ИНН/ОГРН) отдельной строкой
+	// children.push(
+	// 	new Paragraph({
+	// 		alignment: AlignmentType.LEFT,
+	// 		children: [
+	// 			new TextRun({
+	// 				text: `(ИНН: ${data.sellerInn}), (ОГРН: ${data.sellerOgrn})`,
+	// 				bold: false
+	// 			})
+	// 		],
+	// 		spacing: { after: 600 } // Большой отступ перед заголовком "МИРОВОЕ СОГЛАШЕНИЕ"
+	// 	})
+	// )
 
 	// 3. Заголовок [cite: 38-39]
 	children.push(
@@ -81,19 +102,31 @@ async function settlementTemplate(data) {
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
+			children: [new TextRun({ text: 'Мы, стороны по делу:' })],
+			spacing: { after: 120 } // Небольшой отступ перед списком
+		})
+	)
+
+	// 2. Список сторон (используем отдельные параграфы для четких строк)
+	children.push(
+		new Paragraph({
+			alignment: AlignmentType.JUSTIFY,
+			children: [new TextRun({ text: `1) Истец — ${data.plaintiffName};` })]
+		}),
+		new Paragraph({
+			alignment: AlignmentType.JUSTIFY,
+			children: [new TextRun({ text: `2) Ответчик — ${data.defendantName},` })],
+			spacing: { after: 200 } // Тот самый отступ ПЕРЕД "заключили..."
+		})
+	)
+
+	// 3. Финальная фраза
+	children.push(
+		new Paragraph({
+			alignment: AlignmentType.JUSTIFY,
 			children: [
-				new TextRun({ text: 'Мы, стороны по делу:' }),
 				new TextRun({
-					text: `\n1) Истец — ${data.plaintiffName || '(Пума СЕ)'};`,
-					break: 1
-				}),
-				new TextRun({
-					text: `\n2) Ответчик — ${data.defendantName || '(ИП Иванов Иван Иванович)'},`,
-					break: 1
-				}),
-				new TextRun({
-					text: '\nзаключили настоящее мировое соглашение о нижеследующем.',
-					break: 1
+					text: 'заключили настоящее мировое соглашение о нижеследующем.'
 				})
 			],
 			spacing: { after: 200 }
@@ -106,7 +139,7 @@ async function settlementTemplate(data) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: `Стороны договорились урегулировать спор, возникший из факта реализации Ответчиком товара с признаками нарушения исключительного права на товарный знак: ${data.trademark || '(11111, 22222, 33333)'}.`
+					text: `Стороны договорились урегулировать спор, возникший из факта реализации Ответчиком товара с признаками нарушения исключительного права на товарный знак: ${data.trademark}.`
 				})
 			],
 			spacing: { after: 200 }
@@ -124,7 +157,7 @@ async function settlementTemplate(data) {
 			]
 		},
 		{
-			title: `2. Ответчик обязуется выплатить Истцу компенсацию/денежные средства в размере ${data.amount || '(1000000)'} руб. в срок до ${data.deadline || '(25.12.2025)'}.`
+			title: `2. Ответчик обязуется выплатить Истцу компенсацию/денежные средства в размере ${data.amount} руб. в срок до ${data.deadline}.`
 		},
 		{
 			title:
@@ -137,20 +170,36 @@ async function settlementTemplate(data) {
 	]
 
 	terms.forEach(term => {
+		// 1. Основной пункт (заголовок)
 		children.push(
 			new Paragraph({
 				alignment: AlignmentType.JUSTIFY,
 				children: [new TextRun({ text: term.title })],
-				spacing: { before: 150 }
+				spacing: { before: 150, after: 120 }
 			})
 		)
+
+		// 2. Подпункты (тире ровно под цифрой 1)
 		if (term.subPoints) {
 			term.subPoints.forEach(sub => {
 				children.push(
 					new Paragraph({
 						alignment: AlignmentType.JUSTIFY,
-						children: [new TextRun({ text: `— ${sub}` })],
-						indent: { left: 400 }
+						children: [
+							new TextRun({
+								text: `—\t${sub}` // Оставляем ОДИН символ табуляции
+							})
+						],
+						tabStops: [
+							{
+								type: TabStopType.LEFT,
+								position: 300 // Точка, где начинается текст после тире
+							}
+						],
+						indent: {
+							left: 300, // Весь блок текста смещен на 300
+							hanging: 300 // Первая строка (с тире) выносится влево на те же 300
+						}
 					})
 				)
 			})
@@ -163,34 +212,41 @@ async function settlementTemplate(data) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: '\nВ случае утверждения мирового соглашения судом производство по делу подлежит прекращению в порядке, установленном процессуальным законодательством (в том числе ст. 138–139 АПК РФ / в зависимости от вида судопроизводства).',
-					break: 1
-				}),
-				new TextRun({
-					text: '\nНастоящее мировое соглашение вступает в силу с момента его утверждения судом.',
-					break: 1
+					text: 'В случае утверждения мирового соглашения судом производство по делу подлежит прекращению в порядке, установленном процессуальным законодательством (в том числе ст. 138–139 АПК РФ / в зависимости от вида судопроизводства).'
 				})
 			],
-			spacing: { before: 200, after: 400 }
+			spacing: { before: 400, after: 200 } // Отступ перед блоком и между абзацами
+		}),
+		new Paragraph({
+			alignment: AlignmentType.JUSTIFY,
+			children: [
+				new TextRun({
+					text: 'Настоящее мировое соглашение вступает в силу с момента его утверждения судом.'
+				})
+			],
+			spacing: { after: 400 } // Увеличенный отступ перед "Подписи сторон"
 		})
 	)
 
 	// 8. Подписи
 	children.push(
 		new Paragraph({
-			children: [new TextRun({ text: 'Подписи сторон:', bold: true })],
-			spacing: { after: 200 }
+			children: [new TextRun({ text: 'Подписи сторон:', bold: false })],
+			spacing: { after: 300 }
 		})
 	)
 
+	// Истец и Ответчик (каждый в своем параграфе для вертикального списка)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
-			children: [
-				new TextRun({ text: 'Истец: ____________' }),
-				new TextRun({ text: '\t\t\t\t\t' }), // Табуляция для разноса подписей
-				new TextRun({ text: 'Ответчик: ____________' })
-			]
+			children: [new TextRun({ text: 'Истец: ____________________' })], // Удлинил линию для соответствия макету
+			spacing: { after: 200 }
+		}),
+		new Paragraph({
+			alignment: AlignmentType.LEFT,
+			children: [new TextRun({ text: 'Ответчик: ____________________' })],
+			spacing: { after: 200 }
 		})
 	)
 
