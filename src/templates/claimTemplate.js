@@ -5,34 +5,53 @@ const { processImage } = require('../utils/imageProcessor')
 
 async function claimTemplate(data, photos) {
 	const children = []
+
+	// Настройка для шрифта 12 (12pt * 2 = 24 unit)
+	const baseTextStyle = { size: 24 }
+
 	const formatDate = dateStr => {
 		if (!dateStr) return ''
 		const [year, month, day] = dateStr.split('-')
 		return `${day}.${month}.${year}`
 	}
-	// 1. Блок "Кому" (выравнивание по правому краю) [cite: 25-27]
+
+	// 1. Блок "Кому"
 	children.push(
 		new Paragraph({
-			alignment: AlignmentType.LEFT, // Теперь слева, как на первом скрине
+			alignment: AlignmentType.LEFT,
 			children: [
 				new TextRun({
-					text: `Кому: ${data.sellerName}`,
+					...baseTextStyle,
+					text: `Кому: `,
 					bold: true
 				}),
 				new TextRun({
+					...baseTextStyle,
+					text: `${data.sellerName}`,
+					bold: false
+				}),
+				new TextRun({
+					...baseTextStyle,
 					text: `(ИНН: ${data.sellerInn}), (ОГРН: ${data.sellerOgrn})`,
 					break: 1
 				}),
 				new TextRun({
-					text: `Куда: ${data.sellerLegalAddress}`,
+					...baseTextStyle,
+					text: `Куда: `,
+					bold: true,
 					break: 1
+				}),
+				new TextRun({
+					...baseTextStyle,
+					text: `${data.sellerLegalAddress}`,
+					bold: false
 				})
 			],
-			spacing: { after: 400 }
+			spacing: { before: 0, after: 200 }
 		})
 	)
 
-	// 2. Заголовок [cite: 28-29]
+	// 2. Заголовок (здесь размеры уже стояли вручную, я их оставил крупными)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
@@ -41,7 +60,7 @@ async function claimTemplate(data, photos) {
 				new TextRun({
 					text: '\nо нарушении исключительных прав на товарный знак',
 					bold: true,
-					size: 20,
+					size: 24,
 					break: 1
 				})
 			],
@@ -49,23 +68,27 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// 3. Обращение и основной текст [cite: 30-33]
+	// 3. Обращение и основной текст
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
+					...baseTextStyle,
 					text: `Уважаемый ${data.sellerName},`
 				}),
 				new TextRun({
+					...baseTextStyle,
 					text: `Настоящей претензией заявляем о факте нарушения исключительных прав правообладателя на товарный знак (${data.trademark})`,
 					break: 1
 				}),
 				new TextRun({
+					...baseTextStyle,
 					text: `В ходе закупки (${formatDate(data.purchaseDate)}) по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName}" зафиксирована продажа товара (${data.productCategory}), в количестве ${data.productQuantity} стоимостью ${data.productPrice} рублей маркированного обозначением, используемым без законных оснований.`,
 					break: 1
 				}),
 				new TextRun({
+					...baseTextStyle,
 					text: `Доказательства нарушения имеются у правообладателя ${data.plaintiffName}.`,
 					break: 1
 				})
@@ -80,6 +103,7 @@ async function claimTemplate(data, photos) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
+					...baseTextStyle,
 					text: 'Правовая квалификация нарушения: ст. 1484 и ст. 1515 ГК РФ, в системной связи со ст. 1229 и ст. 1252 ГК РФ; также применима ст. 14.10 КоАП РФ.'
 				})
 			],
@@ -87,7 +111,7 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// 5. Требования [cite: 36-42]
+	// 5. Требования
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
@@ -100,7 +124,7 @@ async function claimTemplate(data, photos) {
 	const requirements = [
 		'Прекратить использование обозначения, сходного до степени смешения с товарным знаком правообладателя.',
 		'Изъять контрафактный товар из оборота и исключить его повторное поступление в продажу.',
-		`Выплатить компенсацию в размере ${data.compensationAmount} руб.`,
+		`Выплатить компенсацию в размере () руб.`,
 		'Сообщить данные поставщика и представить подтверждающие документы происхождения товара.',
 		'Направить мотивированный письменный ответ.'
 	]
@@ -108,18 +132,21 @@ async function claimTemplate(data, photos) {
 	requirements.forEach((req, index) => {
 		children.push(
 			new Paragraph({
-				text: `${index + 1}. ${req}`,
+				children: [
+					new TextRun({ ...baseTextStyle, text: `${index + 1}. ${req}` })
+				],
 				spacing: { before: 100 }
 			})
 		)
 	})
 
-	// 6. Информация об оплате и ВСТАВКА QR-КОДА [cite: 43-44]
+	// 6. Информация об оплате
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
+					...baseTextStyle,
 					text: 'Оплату компенсации можно произвести банковским переводом либо по QR-коду, приложенному к претензии.',
 					break: 1
 				})
@@ -127,7 +154,8 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// Вставка QR-кода сразу после текста об оплате
+	// ... (код QR-кода остается без изменений) ...
+	// Вставка QR-кода
 	try {
 		const qrPath = path.join(
 			__dirname,
@@ -152,7 +180,7 @@ async function claimTemplate(data, photos) {
 			)
 		}
 	} catch (e) {
-		console.error('Ошибка вставки QR-кода:', e)
+		console.error(e)
 	}
 
 	children.push(
@@ -160,6 +188,7 @@ async function claimTemplate(data, photos) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
+					...baseTextStyle,
 					text: 'При неисполнении требований правообладатель обратится в суд за взысканием компенсации, судебных расходов и применением мер пресечения нарушения.'
 				})
 			],
@@ -171,12 +200,22 @@ async function claimTemplate(data, photos) {
 	children.push(
 		new Paragraph({
 			children: [
-				new TextRun({ text: '\nПриложения:', bold: true, break: 1 }),
 				new TextRun({
+					...baseTextStyle,
+					text: '\nПриложения:',
+					bold: true,
+					break: 1
+				}),
+				new TextRun({
+					...baseTextStyle,
 					text: '\n1. Доказательства нарушения (чек, фото),',
 					break: 1
 				}),
-				new TextRun({ text: '\n2. Копия Доверенности.', break: 1 })
+				new TextRun({
+					...baseTextStyle,
+					text: '\n2. Копия Доверенности.',
+					break: 1
+				})
 			]
 		})
 	)
@@ -185,22 +224,28 @@ async function claimTemplate(data, photos) {
 		new Paragraph({
 			alignment: AlignmentType.RIGHT,
 			children: [
-				new TextRun({ text: '\nС уважением,', break: 1 }),
-				new TextRun({ text: '\nООО «ЮК ШИП»', bold: true, break: 1 })
+				new TextRun({ ...baseTextStyle, text: '\nС уважением,', break: 1 }),
+				new TextRun({
+					...baseTextStyle,
+					text: '\nООО «ЮК ШИП»',
+					bold: true,
+					break: 1
+				})
 			],
 			spacing: { before: 100 }
 		})
 	)
 
-	// 8. Фотографии (если есть) [cite: 51-52]
+	// 8. Фотографии
 	for (const [title, buffer] of Object.entries(photos)) {
 		if (buffer && buffer.length > 0) {
 			const cleanImg = await processImage(buffer)
 			if (cleanImg) {
 				children.push(
 					new Paragraph({
-						text: title,
-						bold: true,
+						children: [
+							new TextRun({ ...baseTextStyle, text: title, bold: true })
+						],
 						spacing: { before: 400, after: 100 },
 						alignment: AlignmentType.CENTER
 					})
