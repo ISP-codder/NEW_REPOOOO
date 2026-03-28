@@ -1,4 +1,10 @@
-const { Paragraph, TextRun, AlignmentType, ImageRun } = require('docx')
+const {
+	Paragraph,
+	TextRun,
+	AlignmentType,
+	ImageRun,
+	PageBreak
+} = require('docx')
 const fs = require('fs')
 const path = require('path')
 const { processImage } = require('../utils/imageProcessor')
@@ -7,7 +13,7 @@ async function claimTemplate(data, photos) {
 	const children = []
 
 	// Настройка для шрифта 12 (12pt * 2 = 24 unit)
-	const baseTextStyle = { size: 24 }
+	const baseTextStyle = { size: 20 }
 
 	const formatDate = dateStr => {
 		if (!dateStr) return ''
@@ -56,11 +62,11 @@ async function claimTemplate(data, photos) {
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
 			children: [
-				new TextRun({ text: 'Досудебная претензия', bold: true, size: 28 }),
+				new TextRun({ text: 'Досудебная претензия', bold: true, size: 24 }),
 				new TextRun({
 					text: '\nо нарушении исключительных прав на товарный знак',
 					bold: true,
-					size: 24,
+					size: 20,
 					break: 1
 				})
 			],
@@ -116,7 +122,7 @@ async function claimTemplate(data, photos) {
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
 			children: [
-				new TextRun({ text: 'ТРЕБУЕМ:', bold: true, size: 28, break: 1 })
+				new TextRun({ text: 'ТРЕБУЕМ:', bold: true, size: 24, break: 1 })
 			]
 		})
 	)
@@ -235,7 +241,11 @@ async function claimTemplate(data, photos) {
 			spacing: { before: 100 }
 		})
 	)
-
+	children.push(
+		new Paragraph({
+			children: [new PageBreak()]
+		})
+	)
 	// 8. Фотографии
 	for (const [title, buffer] of Object.entries(photos)) {
 		if (buffer && buffer.length > 0) {
@@ -259,7 +269,8 @@ async function claimTemplate(data, photos) {
 								transformation: { width: 450, height: 337 },
 								type: 'jpg'
 							})
-						]
+						],
+						spacing: { after: 400 }
 					})
 				)
 			}

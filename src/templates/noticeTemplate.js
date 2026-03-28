@@ -25,31 +25,31 @@ async function notificationTemplate(data, photos) {
 				new TextRun({
 					text: 'Кому: ',
 					bold: true,
-					size: 24,
+					size: 20,
 					font: 'Times New Roman'
 				}),
 				// 2. Имя продавца — обычный
 				new TextRun({
 					text: `${data.sellerName || '(ФИО ИП/организация)'}`,
 					bold: false,
-					size: 24,
+					size: 20,
 					font: 'Times New Roman'
 				}),
 
 				new TextRun({
 					text: `ИНН: ${data.sellerInn}, ОГРН: ${data.sellerOgrn}`,
 					break: 1,
-					size: 24
+					size: 20
 				}),
 				new TextRun({
 					text: `Куда: `,
 					bold: true,
 					break: 1,
-					size: 24
+					size: 20
 				}),
 				new TextRun({
 					text: `${data.sellerLegalAddress}`,
-					size: 24
+					size: 20
 				})
 			],
 			spacing: { after: 400 }
@@ -61,11 +61,11 @@ async function notificationTemplate(data, photos) {
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
 			children: [
-				new TextRun({ text: 'Уведомление', bold: true, size: 32 }),
+				new TextRun({ text: 'Уведомление', bold: true, size: 24 }),
 				new TextRun({
 					text: '\nо выявлении факта реализации контрафактного товара',
 					bold: true,
-					size: 24,
+					size: 20,
 					break: 1
 				})
 			],
@@ -80,12 +80,12 @@ async function notificationTemplate(data, photos) {
 			children: [
 				new TextRun({
 					text: `Уважаемый ${data.sellerName},`,
-					size: 24
+					size: 20
 				}),
 				new TextRun({
 					text: `Уведомляем Вас о том, что в ходе мониторинга рынка/контрольной закупки выявлен факт реализации товара с признаками контрафактности.`,
 					break: 1,
-					size: 24
+					size: 20
 				})
 			],
 			spacing: { line: 360, before: 200 }
@@ -99,7 +99,7 @@ async function notificationTemplate(data, photos) {
 				new TextRun({
 					text: 'Сведения о выявленном факте:',
 					bold: true,
-					size: 24
+					size: 20
 				})
 			],
 			spacing: { before: 200 }
@@ -121,7 +121,7 @@ async function notificationTemplate(data, photos) {
 				children: [
 					new TextRun({
 						text: fact,
-						size: 24, // 24 полупункта = 12 кегль
+						size: 20, // 24 полупункта = 12 кегль
 						font: 'Times New Roman' // Чтобы точно по ГОСТу
 					})
 				]
@@ -137,7 +137,7 @@ async function notificationTemplate(data, photos) {
 				new TextRun({
 					text: 'Реализация указанного товара нарушает исключительные права правообладателя и противоречит законодательству Российской Федерации, в том числе:',
 					break: 1,
-					size: 24
+					size: 20
 				})
 			],
 			spacing: { before: 200 }
@@ -164,7 +164,7 @@ async function notificationTemplate(data, photos) {
 				children: [
 					new TextRun({
 						text: `—\t${law}`,
-						size: 24, // 12 кегль
+						size: 20, // 12 кегль
 						font: 'Times New Roman'
 					})
 				]
@@ -177,7 +177,7 @@ async function notificationTemplate(data, photos) {
 		new Paragraph({
 			alignment: HorizontalPositionAlign.CENTER,
 			children: [
-				new TextRun({ text: '\nТРЕБУЕМ:', bold: true, break: 1, size: 32 })
+				new TextRun({ text: '\nТРЕБУЕМ:', bold: true, break: 1, size: 24 })
 			],
 			spacing: { before: 200 }
 		})
@@ -199,7 +199,7 @@ async function notificationTemplate(data, photos) {
 				children: [
 					new TextRun({
 						text: `${index + 1}. ${req}`,
-						size: 24, // 12 кегль (24 полупункта)
+						size: 20, // 12 кегль (24 полупункта)
 						font: 'Times New Roman'
 					})
 				]
@@ -242,7 +242,7 @@ async function notificationTemplate(data, photos) {
 			children: [
 				new TextRun({
 					text: 'В случае неисполнения указанных требований в установленный срок мы будем вынуждены обратиться в суд, а также в правоохранительные и контролирующие органы для привлечения виновных лиц к ответственности, включая взыскание компенсации, судебных расходов и иных убытков.',
-					size: 24
+					size: 20
 				})
 			],
 			spacing: { before: 200 }
@@ -254,8 +254,8 @@ async function notificationTemplate(data, photos) {
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
 			children: [
-				new TextRun({ text: 'С уважением,', break: 1, size: 24 }),
-				new TextRun({ text: 'ООО «ЮК ШИП»', break: 1, size: 24 })
+				new TextRun({ text: 'С уважением,', break: 1, size: 20 }),
+				new TextRun({ text: 'ООО «ЮК ШИП»', break: 1, size: 20 })
 			],
 			spacing: { before: 100 }
 		})

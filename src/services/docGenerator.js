@@ -45,7 +45,7 @@ class DocGenerator {
 				new TableRow({
 					children: [
 						new TableCell({
-							width: { size: 20, type: WidthType.PERCENTAGE },
+							width: { size: 30, type: WidthType.PERCENTAGE },
 							verticalAlign: VerticalAlign.CENTER,
 							borders: {
 								right: {
@@ -66,7 +66,7 @@ class DocGenerator {
 							]
 						}),
 						new TableCell({
-							width: { size: 80, type: WidthType.PERCENTAGE },
+							width: { size: 70, type: WidthType.PERCENTAGE },
 							children: [
 								new Paragraph({
 									alignment: AlignmentType.CENTER,
@@ -74,21 +74,21 @@ class DocGenerator {
 									children: [
 										new TextRun({
 											text: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ',
-											size: 24 // Немного уменьшил размер, чтобы влезло красиво
+											size: 20 // Немного уменьшил размер, чтобы влезло красиво
 										}),
 										new TextRun({
 											text: '«ЮРИДИЧЕСКАЯ КОМПАНИЯ «ШЕВЧЕНКО И ПАРТНЕРЫ»',
-											size: 24,
+											size: 20,
 											break: 1
 										}),
 										new TextRun({
 											text: 'ИНН 6164118059 КПП 616101001 344082,',
-											size: 24,
+											size: 20,
 											break: 1
 										}),
 										new TextRun({
 											text: 'г. Ростов-на-Дону, ул. Максима Горького 44 «б», к. 1',
-											size: 24,
+											size: 20,
 											break: 1
 										})
 									]

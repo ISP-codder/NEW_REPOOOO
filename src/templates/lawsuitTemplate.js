@@ -8,8 +8,8 @@ async function lawsuitTemplate(data, photos) {
 		return `${day}.${month}.${year}`
 	}
 	// Константы для размеров
-	const SIZE_12 = 24
-	const SIZE_16 = 32
+	const SIZE_12 = 20
+	const SIZE_16 = 24
 
 	// Общий стиль для всех параграфов (БЕЗ АБЗАЦЕВ)
 	const bodyStyle = {

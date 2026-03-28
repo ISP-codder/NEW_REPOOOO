@@ -15,8 +15,8 @@ async function reportTemplate(data) {
 	}
 	// Настройки шрифта
 	const font = 'Times New Roman'
-	const sizeTitle = 28 // ~14pt
-	const sizeMain = 24 // ~12pt
+	const sizeTitle = 24 // ~14pt
+	const sizeMain = 20 // ~12pt
 	const sizeHeader = 18 // ~9pt для шапки
 
 	// Вспомогательная функция для создания стандартных абзацев

@@ -204,7 +204,7 @@ function initClaimsLogic() {
 
 			if (savePath) {
 				fs.writeFileSync(savePath, buf)
-				window.showSuccess(`Документ "${fileName}" успешно создан!`)
+				window.showSuccess(`Документ успешно создан!`)
 			}
 		} catch (e) {
 			console.error(e)
@@ -262,7 +262,7 @@ function initLawsuitLogic() {
 
 			if (savePath) {
 				fs.writeFileSync(savePath, buf)
-				window.showSuccess(`Документ "${fileName}" успешно создан!`)
+				window.showSuccess(`Документ успешно создан!`)
 			}
 		} catch (e) {
 			showError('Ошибка: ' + e.message)
@@ -274,6 +274,12 @@ function initLawsuitLogic() {
 
 // --- ЛОГИКА ОТЧЕТОВ ---
 function initReportLogic() {
+	const formatDate = dateStr => {
+		if (!dateStr) return ''
+		const [year, month, day] = dateStr.split('-')
+		return `${day}.${month}.${year}`
+	}
+
 	const btn = document.getElementById('generateBtn')
 	if (!btn) return
 
@@ -307,7 +313,9 @@ function initReportLogic() {
 
 			if (savePath) {
 				fs.writeFileSync(savePath, buf)
-				window.showSuccess(`Отчет за ${data.reportDate} успешно создан!`)
+				window.showSuccess(
+					`Отчет за ${formatDate(data.reportDate)} успешно создан!`
+				)
 			}
 		} catch (e) {
 			showError('Ошибка генерации: ' + e.message)

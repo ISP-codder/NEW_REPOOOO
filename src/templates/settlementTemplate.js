@@ -14,8 +14,8 @@ async function settlementTemplate(data) {
 	const children = []
 
 	// Настройки шрифтов: 12pt (24) и 14pt (28)
-	const fontSizeRegular = 24
-	const fontSizeHeader = 28
+	const fontSizeRegular = 20
+	const fontSizeHeader = 24
 
 	const formatDate = dateStr => {
 		if (!dateStr) return ''
