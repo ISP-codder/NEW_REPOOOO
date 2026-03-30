@@ -34,7 +34,7 @@ async function settlementTemplate(data) {
 					size: fontSizeRegular
 				}),
 				new TextRun({
-					text: `${formatDate(data.date)}г.`,
+					text: `${formatDate(data.date)} г.`,
 					bold: false,
 					size: fontSizeRegular
 				})

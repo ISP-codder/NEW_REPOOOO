@@ -12,7 +12,6 @@ const { processImage } = require('../utils/imageProcessor')
 async function claimTemplate(data, photos) {
 	const children = []
 
-	// Настройка для шрифта 12 (12pt * 2 = 24 unit)
 	const baseTextStyle = { size: 20 }
 
 	const formatDate = dateStr => {
@@ -21,7 +20,6 @@ async function claimTemplate(data, photos) {
 		return `${day}.${month}.${year}`
 	}
 
-	// 1. Блок "Кому"
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
@@ -38,7 +36,7 @@ async function claimTemplate(data, photos) {
 				}),
 				new TextRun({
 					...baseTextStyle,
-					text: `(ИНН: ${data.sellerInn}), (ОГРН: ${data.sellerOgrn})`,
+					text: `ИНН: ${data.sellerInn}, ОГРН: ${data.sellerOgrn}`,
 					break: 1
 				}),
 				new TextRun({
@@ -57,7 +55,6 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// 2. Заголовок (здесь размеры уже стояли вручную, я их оставил крупными)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
@@ -74,7 +71,6 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// 3. Обращение и основной текст
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -85,12 +81,12 @@ async function claimTemplate(data, photos) {
 				}),
 				new TextRun({
 					...baseTextStyle,
-					text: `Настоящей претензией заявляем о факте нарушения исключительных прав правообладателя на товарный знак (${data.trademark})`,
+					text: `Настоящей претензией заявляем о факте нарушения исключительных прав правообладателя на товарный знак ${data.trademark}`,
 					break: 1
 				}),
 				new TextRun({
 					...baseTextStyle,
-					text: `В ходе закупки (${formatDate(data.purchaseDate)}) по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName}" зафиксирована продажа товара (${data.productCategory}), в количестве ${data.productQuantity} стоимостью ${data.productPrice} рублей маркированного обозначением, используемым без законных оснований.`,
+					text: `В ходе закупки ${formatDate(data.purchaseDate)} по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName}" зафиксирована продажа товара ${data.productCategory}, в количестве ${data.productQuantity} стоимостью ${data.productPrice} рублей маркированного обозначением, используемым без законных оснований.`,
 					break: 1
 				}),
 				new TextRun({
@@ -103,7 +99,6 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// 4. Правовая квалификация
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -117,7 +112,6 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// 5. Требования
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
@@ -130,23 +124,53 @@ async function claimTemplate(data, photos) {
 	const requirements = [
 		'Прекратить использование обозначения, сходного до степени смешения с товарным знаком правообладателя.',
 		'Изъять контрафактный товар из оборота и исключить его повторное поступление в продажу.',
-		`Выплатить компенсацию в размере () руб.`,
+		'Выплатить компенсацию в размере (УКАЗАТЬ ЦЕНУ ВРУЧНУЮ) руб.', // Оставляем как обычную строку
 		'Сообщить данные поставщика и представить подтверждающие документы происхождения товара.',
 		'Направить мотивированный письменный ответ.'
 	]
 
 	requirements.forEach((req, index) => {
-		children.push(
-			new Paragraph({
-				children: [
-					new TextRun({ ...baseTextStyle, text: `${index + 1}. ${req}` })
-				],
-				spacing: { before: 100 }
-			})
-		)
+		const phraseToHighlight = '(УКАЗАТЬ ЦЕНУ ВРУЧНУЮ)'
+
+		// Проверяем, содержит ли текущая строка нашу фразу
+		if (req.includes(phraseToHighlight)) {
+			// Разрезаем строку на части
+			const parts = req.split(phraseToHighlight)
+
+			children.push(
+				new Paragraph({
+					children: [
+						// Номер и первая часть текста
+						new TextRun({
+							...baseTextStyle,
+							text: `${index + 1}. ${parts[0]}`
+						}),
+						// Сама фраза с желтым выделением
+						new TextRun({
+							...baseTextStyle,
+							text: phraseToHighlight,
+							highlight: 'yellow',
+							bold: true
+						}),
+						// Оставшаяся часть текста (например, " руб.")
+						new TextRun({ ...baseTextStyle, text: parts[1] })
+					],
+					spacing: { before: 100 }
+				})
+			)
+		} else {
+			// Если фразы нет — выводим пункт как обычно
+			children.push(
+				new Paragraph({
+					children: [
+						new TextRun({ ...baseTextStyle, text: `${index + 1}. ${req}` })
+					],
+					spacing: { before: 100 }
+				})
+			)
+		}
 	})
 
-	// 6. Информация об оплате
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -160,8 +184,6 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// ... (код QR-кода остается без изменений) ...
-	// Вставка QR-кода
 	try {
 		const qrPath = path.join(
 			__dirname,
@@ -202,7 +224,6 @@ async function claimTemplate(data, photos) {
 		})
 	)
 
-	// 7. Приложения и подпись
 	children.push(
 		new Paragraph({
 			children: [
@@ -246,7 +267,6 @@ async function claimTemplate(data, photos) {
 			children: [new PageBreak()]
 		})
 	)
-	// 8. Фотографии
 	for (const [title, buffer] of Object.entries(photos)) {
 		if (buffer && buffer.length > 0) {
 			const cleanImg = await processImage(buffer)

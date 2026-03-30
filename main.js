@@ -4,14 +4,18 @@ const path = require('path')
 
 function createWindow() {
 	const win = new BrowserWindow({
-		width: 600,
-		height: 500,
+		width: 950,
+		height: 800,
+		icon: path.join(__dirname, 'src', 'assets', 'images', 'icon.ico'),
+		resizable: false,
+		minimizable: true,
+		maximizable: false,
+		autoHideMenuBar: true,
 		webPreferences: {
 			nodeIntegration: true,
 			contextIsolation: false
 		}
 	})
-
 	win.loadFile('index.html')
 }
 

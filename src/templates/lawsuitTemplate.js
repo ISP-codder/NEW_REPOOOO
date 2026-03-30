@@ -7,23 +7,19 @@ async function lawsuitTemplate(data, photos) {
 		const [year, month, day] = dateStr.split('-')
 		return `${day}.${month}.${year}`
 	}
-	// Константы для размеров
 	const SIZE_12 = 20
 	const SIZE_16 = 24
 
-	// Общий стиль для всех параграфов (БЕЗ АБЗАЦЕВ)
 	const bodyStyle = {
 		alignment: AlignmentType.JUSTIFY,
 		spacing: { before: 80, after: 80 },
-		indent: { firstLine: 0 } // Убираем отступ первой строки
+		indent: { firstLine: 0 }
 	}
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
-			// indent: { firstLine: 0 } гарантирует отсутствие красной строки
 			indent: { firstLine: 0 },
 			children: [
-				// Суд (Жирным, как на скринах обычно требуют)
 				new TextRun({
 					text: data.courtName,
 					bold: true,
@@ -32,18 +28,17 @@ async function lawsuitTemplate(data, photos) {
 				}),
 				new TextRun({
 					text: 'Адрес суда: ',
-					bold: true, // Заголовок жирным
+					bold: true,
 					break: 1,
 					size: SIZE_12,
 					font: 'Times New Roman'
 				}),
 				new TextRun({
 					text: data.courtAddress,
-					bold: false, // Сам адрес обычным
+					bold: false,
 					size: SIZE_12,
 					font: 'Times New Roman'
 				}),
-				// Истец
 				new TextRun({
 					text: `Истец: `,
 					bold: true,
@@ -57,7 +52,6 @@ async function lawsuitTemplate(data, photos) {
 					font: 'Times New Roman'
 				}),
 
-				// Представитель
 				new TextRun({
 					text: `Представитель истца: `,
 					bold: true,
@@ -71,7 +65,6 @@ async function lawsuitTemplate(data, photos) {
 					font: 'Times New Roman'
 				}),
 
-				// Ответчик
 				new TextRun({
 					text: `Ответчик: `,
 					bold: true,
@@ -85,13 +78,12 @@ async function lawsuitTemplate(data, photos) {
 					font: 'Times New Roman'
 				}),
 				new TextRun({
-					text: `(ИНН: ${data.sellerInn}), (ОГРН: ${data.sellerOgrn})`,
+					text: `ИНН: ${data.sellerInn}, ОГРН: ${data.sellerOgrn}`,
 					break: 1,
 					size: SIZE_12,
 					font: 'Times New Roman'
 				}),
 
-				// Юридический адрес
 				new TextRun({
 					text: `Юридический адрес: `,
 					bold: true,
@@ -108,7 +100,6 @@ async function lawsuitTemplate(data, photos) {
 		})
 	)
 
-	// --- 2. ЗАГОЛОВОК (16 ШРИФТ) ---
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
@@ -117,21 +108,20 @@ async function lawsuitTemplate(data, photos) {
 				new TextRun({
 					text: 'Исковое заявление',
 					bold: true,
-					size: SIZE_16, // 16 кегль
+					size: SIZE_16,
 					font: 'Times New Roman'
 				}),
 				new TextRun({
 					text: 'о пресечении незаконного использования товарного знака и взыскании компенсации',
 					break: 1,
 					bold: true,
-					size: SIZE_12, // 12 кегль для подзаголовка, как просили
+					size: SIZE_12,
 					font: 'Times New Roman'
 				})
 			]
 		})
 	)
 
-	// --- 3. ОПИСАТЕЛЬНАЯ ЧАСТЬ ---
 	const texts = [
 		`Истец является правообладателем товарный знак ${data.tmNumbers}.`,
 		`Из материалов дела следует, что ${formatDate(data.purchaseDate)} в торговой точке Ответчика ${data.shopName}, адрес: ${data.shopLocation}, ${data.shopStreet} реализовывался товар ${data.productCategory}, в количестве ${data.productCount}, стоимостью ${data.productPrice} рублей с признаками контрафактности. Использование спорного обозначения осуществлялось без разрешения Истца, чем нарушено исключительное право правообладателя.`,
@@ -149,7 +139,6 @@ async function lawsuitTemplate(data, photos) {
 		)
 	})
 
-	// --- 4. ПРАВОВОЕ ОБОСНОВАНИЕ ---
 	children.push(
 		new Paragraph({
 			...bodyStyle,
@@ -164,7 +153,6 @@ async function lawsuitTemplate(data, photos) {
 		})
 	)
 
-	// --- 5. ТРЕБУЕМ (16 ШРИФТ) ---
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
@@ -174,7 +162,7 @@ async function lawsuitTemplate(data, photos) {
 				new TextRun({
 					text: 'ТРЕБУЕМ:',
 					bold: true,
-					size: SIZE_16, // 16 кегль
+					size: SIZE_16,
 					font: 'Times New Roman'
 				})
 			]
@@ -185,22 +173,60 @@ async function lawsuitTemplate(data, photos) {
 		'1. Признать действия Ответчика нарушающими исключительные права Истца на товарный знак.',
 		'2. Обязать Ответчика прекратить незаконное использование обозначения.',
 		'3. Изъять из оборота и уничтожить контрафактный товар, а также предъявить доказательство уничтожения товара.',
-		`4. Взыскать компенсацию в сумме ${data.productPrice * 10 || '1000000'} руб.`,
+		'4. Взыскать компенсацию в сумме (ЦЕНУ УКАЗАТЬ ВРУЧНУЮ)',
 		'5. Взыскать судебные расходы, включая госпошлину и расходы на представителя.'
 	]
 
-	requests.forEach(text =>
-		children.push(
-			new Paragraph({
-				...bodyStyle,
-				children: [
-					new TextRun({ text, size: SIZE_12, font: 'Times New Roman' })
-				]
-			})
-		)
-	)
+	requests.forEach(text => {
+		const highlightPhrase = '(ЦЕНУ УКАЗАТЬ ВРУЧНУЮ)'
 
-	// Заключительная часть
+		if (text.includes(highlightPhrase)) {
+			// Разрезаем строку на части до фразы и после
+			const parts = text.split(highlightPhrase)
+
+			children.push(
+				new Paragraph({
+					...bodyStyle,
+					children: [
+						// Текст до желтой вставки
+						new TextRun({
+							text: parts[0],
+							size: SIZE_12,
+							font: 'Times New Roman'
+						}),
+						// Сама фраза с выделением
+						new TextRun({
+							text: highlightPhrase,
+							size: SIZE_12,
+							font: 'Times New Roman',
+							highlight: 'yellow',
+							bold: true
+						}),
+						// Текст после (если он есть)
+						new TextRun({
+							text: parts[1],
+							size: SIZE_12,
+							font: 'Times New Roman'
+						})
+					]
+				})
+			)
+		} else {
+			// Обычные строки без выделения
+			children.push(
+				new Paragraph({
+					...bodyStyle,
+					children: [
+						new TextRun({
+							text: text,
+							size: SIZE_12,
+							font: 'Times New Roman'
+						})
+					]
+				})
+			)
+		}
+	})
 	children.push(
 		new Paragraph({
 			...bodyStyle,

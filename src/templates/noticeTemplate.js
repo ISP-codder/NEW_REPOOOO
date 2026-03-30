@@ -17,7 +17,6 @@ async function notificationTemplate(data, photos) {
 		const [year, month, day] = dateStr.split('-')
 		return `${day}.${month}.${year}`
 	}
-	// 1. Блок "Кому" (выравнивание по правому краю)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
@@ -28,9 +27,8 @@ async function notificationTemplate(data, photos) {
 					size: 20,
 					font: 'Times New Roman'
 				}),
-				// 2. Имя продавца — обычный
 				new TextRun({
-					text: `${data.sellerName || '(ФИО ИП/организация)'}`,
+					text: `${data.sellerName}`,
 					bold: false,
 					size: 20,
 					font: 'Times New Roman'
@@ -56,7 +54,6 @@ async function notificationTemplate(data, photos) {
 		})
 	)
 
-	// 2. Заголовок
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
@@ -73,7 +70,6 @@ async function notificationTemplate(data, photos) {
 		})
 	)
 
-	// 3. Обращение и вводная часть
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -92,7 +88,6 @@ async function notificationTemplate(data, photos) {
 		})
 	)
 
-	// 4. Сведения о выявленном факте
 	children.push(
 		new Paragraph({
 			children: [
@@ -109,9 +104,9 @@ async function notificationTemplate(data, photos) {
 	const facts = [
 		`Торговая точка: ${data.shopName}.`,
 		`Адрес торговой точки: ${data.shopLocation}, ${data.shopStreet}.`,
-		`Дата выявления/приобретения товара: ${formatDate(data.purchaseDate)}.`, // Не забывай про формат даты
+		`Дата выявления/приобретения товара: ${formatDate(data.purchaseDate)}.`,
 		`Признаки контрафактности: ${data.trademark}.`,
-		`Правообладатель: ${data.rightHolder}.` // Исправил опечатку HoЫlder
+		`Правообладатель: ${data.rightHolder}.`
 	]
 
 	facts.forEach(fact => {
@@ -121,15 +116,14 @@ async function notificationTemplate(data, photos) {
 				children: [
 					new TextRun({
 						text: fact,
-						size: 20, // 24 полупункта = 12 кегль
-						font: 'Times New Roman' // Чтобы точно по ГОСТу
+						size: 20,
+						font: 'Times New Roman'
 					})
 				]
 			})
 		)
 	})
 
-	// 5. Правовое обоснование
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -157,14 +151,13 @@ async function notificationTemplate(data, photos) {
 		children.push(
 			new Paragraph({
 				alignment: AlignmentType.JUSTIFY,
-				// Настройка отступов: тире слева, текст ровным блоком
 				indent: { left: 360, hanging: 360 },
 				tabStops: [{ type: TabStopType.LEFT, position: 360 }],
 				spacing: { before: 80 },
 				children: [
 					new TextRun({
 						text: `—\t${law}`,
-						size: 20, // 12 кегль
+						size: 20,
 						font: 'Times New Roman'
 					})
 				]
@@ -172,7 +165,6 @@ async function notificationTemplate(data, photos) {
 		)
 	})
 
-	// 6. Требования
 	children.push(
 		new Paragraph({
 			alignment: HorizontalPositionAlign.CENTER,
@@ -194,12 +186,12 @@ async function notificationTemplate(data, photos) {
 	requirements.forEach((req, index) => {
 		children.push(
 			new Paragraph({
-				alignment: AlignmentType.JUSTIFY, // Выравнивание по ширине
-				spacing: { before: 120, after: 120 }, // Чуть больше отступа для читаемости
+				alignment: AlignmentType.JUSTIFY,
+				spacing: { before: 120, after: 120 },
 				children: [
 					new TextRun({
 						text: `${index + 1}. ${req}`,
-						size: 20, // 12 кегль (24 полупункта)
+						size: 20,
 						font: 'Times New Roman'
 					})
 				]
@@ -207,7 +199,6 @@ async function notificationTemplate(data, photos) {
 		)
 	})
 
-	// Вставка QR-кода
 	try {
 		const qrPath = path.join(
 			__dirname,
@@ -235,7 +226,6 @@ async function notificationTemplate(data, photos) {
 		console.error('Ошибка вставки QR-кода:', e)
 	}
 
-	// 8. Заключительная часть
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -249,7 +239,6 @@ async function notificationTemplate(data, photos) {
 		})
 	)
 
-	// 9. Подпись
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
