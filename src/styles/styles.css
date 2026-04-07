@@ -77,14 +77,6 @@ input[type='number'] {
 	margin-right: 60px;
 }
 
-.photo-box input {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	opacity: 0;
-	cursor: pointer;
-}
-
 .photo-label {
 	font-size: 14px;
 	color: black;
@@ -114,17 +106,6 @@ input[type='number'] {
 .btn-main:hover {
 	background: #bfbfbf;
 }
-.photo-box.has-file {
-	border: 2px solid #4caf50;
-	background: #e8f5e9;
-}
-
-.photo-box.has-file .photo-label::after {
-	content: ' ✅ (Выбрано)';
-	color: #2e7d32;
-	font-weight: bold;
-}
-
 .photo-box.invalid {
 	border: 2px solid #ff0000 !important;
 	background-color: #fff5f5 !important;
@@ -235,20 +216,6 @@ input.invalid {
 .authenticated .sidebar,
 .authenticated .nav-tabs {
 	display: flex;
-}
-
-.photo-status {
-	display: block;
-	margin-top: 5px;
-	font-family: 'Times New Roman', serif;
-	font-size: 0.9em;
-	color: #4caf50;
-	font-style: italic;
-	font-weight: bold;
-}
-
-.photo-box input[type='file'] {
-	margin-top: 5px;
 }
 
 .full-tab-menu {

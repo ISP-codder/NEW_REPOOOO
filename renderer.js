@@ -186,7 +186,8 @@ function initClaimsLogic() {
 				productPrice: document.getElementById('productPrice').value,
 				productQuantity: document.getElementById('productCount').value,
 				trademark: document.getElementById('trademark').value,
-				plaintiffName: document.getElementById('rightHolder').value
+				plaintiffName: document.getElementById('rightHolder').value,
+				compensationAmount: document.getElementById('compensationAmount').value
 			}
 
 			const photos = {}

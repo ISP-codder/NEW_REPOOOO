@@ -124,45 +124,20 @@ async function claimTemplate(data, photos) {
 	const requirements = [
 		'Прекратить использование обозначения, сходного до степени смешения с товарным знаком правообладателя.',
 		'Изъять контрафактный товар из оборота и исключить его повторное поступление в продажу.',
-		'Выплатить компенсацию в размере (УКАЗАТЬ ЦЕНУ ВРУЧНУЮ) руб.',
+		`Выплатить компенсацию в размере ${data.compensationAmount || 'не указана'} руб.`,
 		'Сообщить данные поставщика и представить подтверждающие документы происхождения товара.',
 		'Направить мотивированный письменный ответ.'
 	]
 
 	requirements.forEach((req, index) => {
-		const phraseToHighlight = '(УКАЗАТЬ ЦЕНУ ВРУЧНУЮ)'
-
-		if (req.includes(phraseToHighlight)) {
-			const parts = req.split(phraseToHighlight)
-
-			children.push(
-				new Paragraph({
-					children: [
-						new TextRun({
-							...baseTextStyle,
-							text: `${index + 1}. ${parts[0]}`
-						}),
-						new TextRun({
-							...baseTextStyle,
-							text: phraseToHighlight,
-							highlight: 'yellow',
-							bold: true
-						}),
-						new TextRun({ ...baseTextStyle, text: parts[1] })
-					],
-					spacing: { before: 100 }
-				})
-			)
-		} else {
-			children.push(
-				new Paragraph({
-					children: [
-						new TextRun({ ...baseTextStyle, text: `${index + 1}. ${req}` })
-					],
-					spacing: { before: 100 }
-				})
-			)
-		}
+		children.push(
+			new Paragraph({
+				children: [
+					new TextRun({ ...baseTextStyle, text: `${index + 1}. ${req}` })
+				],
+				spacing: { before: 100 }
+			})
+		)
 	})
 
 	children.push(
