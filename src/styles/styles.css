@@ -114,9 +114,8 @@ input[type='number'] {
 .btn-main:hover {
 	background: #bfbfbf;
 }
-/* Стили для индикации загрузки */
 .photo-box.has-file {
-	border: 2px solid #4caf50; /* Зеленая рамка */
+	border: 2px solid #4caf50;
 	background: #e8f5e9;
 }
 
@@ -126,7 +125,6 @@ input[type='number'] {
 	font-weight: bold;
 }
 
-/* Стили для контейнера фото при ошибке */
 .photo-box.invalid {
 	border: 2px solid #ff0000 !important;
 	background-color: #fff5f5 !important;
@@ -138,7 +136,7 @@ input[type='number'] {
 	min-width: 250px;
 	padding: 16px 24px;
 	color: white;
-	border-radius: 8px; /* Скругленные углы выглядят дружелюбнее */
+	border-radius: 8px;
 	font-family: 'Times New Roman', serif;
 	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 	z-index: 10000;
@@ -148,7 +146,6 @@ input[type='number'] {
 	display: none;
 }
 
-/* Принудительно разрешаем клики на инпуты */
 input {
 	pointer-events: auto !important;
 	user-select: text !important;
@@ -158,7 +155,6 @@ input.invalid {
 	border: 2px solid #ff4d4d !important;
 	background-color: #fff5f5 !important;
 }
-/* Экран логина */
 .login-page {
 	position: fixed;
 	top: 0;
@@ -172,7 +168,7 @@ input.invalid {
 }
 
 .login-header {
-	background: #7d2429; /* Бордовый цвет с макета */
+	background: #7d2429;
 	padding: 15px 30px;
 	height: 60px;
 	display: flex;
@@ -231,7 +227,6 @@ input.invalid {
 	color: #666;
 }
 
-/* Скрытие навигации до логина */
 .sidebar,
 .nav-tabs {
 	display: none;
@@ -247,12 +242,11 @@ input.invalid {
 	margin-top: 5px;
 	font-family: 'Times New Roman', serif;
 	font-size: 0.9em;
-	color: #4caf50; /* Твой бордовый для акцента */
+	color: #4caf50;
 	font-style: italic;
 	font-weight: bold;
 }
 
-/* Скроем стандартную кнопку выбора файла, если хочешь кастомный вид (опционально) */
 .photo-box input[type='file'] {
 	margin-top: 5px;
 }

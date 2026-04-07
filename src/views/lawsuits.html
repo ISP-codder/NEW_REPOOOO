@@ -6,17 +6,14 @@
 		<title>ООО "ЮК ШИП"</title>
 		<link rel="stylesheet" href="../styles/styles.css" />
 		<style>
-			/* Основной контейнер */
 			.ls-header-container {
 				border-bottom: 2px solid black;
 				margin-bottom: 10px;
 			}
-			/* Секция с заголовком и сеткой */
 			.ls-section {
 				margin-bottom: 25px;
 			}
 
-			/* Заголовок с жирной черной линией во всю ширину */
 			.ls-header {
 				font-size: 24px;
 				padding-bottom: 5px;
@@ -24,7 +21,6 @@
 				margin-left: 10px;
 			}
 
-			/* Сетка полей (3 колонки) */
 			.ls-grid {
 				margin-left: 10px;
 				margin-right: 10px;
@@ -33,19 +29,16 @@
 				gap: 15px;
 			}
 
-			/* Контейнер одного поля */
 			.ls-field {
 				display: flex;
 				flex-direction: column;
 				margin-bottom: 10px;
 			}
 
-			/* Поле на всю ширину (для Юр. адреса) */
 			.ls-full {
 				grid-column: span 3;
 			}
 
-			/* Подпись к инпуту */
 			.ls-field label {
 				font-size: 16px;
 				color: #1f2937;
@@ -54,7 +47,6 @@
 				margin-top: 10px;
 			}
 
-			/* Инпуты с черной рамкой и закруглением 9px */
 			.ls-field input {
 				padding: 8px;
 				border: 2px solid black;
@@ -65,9 +57,8 @@
 				font-family: 'Times New Roman', serif;
 			}
 
-			/* Фокус и валидация */
 			.ls-field input:focus {
-				border-color: #6d272c; /* Бордовый при клике */
+				border-color: #6d272c;
 				outline: none;
 			}
 
@@ -76,7 +67,6 @@
 				background-color: #fff5f5 !important;
 			}
 
-			/* Контейнер и кнопка генерации */
 			.ls-btn-wrap {
 				display: flex;
 				justify-content: center;
@@ -85,7 +75,7 @@
 			}
 
 			.ls-btn-main {
-				background-color: #c9a27a; /* Бежевый цвет из макета */
+				background-color: #c9a27a;
 				border: none;
 				padding: 15px 80px;
 				border-radius: 10px;
@@ -110,19 +100,19 @@
 				<div class="ls-grid ls-3-cols">
 					<div class="ls-field">
 						<label>Наименование суда</label>
-						<input type="text" id="courtName" value="rerere" />
+						<input type="text" id="courtName" />
 					</div>
 					<div class="ls-field">
 						<label>Истец</label>
-						<input type="text" id="plaintiffName" value="rerere" />
+						<input type="text" id="plaintiffName" />
 					</div>
 					<div class="ls-field">
 						<label>Представитель истца</label>
-						<input type="text" id="representativeName" value="rerere" />
+						<input type="text" id="representativeName" />
 					</div>
 					<div class="ls-field">
 						<label>Адрес суда</label>
-						<input type="text" id="courtAddress" value="rerere" />
+						<input type="text" id="courtAddress" />
 					</div>
 				</div>
 			</section>
@@ -134,15 +124,15 @@
 				<div class="ls-grid ls-3-cols">
 					<div class="ls-field">
 						<label>Название</label>
-						<input type="text" id="shopName" value="rerere" />
+						<input type="text" id="shopName" />
 					</div>
 					<div class="ls-field">
 						<label>Область, город</label>
-						<input type="text" id="shopLocation" value="rerere" />
+						<input type="text" id="shopLocation" />
 					</div>
 					<div class="ls-field">
 						<label>Улица</label>
-						<input type="text" id="shopStreet" value="rerere" />
+						<input type="text" id="shopStreet" />
 					</div>
 				</div>
 			</section>
@@ -154,19 +144,19 @@
 				<div class="ls-grid ls-3-cols">
 					<div class="ls-field">
 						<label>Наименование</label>
-						<input type="text" id="sellerName" value="rerere" />
+						<input type="text" id="sellerName" />
 					</div>
 					<div class="ls-field">
 						<label>ОГРН</label>
-						<input type="text" id="sellerOgrn" value="123456789" />
+						<input type="text" id="sellerOgrn" />
 					</div>
 					<div class="ls-field">
 						<label>ИНН</label>
-						<input type="text" id="sellerInn" value="123456789" />
+						<input type="text" id="sellerInn" />
 					</div>
 					<div class="ls-field">
 						<label>Юридический адрес</label>
-						<input type="text" id="sellerLegalAddress" value="rerere" />
+						<input type="text" id="sellerLegalAddress" />
 					</div>
 				</div>
 			</section>
@@ -178,23 +168,23 @@
 				<div class="ls-grid ls-3-cols">
 					<div class="ls-field">
 						<label>Дата закупки</label>
-						<input type="date" id="purchaseDate" value="2026-03-24" />
+						<input type="date" id="purchaseDate" />
 					</div>
 					<div class="ls-field">
 						<label>Категория</label>
-						<input type="text" id="productCategory" value="rerere" />
+						<input type="text" id="productCategory" />
 					</div>
 					<div class="ls-field">
 						<label>Стоимость</label>
-						<input type="number" id="productPrice" value="1500" />
+						<input type="number" id="productPrice" />
 					</div>
 					<div class="ls-field">
 						<label>Количество</label>
-						<input type="number" id="productCount" value="1" />
+						<input type="number" id="productCount" />
 					</div>
 					<div class="ls-field">
 						<label>Товарный знак</label>
-						<input type="text" id="trademark" value="rerere" />
+						<input type="text" id="trademark" />
 					</div>
 				</div>
 			</section>

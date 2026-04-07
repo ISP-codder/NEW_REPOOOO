@@ -124,7 +124,7 @@ async function claimTemplate(data, photos) {
 	const requirements = [
 		'Прекратить использование обозначения, сходного до степени смешения с товарным знаком правообладателя.',
 		'Изъять контрафактный товар из оборота и исключить его повторное поступление в продажу.',
-		'Выплатить компенсацию в размере (УКАЗАТЬ ЦЕНУ ВРУЧНУЮ) руб.', // Оставляем как обычную строку
+		'Выплатить компенсацию в размере (УКАЗАТЬ ЦЕНУ ВРУЧНУЮ) руб.',
 		'Сообщить данные поставщика и представить подтверждающие документы происхождения товара.',
 		'Направить мотивированный письменный ответ.'
 	]
@@ -132,34 +132,28 @@ async function claimTemplate(data, photos) {
 	requirements.forEach((req, index) => {
 		const phraseToHighlight = '(УКАЗАТЬ ЦЕНУ ВРУЧНУЮ)'
 
-		// Проверяем, содержит ли текущая строка нашу фразу
 		if (req.includes(phraseToHighlight)) {
-			// Разрезаем строку на части
 			const parts = req.split(phraseToHighlight)
 
 			children.push(
 				new Paragraph({
 					children: [
-						// Номер и первая часть текста
 						new TextRun({
 							...baseTextStyle,
 							text: `${index + 1}. ${parts[0]}`
 						}),
-						// Сама фраза с желтым выделением
 						new TextRun({
 							...baseTextStyle,
 							text: phraseToHighlight,
 							highlight: 'yellow',
 							bold: true
 						}),
-						// Оставшаяся часть текста (например, " руб.")
 						new TextRun({ ...baseTextStyle, text: parts[1] })
 					],
 					spacing: { before: 100 }
 				})
 			)
 		} else {
-			// Если фразы нет — выводим пункт как обычно
 			children.push(
 				new Paragraph({
 					children: [

@@ -181,20 +181,17 @@ async function lawsuitTemplate(data, photos) {
 		const highlightPhrase = '(ЦЕНУ УКАЗАТЬ ВРУЧНУЮ)'
 
 		if (text.includes(highlightPhrase)) {
-			// Разрезаем строку на части до фразы и после
 			const parts = text.split(highlightPhrase)
 
 			children.push(
 				new Paragraph({
 					...bodyStyle,
 					children: [
-						// Текст до желтой вставки
 						new TextRun({
 							text: parts[0],
 							size: SIZE_12,
 							font: 'Times New Roman'
 						}),
-						// Сама фраза с выделением
 						new TextRun({
 							text: highlightPhrase,
 							size: SIZE_12,
@@ -202,7 +199,6 @@ async function lawsuitTemplate(data, photos) {
 							highlight: 'yellow',
 							bold: true
 						}),
-						// Текст после (если он есть)
 						new TextRun({
 							text: parts[1],
 							size: SIZE_12,
@@ -212,7 +208,6 @@ async function lawsuitTemplate(data, photos) {
 				})
 			)
 		} else {
-			// Обычные строки без выделения
 			children.push(
 				new Paragraph({
 					...bodyStyle,

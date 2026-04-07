@@ -6,14 +6,10 @@ const {
 	TabStopPosition
 } = require('docx')
 
-/**
- * Шаблон Мирового соглашения
- * Воспроизводит структуру документа text_mirovoe_soglashenie.docx
- */
+
 async function settlementTemplate(data) {
 	const children = []
 
-	// Настройки шрифтов: 12pt (24) и 14pt (28)
 	const fontSizeRegular = 20
 	const fontSizeHeader = 24
 
@@ -23,7 +19,6 @@ async function settlementTemplate(data) {
 		return `${day}.${month}.${year}`
 	}
 
-	// 1. Дата и Суд (Верхняя часть)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
@@ -43,7 +38,6 @@ async function settlementTemplate(data) {
 		})
 	)
 
-	// 2. Суд и Адрес
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
@@ -74,7 +68,6 @@ async function settlementTemplate(data) {
 		})
 	)
 
-	// 2. Стороны (Истец и Ответчик)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
@@ -98,11 +91,10 @@ async function settlementTemplate(data) {
 					size: fontSizeRegular
 				})
 			],
-			spacing: { after: 200 } // Уменьшено для экономии места
+			spacing: { after: 200 } 
 		})
 	)
 
-	// 3. Заголовок
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
@@ -123,7 +115,6 @@ async function settlementTemplate(data) {
 		})
 	)
 
-	// 4. Преамбула
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -134,7 +125,6 @@ async function settlementTemplate(data) {
 		})
 	)
 
-	// Список сторон
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -157,7 +147,6 @@ async function settlementTemplate(data) {
 		})
 	)
 
-	// 3. Финальная фраза
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -171,7 +160,6 @@ async function settlementTemplate(data) {
 		})
 	)
 
-	// 5. Описание спора
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
@@ -185,7 +173,6 @@ async function settlementTemplate(data) {
 		})
 	)
 
-	// 6. Пункты соглашения (1-4)
 	const terms = [
 		{
 			title:
@@ -237,7 +224,6 @@ async function settlementTemplate(data) {
 		}
 	})
 
-	// 7. Юридические последствия
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,

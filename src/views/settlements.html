@@ -13,7 +13,6 @@
 				border-bottom: 2px solid black;
 				margin-bottom: 10px;
 			}
-			/* Заголовок с черной линией во всю ширину */
 			.st-header {
 				font-size: 24px;
 				font-weight: bold;
@@ -22,7 +21,6 @@
 				margin-left: 10px;
 			}
 
-			/* Сетка полей (3 колонки) */
 			.st-grid {
 				margin-left: 10px;
 				margin-right: 10px;
@@ -36,8 +34,6 @@
 				flex-direction: column;
 				margin-bottom: 10px;
 			}
-
-			/* Поле даты на всю ширину (как на макете) */
 			.st-full-width {
 				margin-left: 10px;
 				margin-right: 10px;
@@ -56,8 +52,6 @@
 				margin-bottom: 5px;
 				margin-top: 10px;
 			}
-
-			/* Инпуты: черная рамка 2px, закругление 9px */
 			.st-field input {
 				padding: 8px;
 				border: 2px solid black;
@@ -68,16 +62,14 @@
 				font-family: 'Times New Roman', serif;
 			}
 
-			/* Состояние при вводе */
 			.st-field input:focus {
-				border-color: #6d272c; /* Бордовый при клике */
+				border-color: #6d272c;
 				outline: none;
 			}
 			.st-field input.invalid {
 				border: 2px solid #ff0011 !important;
 				background-color: #fff5f5 !important;
 			}
-			/* Стилизация длинного поля для даты */
 			.st-full-width input {
 				border-radius: 10px;
 				width: 100%;
@@ -94,38 +86,23 @@
 				<div class="st-grid st-3-cols">
 					<div class="st-field">
 						<label>Наименование суда</label>
-						<input
-							type="text"
-							id="courtName"
-							value="Арбитражный суд Ростовской области" />
+						<input type="text" id="courtName" />
 					</div>
 					<div class="st-field">
 						<label>Истец</label>
-						<input
-							type="text"
-							id="plaintiffName"
-							value="ООО «Юридическая компания «Шевченко и партнеры»" />
+						<input type="text" id="plaintiffName" />
 					</div>
 					<div class="st-field">
 						<label>Ответчик</label>
-						<input
-							type="text"
-							id="defendantName"
-							value="ИП Иванов Иван Иванович" />
+						<input type="text" id="defendantName" />
 					</div>
 					<div class="st-field">
 						<label>Адрес суда</label>
-						<input
-							type="text"
-							id="courtAddress"
-							value="344002, г. Ростов-на-Дону, ул. Станиславского, 8а" />
+						<input type="text" id="courtAddress" />
 					</div>
 					<div class="st-field">
 						<label>Товарный знак</label>
-						<input
-							type="text"
-							id="trademarkSettlement"
-							value="PUMA (свидетельство №123456)" />
+						<input type="text" id="trademarkSettlement" />
 					</div>
 				</div>
 			</section>
@@ -137,17 +114,11 @@
 				<div class="st-grid st-3-cols">
 					<div class="st-field">
 						<label>Сумма</label>
-						<input
-							type="text"
-							id="settlementSum"
-							value="50 000 рублей 00 копеек" />
+						<input type="text" id="settlementSum" />
 					</div>
 					<div class="st-field">
 						<label>Срок оплаты</label>
-						<input
-							type="text"
-							id="paymentDeadline"
-							value="в течение 10 рабочих дней с даты подписания" />
+						<input type="text" id="paymentDeadline" />
 					</div>
 				</div>
 			</section>

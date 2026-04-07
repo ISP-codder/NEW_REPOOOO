@@ -7,9 +7,9 @@ function createWindow() {
 		width: 950,
 		height: 800,
 		icon: path.join(__dirname, 'src', 'assets', 'images', 'icon.ico'),
-		resizable: false,
+		resizable: true,
 		minimizable: true,
-		maximizable: false,
+		maximizable: true,
 		autoHideMenuBar: true,
 		webPreferences: {
 			nodeIntegration: true,

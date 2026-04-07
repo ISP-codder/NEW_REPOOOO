@@ -18,16 +18,13 @@ const RecoveryService = {
 				return
 			}
 
-			// СОХРАНЕНИЕ
 			localStorage.setItem('user_password', p1)
 			localStorage.removeItem('is_authenticated')
 
-			// ДРУЖЕЛЮБНОЕ СООБЩЕНИЕ
 			showSuccessCallback(
 				'Приятной работы! Пароль успешно обновлен. Сейчас вы вернетесь к экрану входа.'
 			)
 
-			// Задержка перед релоадом, чтобы юзер успел прочитать
 			setTimeout(() => {
 				location.reload()
 			}, 2500)

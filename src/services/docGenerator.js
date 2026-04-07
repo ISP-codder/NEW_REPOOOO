@@ -20,7 +20,6 @@ class DocGenerator {
 		const assetsPath = path.join(__dirname, '..', 'assets', 'images')
 		const logoPath = path.join(assetsPath, 'black_logo.png')
 
-		// 1. ПОДГОТОВКА ЛОГОТИПА
 		let logoRun = new TextRun('')
 		if (fs.existsSync(logoPath)) {
 			logoRun = new ImageRun({
@@ -30,7 +29,6 @@ class DocGenerator {
 			})
 		}
 
-		// 2. СОЗДАНИЕ ТАБЛИЦЫ-ШАПКИ (Теперь это часть основного контента)
 		const headerTable = new Table({
 			width: { size: 100, type: WidthType.PERCENTAGE },
 			borders: {
@@ -50,8 +48,8 @@ class DocGenerator {
 							borders: {
 								right: {
 									style: BorderStyle.SINGLE,
-									size: 4, // толщина линии
-									color: 'A6A6A6' // светло-серый цвет как на скрине
+									size: 4,
+									color: 'A6A6A6'
 								},
 								top: { style: BorderStyle.NONE },
 								bottom: { style: BorderStyle.NONE },
@@ -60,7 +58,7 @@ class DocGenerator {
 							children: [
 								new Paragraph({
 									children: [logoRun],
-									alignment: AlignmentType.CENTER, // Центрируем лого в своей колонке
+									alignment: AlignmentType.CENTER,
 									spacing: { before: 0, after: 0 }
 								})
 							]
@@ -74,7 +72,7 @@ class DocGenerator {
 									children: [
 										new TextRun({
 											text: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ',
-											size: 20 // Немного уменьшил размер, чтобы влезло красиво
+											size: 20
 										}),
 										new TextRun({
 											text: '«ЮРИДИЧЕСКАЯ КОМПАНИЯ «ШЕВЧЕНКО И ПАРТНЕРЫ»',
@@ -100,18 +98,15 @@ class DocGenerator {
 			]
 		})
 
-		// 3. СОБИРАЕМ ДОКУМЕНТ
-		// Вставляем шапку в самое начало массива children
 		const finalChildren = [
 			headerTable,
-			new Paragraph({ text: '', spacing: { after: 400 } }), // Отступ после шапки
+			new Paragraph({ text: '', spacing: { after: 400 } }),
 			...children
 		]
 
 		const doc = new Document({
 			sections: [
 				{
-					// headers: { default: ... } <-- УБРАЛИ КОЛОНТИТУЛ
 					children: finalChildren
 				}
 			]

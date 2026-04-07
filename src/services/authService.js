@@ -3,15 +3,11 @@ const fs = require('fs')
 const path = require('path')
 
 const AuthService = {
-	// Проверка: залогинен ли юзер (вызывается в renderer.js)
 	check: function () {
 		return localStorage.getItem('is_authenticated') === 'true'
 	},
 
-	// Логика сверки логина/пароля
 	login: function (login, password) {
-		// ИСПРАВЛЕНИЕ: Проверяем наличие пароля строго через null.
-		// Если там уже есть измененный пароль, это условие просто пропустится.
 		if (localStorage.getItem('user_password') === null) {
 			localStorage.setItem('user_password', '1234')
 		}
@@ -25,9 +21,7 @@ const AuthService = {
 		return false
 	},
 
-	// Отрисовка формы логина
 	async renderLogin(container, onLoginSuccess, showErrorCallback) {
-		// ВНИМАНИЕ: Путь от этого файла до папки views
 		const loginPath = path.join(__dirname, '..', 'views', 'login.html')
 
 		try {
@@ -37,11 +31,10 @@ const AuthService = {
 			const btn = document.getElementById('loginBtn')
 			const loginInput = document.getElementById('loginInput')
 			const passInput = document.getElementById('passwordInput')
-			const toRecover = document.getElementById('toRecover') // Ссылка "Забыли пароль"
+			const toRecover = document.getElementById('toRecover')
 			if (toRecover) {
 				toRecover.onclick = e => {
 					e.preventDefault()
-					// Используем твою функцию из renderer.js
 					if (typeof window.loadView === 'function') {
 						console.log('Вызываю loadView для forgot-password')
 						window.loadView('forgot-password')
@@ -50,9 +43,7 @@ const AuthService = {
 					}
 				}
 			}
-			// Кнопка входа
 			btn.onclick = () => {
-				// Вызываем login, который теперь корректно берет данные из localStorage
 				if (this.login(loginInput.value, passInput.value)) {
 					onLoginSuccess()
 				} else {
@@ -61,8 +52,6 @@ const AuthService = {
 					passInput.classList.add('invalid')
 				}
 			}
-
-			// Переход на восстановление БЕЗ перезагрузки страницы
 		} catch (err) {
 			console.error('Ошибка загрузки login.html:', err)
 			container.innerHTML = `<h2>Ошибка загрузки формы входа</h2><p>${err.message}</p>`
