@@ -86,7 +86,7 @@ async function claimTemplate(data, photos) {
 				}),
 				new TextRun({
 					...baseTextStyle,
-					text: `В ходе закупки ${formatDate(data.purchaseDate)} по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName}" зафиксирована продажа товара ${data.productCategory}, в количестве ${data.productQuantity} стоимостью ${data.productPrice} рублей маркированного обозначением, используемым без законных оснований.`,
+					text: `В ходе закупки ${formatDate(data.purchaseDate)} по адресу: ${data.shopLocation}, ${data.shopStreet} в торговой точке "${data.shopName}" зафиксирована продажа в категории ${data.productCategory} - ${data.productCategoryName}, в количестве ${data.productQuantity} стоимостью ${data.productPrice} рублей маркированного обозначением, используемым без законных оснований.`,
 					break: 1
 				}),
 				new TextRun({

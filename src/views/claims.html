@@ -48,6 +48,21 @@
 				width: 100%;
 			}
 
+			.cl-select {
+				padding: 10px;
+				border: 2px solid black;
+				border-radius: 9px;
+				font-size: 14px;
+				width: 100%;
+				background-color: white;
+				cursor: pointer;
+			}
+
+			.cl-select:focus {
+				border-color: #6d272c;
+				outline: none;
+			}
+
 			/* Состояния валидации */
 			.cl-input.invalid {
 				border: 2px solid #ff0011 !important;
@@ -172,7 +187,30 @@
 					</div>
 					<div class="cl-field">
 						<label class="cl-label">Категория</label>
-						<input type="text" class="cl-input" id="productCategory" value="" />
+						<select class="cl-select" id="productCategory">
+							<option value="" disabled selected>Выберите категорию</option>
+							<option value="одежда">Одежда</option>
+							<option value="пестициды">Пестициды</option>
+							<option value="игрушки">Игрушки</option>
+							<option value="обувь">Обувь</option>
+							<option value="головные уборы">Головные уборы</option>
+							<option value="семена">Семена</option>
+							<option value="открытки">Открытки</option>
+							<option value="сумки">Сумки</option>
+							<option value="маникюрные принадлежности">
+								Маникюрные принадлежности
+							</option>
+							<option value="духи">Духи</option>
+						</select>
+					</div>
+					<div class="cl-field">
+						<label class="cl-label">Название категории</label>
+						<input
+							type="text"
+							class="cl-input"
+							id="productCategoryName"
+							value=""
+							placeholder="Введите название категории" />
 					</div>
 					<div class="cl-field">
 						<label class="cl-label">Стоимость</label>
@@ -191,7 +229,7 @@
 						<input type="text" class="cl-input" id="rightHolder" value="" />
 					</div>
 					<div class="cl-field">
-						<label class="cl-label">Сумма компенсации</label>
+						<label class="cl-label">Сумма компенсации (₽)</label>
 						<input
 							type="number"
 							class="cl-input"
