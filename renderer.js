@@ -15,6 +15,7 @@ const lawsuitTemplate = require('./src/templates/lawsuitTemplate')
 const reportTemplate = require('./src/templates/reportTemplate')
 const noticeTemplate = require('./src/templates/noticeTemplate')
 const settlementTemplate = require('./src/templates/settlementTemplate')
+const ActivityService = require('./src/services/activityService')
 
 document.addEventListener('DOMContentLoaded', () => {
 	initApp()
@@ -74,7 +75,6 @@ async function loadView(viewName) {
 			}
 		},
 		activity: () => {
-			const ActivityService = require('./src/services/activityService')
 			ActivityService.init()
 		},
 		generations: () => console.log('Инициализация генераций'), // Это твоя текущая рабочая вкладка
