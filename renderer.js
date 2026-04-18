@@ -188,8 +188,8 @@ function initClaimsLogic() {
 				trademark: document.getElementById('trademark').value,
 				plaintiffName: document.getElementById('rightHolder').value,
 				compensationAmount: document.getElementById('compensationAmount').value,
-				productCategoryName: document.getElementById('productCategoryName').value,
-				
+				productCategoryName: document.getElementById('productCategoryName')
+					.value
 			}
 
 			const photos = {}

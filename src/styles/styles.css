@@ -220,13 +220,18 @@ input.invalid {
 
 .full-tab-menu {
 	display: flex;
-	justify-content: space-between;
+	flex-direction: column; /* Элементы в колонку */
+	justify-content: space-between; /* Логотип уйдет вниз */
 	background-color: #7a1f2b;
+	width: 280px; /* Фиксированная ширина боковой панели */
+	height: 100vh; /* На всю высоту окна */
+	position: sticky; /* Чтобы не уезжало при скролле */
+	top: 0;
+	flex-shrink: 0; /* Чтобы меню не сжималось */
 }
-
 .tab-menu {
 	display: flex;
-	justify-content: space-around;
+	flex-direction: column; /* Кнопки в колонку */
 	background-color: #7a1f2b;
 }
 .tab-menu > button {
@@ -234,10 +239,14 @@ input.invalid {
 	cursor: pointer;
 	color: white;
 	border: none;
-	border-right: 1px solid white;
-	font-size: 24px;
-	padding: 10px;
-	padding-right: 50px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Разделитель снизу */
+	font-size: 18px; /* Уменьшил, так как 24px для вертикального многовато */
+	padding: 20px 15px;
+	text-align: left; /* Текст по левому краю */
+	transition: background 0.3s;
+}
+.tab-menu > button:hover {
+	background-color: #912a38;
 }
 
 .logo-header {
@@ -245,5 +254,11 @@ input.invalid {
 	align-items: center;
 	justify-content: center;
 	background-color: #7a1f2b;
-	margin-right: 20px;
+	padding: 20px;
+}
+
+/* Настройка области контента */
+#content-viewport {
+	flex-grow: 1;
+	overflow-y: auto;
 }

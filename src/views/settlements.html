@@ -6,6 +6,62 @@
 		<title>ООО "ЮК ШИП"</title>
 		<link rel="stylesheet" href="../styles/styles.css" />
 		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background-color: #faf7f3;
+				font-family: 'Times New Roman', Times, serif;
+			}
+
+			/* КОНТЕЙНЕР МЕНЮ */
+			.tab-menus {
+				display: flex; /* Выстраиваем кнопки в ряд */
+				background-color: #c9a27a;
+				height: 50px;
+				width: 100%; /* Растягиваем на всю ширину */
+				box-sizing: border-box;
+			}
+
+			/* КНОПКИ */
+			.tab-menus button {
+				flex: 1; /* ГЛАВНОЕ: каждая кнопка берет равную долю ширины */
+				background: none;
+				border: none;
+				border-right: 1px solid rgba(0, 0, 0, 0.2); /* Тонкий разделитель */
+				color: #1a1a1a;
+				font-size: 16px;
+				cursor: pointer;
+				font-family: inherit;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 0 10px;
+				transition: background 0.3s ease;
+				white-space: nowrap; /* Текст не переносится на новую строку */
+			}
+
+			/* Убираем разделитель у последней кнопки */
+			.tab-menus button:last-child {
+				border-right: none;
+			}
+
+			/* Эффект при наведении */
+			.tab-menus button:hover {
+				background-color: rgba(0, 0, 0, 0.05);
+			}
+
+			/* АДАПТИВНОСТЬ: если экран совсем узкий (мобилки) */
+			@media (max-width: 768px) {
+				.tab-menus {
+					height: auto;
+					flex-wrap: wrap; /* Кнопки прыгнут на новую строку, если не влезут */
+				}
+				.tab-menus button {
+					flex: 1 0 33.33%; /* По 3 кнопки в ряд на маленьких экранах */
+					height: 50px;
+					border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+				}
+			}
 			.st-section {
 				margin-bottom: 25px;
 			}
@@ -77,6 +133,15 @@
 			}
 		</style>
 	</head>
+	<div class="tab-menus">
+		<button onclick="loadView('claims')">Претензии</button>
+		<button onclick="loadView('lawsuits')">Иски</button>
+		<button onclick="loadView('reports')">Отчет</button>
+		<button onclick="loadView('notices')">Уведомления</button>
+		<button style="border: none" onclick="loadView('settlements')">
+			Мировое соглашение
+		</button>
+	</div>
 	<body class="app-body">
 		<div class="st-container">
 			<section class="st-section">
