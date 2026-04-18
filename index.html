@@ -141,16 +141,20 @@
 						class="login-logo" />
 				</div>
 				<div class="tab-menu">
-					<button onclick="loadView('claims')">Претензии</button>
-					<button onclick="loadView('lawsuits')">Иски</button>
-					<button onclick="loadView('reports')">Отчет</button>
-					<button onclick="loadView('notices')">Уведомления</button>
-					<button onclick="loadView('settlements')">Мировое соглашение</button>
+					<button onclick="loadView('profile')">Личный кабинет</button>
+					<button onclick="loadView('activity')">Журнал активности</button>
+					<button onclick="loadView('claims')" class="active">Генерации</button>
+					<button onclick="loadView('new-clients')">Новые клиенты</button>
+					<button onclick="loadView('foreign-clients')">
+						Иностранные клиенты
+					</button>
+					<button onclick="loadView('ru-clients')">Клиент РФ</button>
+					<button onclick="loadView('charts')">Столбчатая диаграмма</button>
 				</div>
 			</div>
 
 			<div class="user-footer">
-				<div class="user-avatar">
+				<div class="user-avatar" onclick="loadView('profile')">
 					<span class="user-avatar-initial">И</span>
 				</div>
 			</div>

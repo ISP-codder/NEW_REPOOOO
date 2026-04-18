@@ -35,7 +35,6 @@ function initApp() {
 
 // --- НАВИГАЦИЯ И ЗАГРУЗКА ВЬЮХ ---
 async function loadView(viewName) {
-	// Исключение для страницы восстановления пароля (доступна без логина)
 	if (!AuthService.check() && viewName !== 'forgot-password') {
 		initApp()
 		return
@@ -51,13 +50,21 @@ async function loadView(viewName) {
 
 	container.innerHTML = fs.readFileSync(viewPath, 'utf8')
 
-	// Инициализация логики для каждой конкретной вкладки
+	// Расширяем карту логики новыми пунктами из макета
 	const logicMap = {
+		profile: () => console.log('Инициализация личного кабинета'),
+		activity: () => console.log('Инициализация журнала активности'),
+		generations: () => console.log('Инициализация генераций'), // Это твоя текущая рабочая вкладка
+		'new-clients': () => console.log('Инициализация новых клиентов'),
+		'foreign-clients': () => console.log('Инициализация иностранных клиентов'),
+		'ru-clients': () => console.log('Инициализация клиентов РФ'),
+		history: () => console.log('Инициализация истории обращений'),
+		charts: () => console.log('Инициализация диаграмм'),
 		'forgot-password': () => {
 			const RecoveryService = require('./src/services/forgotPassword')
-			// Передаем showError и showSuccess для красивых уведомлений
 			RecoveryService.init(window.showError, window.showSuccess)
 		},
+		// Твои старые вкладки (можно оставить или заменить на новые)
 		claims: initClaimsLogic,
 		lawsuits: initLawsuitLogic,
 		reports: initReportLogic,
@@ -68,8 +75,21 @@ async function loadView(viewName) {
 	if (logicMap[viewName]) {
 		logicMap[viewName]()
 	}
+
+	// Подсветка активной кнопки (опционально)
+	updateActiveTab(viewName)
 }
 
+// Функция для визуального выделения нажатой кнопки
+function updateActiveTab(viewName) {
+	document.querySelectorAll('.tab-menu button').forEach(btn => {
+		btn.classList.remove('active')
+		// Извлекаем viewName из атрибута onclick кнопки
+		if (btn.getAttribute('onclick')?.includes(`'${viewName}'`)) {
+			btn.classList.add('active')
+		}
+	})
+}
 // --- УВЕДОМЛЕНИЯ (TOASTS) ---
 function showToast(message, type = 'error') {
 	const toast = document.getElementById('errorToast')
