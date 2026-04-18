@@ -5,7 +5,171 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
 	</head>
+	<style>
+		/* Шапка контента как на макете */
+		.view-header {
+			background-color: #c9a27a;
+			padding: 10px 20px;
+			font-weight: bold;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		}
+
+		.profile-form {
+			padding: 20px;
+			max-width: 800px;
+		}
+
+		.profile-field {
+			margin-bottom: 15px;
+		}
+
+		.profile-field label {
+			display: block;
+			font-size: 14px;
+			color: #444;
+			margin-bottom: 5px;
+		}
+
+		.profile-field input,
+		.profile-field select {
+			width: 100%;
+			padding: 8px 12px;
+			border: 2px solid #333;
+			border-radius: 8px;
+			font-family: inherit;
+		}
+
+		/* Стили для круглой кнопки в углу */
+		.user-footer {
+			position: absolute;
+			bottom: 20px;
+			left: 20px;
+		}
+
+		.user-avatar-btn {
+			width: 60px;
+			height: 60px;
+			background: white;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 24px;
+			font-weight: bold;
+			cursor: pointer;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+			position: relative;
+		}
+
+		.profile-dropdown {
+			position: absolute;
+			bottom: 70px;
+			left: 0;
+			background: white;
+			border: 1px solid #ccc;
+			display: none; /* По умолчанию скрыто */
+			flex-direction: column;
+			min-width: 150px;
+			z-index: 100;
+		}
+
+		.profile-dropdown.show {
+			display: flex;
+		}
+
+		.profile-dropdown button {
+			background: none;
+			border: none;
+			padding: 10px;
+			text-align: left;
+			cursor: pointer;
+			border-bottom: 1px solid #eee;
+		}
+
+		.profile-dropdown button:hover {
+			background: #f5f5f5;
+		}
+	</style>
 	<body>
-		profile
+		<div class="profile-container">
+			<div class="view-header">Личный кабинет</div>
+
+			<div class="profile-form">
+				<div class="profile-field">
+					<label>ФИО</label>
+					<input
+						type="text"
+						id="profileFio"
+						placeholder="Иванов Иван Иванович" />
+				</div>
+
+				<div class="profile-field">
+					<label>Ваш логин</label>
+					<input
+						type="text"
+						id="profileLogin"
+						readonly
+						style="background: #f0f0f0" />
+				</div>
+
+				<div class="profile-field">
+					<label>Должность</label>
+					<input type="text" id="profilePosition" placeholder="Юрист" />
+				</div>
+
+				<div class="profile-field">
+					<label>Дата регистрации</label>
+					<input
+						type="text"
+						id="profileRegDate"
+						readonly
+						style="background: #f0f0f0" />
+				</div>
+
+				<div class="profile-field">
+					<label>Email</label>
+					<input
+						type="email"
+						id="profileEmail"
+						placeholder="ivanov.2@yandex.ru" />
+				</div>
+
+				<div class="profile-field">
+					<label>Телефон</label>
+					<input type="text" id="profilePhone" placeholder="8-989-504-29-34" />
+				</div>
+
+				<div class="profile-field">
+					<label>Дата и время последнего входа</label>
+					<input
+						type="text"
+						id="profileLastLogin"
+						readonly
+						style="background: #f0f0f0" />
+				</div>
+
+				<div class="profile-field">
+					<label>Количество выполненных действий</label>
+					<input
+						type="number"
+						id="profileActions"
+						readonly
+						style="background: #f0f0f0" />
+				</div>
+
+				<div class="profile-field">
+					<label>Статус активности</label>
+					<select id="profileStatus">
+						<option value="active">Активен</option>
+						<option value="inactive">Неактивен</option>
+						<option value="blocked">Заблокирован</option>
+					</select>
+				</div>
+
+				<div class="save-btn-container">
+					<button id="saveProfileBtn" class="btn-main">Сохранить данные</button>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>

@@ -141,9 +141,11 @@
 						class="login-logo" />
 				</div>
 				<div class="tab-menu">
-					<button onclick="loadView('profile')">Личный кабинет</button>
+					<button onclick="loadView('profile')" class="active">
+						Личный кабинет
+					</button>
 					<button onclick="loadView('activity')">Журнал активности</button>
-					<button onclick="loadView('claims')" class="active">Генерации</button>
+					<button onclick="loadView('claims')">Генерации</button>
 					<button onclick="loadView('new-clients')">Новые клиенты</button>
 					<button onclick="loadView('foreign-clients')">
 						Иностранные клиенты
@@ -154,8 +156,11 @@
 			</div>
 
 			<div class="user-footer">
-				<div class="user-avatar" onclick="loadView('profile')">
-					<span class="user-avatar-initial">И</span>
+				<div
+					id="userAvatar"
+					class="user-avatar-btn"
+					onclick="loadView('profile')">
+					И
 				</div>
 			</div>
 		</nav>

@@ -1,4 +1,3 @@
-const { log } = require('console')
 const fs = require('fs')
 const path = require('path')
 
@@ -8,13 +7,23 @@ const AuthService = {
 	},
 
 	login: function (login, password) {
-		if (localStorage.getItem('user_password') === null) {
-			localStorage.setItem('user_password', '1234')
-		}
+		const correctPassword = localStorage.getItem('user_password') || '1234'
+		const correctLogin = localStorage.getItem('user_login') || 'admin'
 
-		const correctPassword = localStorage.getItem('user_password')
+		if (login.trim() === correctLogin && password.trim() === correctPassword) {
+			// Логика записи времени:
+			const currentSession = localStorage.getItem('current_login_session')
+			if (currentSession) {
+				// Если в памяти уже есть запись о входе — переносим её в "Прошлый вход"
+				localStorage.setItem('last_login_time', currentSession)
+			}
 
-		if (login.trim() === 'admin' && password.trim() === correctPassword) {
+			// Записываем текущий вход как "активный"
+			localStorage.setItem(
+				'current_login_session',
+				new Date().toLocaleString('ru-RU')
+			)
+
 			localStorage.setItem('is_authenticated', 'true')
 			return true
 		}
@@ -28,21 +37,15 @@ const AuthService = {
 			const html = fs.readFileSync(loginPath, 'utf8')
 			container.innerHTML = html
 
+			// 1. Логика входа
 			const btn = document.getElementById('loginBtn')
 			const loginInput = document.getElementById('loginInput')
 			const passInput = document.getElementById('passwordInput')
-			const toRecover = document.getElementById('toRecover')
-			if (toRecover) {
-				toRecover.onclick = e => {
-					e.preventDefault()
-					if (typeof window.loadView === 'function') {
-						console.log('Вызываю loadView для forgot-password')
-						window.loadView('forgot-password')
-					} else {
-						console.error('Ошибка: window.loadView не определена!')
-					}
-				}
+			const last = localStorage.getItem('current_login_time')
+			if (last) {
+				localStorage.setItem('prev_login_time', last) // Записываем предыдущий вход
 			}
+			localStorage.setItem('current_login_time', new Date().toLocaleString())
 			btn.onclick = () => {
 				if (this.login(loginInput.value, passInput.value)) {
 					onLoginSuccess()
@@ -52,9 +55,27 @@ const AuthService = {
 					passInput.classList.add('invalid')
 				}
 			}
+
+			// 2. Мост для восстановления пароля
+			const toRecover = document.getElementById('toRecover')
+			if (toRecover) {
+				toRecover.onclick = e => {
+					e.preventDefault()
+					window.loadView('forgot-password') // Просто переключаем экран
+				}
+			}
+
+			// 3. Мост для регистрации (БЕЗ логина регистрации внутри)
+			const toRegister = document.getElementById('toRegister')
+			if (toRegister) {
+				toRegister.onclick = e => {
+					e.preventDefault()
+					window.loadView('register') // Просто переключаем экран
+				}
+			}
 		} catch (err) {
 			console.error('Ошибка загрузки login.html:', err)
-			container.innerHTML = `<h2>Ошибка загрузки формы входа</h2><p>${err.message}</p>`
+			container.innerHTML = `<h2>Ошибка загрузки</h2><p>${err.message}</p>`
 		}
 	},
 

@@ -9,7 +9,7 @@ localStorage.removeItem('is_authenticated')
 // --- ИМПОРТЫ СЕРВИСОВ ---
 const DocGenerator = require('./src/services/docGenerator')
 const AuthService = require('./src/services/authService')
-
+const registerService = require('./src/services/registerService')
 const claimTemplate = require('./src/templates/claimTemplate')
 const lawsuitTemplate = require('./src/templates/lawsuitTemplate')
 const reportTemplate = require('./src/templates/reportTemplate')
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initApp() {
 	if (AuthService.check()) {
 		document.body.classList.add('authenticated')
-		loadView('claims')
+		loadView('profile')
 	} else {
 		document.body.classList.remove('authenticated')
 		const viewport = document.getElementById('content-viewport')
@@ -35,8 +35,10 @@ function initApp() {
 
 // --- НАВИГАЦИЯ И ЗАГРУЗКА ВЬЮХ ---
 async function loadView(viewName) {
-	if (!AuthService.check() && viewName !== 'forgot-password') {
-		initApp()
+	const isAuthFreeView =
+		viewName === 'forgot-password' || viewName === 'register'
+	if (!AuthService.check() && !isAuthFreeView) {
+		initApp() // Если не вошел и это не регистрация/пароль — кидаем на логин
 		return
 	}
 
@@ -52,18 +54,36 @@ async function loadView(viewName) {
 
 	// Расширяем карту логики новыми пунктами из макета
 	const logicMap = {
-		profile: () => console.log('Инициализация личного кабинета'),
-		activity: () => console.log('Инициализация журнала активности'),
+		'forgot-password': () => {
+			const RecoveryService = require('./src/services/forgotPassword')
+			RecoveryService.init(window.showError, window.showSuccess)
+		},
+		register: () => {
+			// Добавляем этот блок
+			const RegisterService = require('./src/services/registerService')
+			RegisterService.init(window.showError, window.showSuccess)
+		},
+		profile: () => {
+			// Подключаем логику, которая заполнит поля данными
+			const ProfileService = require('./src/services/profileService')
+			ProfileService.init(window.showError, window.showSuccess)
+
+			// Сразу обновляем букву на случай, если зашли под другим пользователем
+			if (typeof window.updateAvatar === 'function') {
+				window.updateAvatar()
+			}
+		},
+		activity: () => {
+			const ActivityService = require('./src/services/activityService')
+			ActivityService.init()
+		},
 		generations: () => console.log('Инициализация генераций'), // Это твоя текущая рабочая вкладка
 		'new-clients': () => console.log('Инициализация новых клиентов'),
 		'foreign-clients': () => console.log('Инициализация иностранных клиентов'),
 		'ru-clients': () => console.log('Инициализация клиентов РФ'),
 		history: () => console.log('Инициализация истории обращений'),
 		charts: () => console.log('Инициализация диаграмм'),
-		'forgot-password': () => {
-			const RecoveryService = require('./src/services/forgotPassword')
-			RecoveryService.init(window.showError, window.showSuccess)
-		},
+
 		// Твои старые вкладки (можно оставить или заменить на новые)
 		claims: initClaimsLogic,
 		lawsuits: initLawsuitLogic,
@@ -229,6 +249,7 @@ function initClaimsLogic() {
 				fs.writeFileSync(savePath, buf)
 				window.showSuccess(`Документ успешно создан!`)
 			}
+			ActivityService.logAction('Генерация', 'Претензия')
 		} catch (e) {
 			console.error(e)
 			showError('Ошибка: ' + e.message)
@@ -285,8 +306,10 @@ function initLawsuitLogic() {
 
 			if (savePath) {
 				fs.writeFileSync(savePath, buf)
+
 				window.showSuccess(`Документ успешно создан!`)
 			}
+			ActivityService.logAction('Генерация', 'Исковое заявление')
 		} catch (e) {
 			showError('Ошибка: ' + e.message)
 		} finally {
@@ -340,6 +363,7 @@ function initReportLogic() {
 					`Отчет за ${formatDate(data.reportDate)} успешно создан!`
 				)
 			}
+			ActivityService.logAction('Генерация', 'Отчет')
 		} catch (e) {
 			showError('Ошибка генерации: ' + e.message)
 		} finally {
@@ -388,6 +412,7 @@ function initNoticeLogic() {
 				fs.writeFileSync(savePath, buf)
 				window.showSuccess(`Уведомление для "${data.sellerName}" создано!`)
 			}
+			ActivityService.logAction('Генерация', 'Уведомление')
 		} catch (e) {
 			showError('Ошибка: ' + e.message)
 		} finally {
@@ -433,6 +458,7 @@ function initSettlementLogic() {
 					`Мировое соглашение с "${data.defendantName}" создано!`
 				)
 			}
+			ActivityService.logAction('Генерация', 'Мировое соглашение')
 		} catch (e) {
 			showError('Ошибка: ' + e.message)
 		} finally {
@@ -440,6 +466,31 @@ function initSettlementLogic() {
 		}
 	}
 }
+function initAvatarMenu() {
+	const avatar = document.querySelector('.user-avatar-btn')
+	const dropdown = document.querySelector('.profile-dropdown')
 
+	if (avatar) {
+		avatar.onclick = () => dropdown.classList.toggle('show')
+	}
+
+	// Закрытие при клике мимо
+	window.onclick = e => {
+		if (!e.target.matches('.user-avatar-btn')) {
+			dropdown.classList.remove('show')
+		}
+	}
+}
+window.updateAvatar = function () {
+	const fio = localStorage.getItem('user_fio') || ''
+	// Ищем круг в левом нижнем углу. Убедись, что у тебя в HTML именно этот класс!
+	const avatarElement = document.getElementById('userAvatar')
+
+	if (avatarElement) {
+		// Берем самый первый символ строки, убирая пробелы в начале
+		const firstChar = fio.trim().substring(0, 1).toUpperCase()
+		avatarElement.innerText = firstChar || 'И' // 'И' если поле пустое
+	}
+}
 // Делаем функцию доступной глобально для AuthService и ссылок
 window.loadView = loadView
