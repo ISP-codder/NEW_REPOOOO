@@ -1,11 +1,197 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<title>Столбчатая диаграмма</title>
+		<style>
+			/* Основные стили страницы */
+			body {
+				margin: 0;
+				padding: 0;
+				font-family:
+					'Times New Roman', Times, serif; /* Соответствие вашему стилю */
+				background-color: #f9f6f3; /* Ваш основной кремовый фон */
+				color: #333;
+				overflow: hidden;
+			}
+
+			.charts-view {
+				display: flex;
+				flex-direction: column;
+				height: 100vh;
+			}
+
+			/* Золотистый хедер */
+			.view-header-gold {
+				background-color: #c4a484; /* Ваш бежево-золотой цвет */
+				padding: 15px 25px;
+				color: #2c2c2c;
+				font-size: 20px;
+				font-weight: bold;
+				border-bottom: 1px solid #a38565;
+			}
+
+			/* Контентная область */
+			.charts-content {
+				flex-grow: 1;
+				display: flex;
+				flex-direction: column;
+				padding-left: 20px;
+				padding-right: 20px;
+				padding-bottom: 70px;
+				padding-top: 30px;
+				box-sizing: border-box;
+			}
+
+			/* Управление периодом */
+			.chart-controls {
+				margin-left: 20px;
+				display: flex;
+				align-items: center;
+				gap: 15px;
+				margin-bottom: 40px;
+			}
+
+			.chart-label-text {
+				font-size: 16px;
+			}
+
+			.chart-date-input {
+				padding: 6px 12px;
+				border: 1px solid #731a20; /* Бордовая рамка в стиле ЮК ШИП */
+				border-radius: 4px;
+				background: white;
+				font-family: inherit;
+			}
+
+			/* Главная область графика */
+			.chart-container-wrapper {
+				display: flex;
+				flex-grow: 1;
+				min-height: 400px;
+				position: relative;
+			}
+
+			/* Ось Y (числа) */
+			.chart-y-axis {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				padding-right: 15px;
+				text-align: right;
+				width: 50px;
+				font-size: 14px;
+				color: #555;
+				border-right: 2px solid #333; /* Вертикальная линия оси */
+				z-index: 10;
+			}
+
+			/* Холст графика */
+			.chart-canvas {
+				flex-grow: 1;
+				position: relative;
+				/* Единая неразрывная линия оси X */
+				border-bottom: 2px solid #333;
+			}
+
+			/* Сетка уровня (Линии) */
+			.grid-background {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				pointer-events: none;
+			}
+
+			.grid-line {
+				flex-grow: 1;
+				border-top: 1px solid #e8e0d5; /* Золотисто-серые направляющие */
+			}
+
+			/* Слой со столбцами */
+			.bars-layer {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				display: flex;
+				justify-content: space-around;
+				align-items: flex-end;
+				z-index: 5;
+			}
+
+			/* Контейнер: столбец + текст */
+			.bar-slot {
+				width: 15%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				justify-content: flex-end;
+				align-items: center;
+				position: relative;
+			}
+
+			/* Сам столбец */
+			.bar-fill {
+				width: 55px; /* Ширина как на макете */
+				position: relative;
+				transition: height 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+				box-shadow: 2px -2px 5px rgba(0, 0, 0, 0.05);
+			}
+
+			/* Число над баром */
+			.bar-value-top {
+				position: absolute;
+				top: -25px;
+				left: 50%;
+				transform: translateX(-50%);
+				font-weight: bold;
+				font-size: 14px;
+				color: #000;
+			}
+
+			/* Подпись под осью X */
+			.x-label-fixed {
+				position: absolute;
+				bottom: -50px; /* Вынос строго под линию оси */
+				width: 150px;
+				text-align: center;
+				font-size: 14px;
+				font-weight: 500;
+				color: #2c2c2c;
+			}
+		</style>
 	</head>
 	<body>
-		столбчатая диаграмма
+		<div class="charts-view">
+			<div class="view-header-gold">Столбчатая диаграмма</div>
+
+			<div class="charts-content">
+				<div class="chart-controls">
+					<span class="chart-label-text"
+						>Количество сгенерированных документов за период:</span
+					>
+					<input
+						type="month"
+						id="chartPeriod"
+						class="chart-date-input"
+						onchange="ActivityService.renderChart()" />
+				</div>
+
+				<div class="chart-container-wrapper">
+					<div id="yAxis" class="chart-y-axis"></div>
+
+					<div class="chart-canvas">
+						<div id="gridLines" class="grid-background"></div>
+
+						<div id="barChartContainer" class="bars-layer"></div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>

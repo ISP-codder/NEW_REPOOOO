@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<body>
+		<div class="charts-view">
+			<div class="view-header-gold">Новые клиенты - Иностранные клиенты</div>
+
+			<div class="charts-content">
+				<form id="foreignClientForm" class="client-form">
+					<div class="form-group">
+						<label>Наименование компании на языке оригинала</label>
+						<input
+							type="text"
+							id="origName"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>Наименование на русском языке</label>
+						<input
+							type="text"
+							id="rusName"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>Регистрационный номер компании</label>
+						<input
+							type="text"
+							id="regNumber"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>Страна регистрации</label>
+						<input
+							type="text"
+							id="country"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label
+							>Адрес за рубежом (полностью на английском и в русской
+							транскрипции)</label
+						>
+						<input
+							type="text"
+							id="address"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>Наименование банка</label>
+						<input
+							type="text"
+							id="bankName"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>БИК</label>
+						<input
+							type="text"
+							id="bik"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>Международный номер счета</label>
+						<input
+							type="text"
+							id="iban"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>Имя и должность контактного лица</label>
+						<input
+							type="text"
+							id="contactPerson"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>Телефон</label>
+						<input
+							type="text"
+							id="phone"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div class="form-group">
+						<label>Email</label>
+						<input
+							type="text"
+							id="email"
+							class="chart-date-input"
+							style="width: 100%" />
+					</div>
+
+					<div style="text-align: center; margin-top: 30px">
+						<button
+							type="button"
+							id="addForeignClientBtn"
+							class="add-client-btn">
+							Добавить клиента
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<style>
+			.client-form {
+				display: flex;
+				flex-direction: column;
+				gap: 15px;
+			}
+			.form-group label {
+				display: block;
+				margin-bottom: 5px;
+				font-size: 14px;
+			}
+			.add-client-btn {
+				background-color: #c4a484;
+				border: none;
+				padding: 15px 50px;
+				font-size: 24px;
+				color: #2c2c2c;
+				border-radius: 10px;
+				cursor: pointer;
+				font-family: 'Times New Roman', serif;
+			}
+			.add-client-btn:hover {
+				background-color: #a38565;
+			}
+		</style>
+	</body>
+</html>

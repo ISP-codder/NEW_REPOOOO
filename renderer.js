@@ -82,8 +82,16 @@ async function loadView(viewName) {
 		'foreign-clients': () => console.log('Инициализация иностранных клиентов'),
 		'ru-clients': () => console.log('Инициализация клиентов РФ'),
 		history: () => console.log('Инициализация истории обращений'),
-		charts: () => console.log('Инициализация диаграмм'),
+		charts: () => {
+			const ActivityService = require('./src/services/activityService')
+			ActivityService.renderChart()
 
+			// Перерисовываем при изменении даты
+			const input = document.getElementById('chartPeriod')
+			if (input) {
+				input.onchange = () => ActivityService.renderChart()
+			}
+		},
 		// Твои старые вкладки (можно оставить или заменить на новые)
 		claims: initClaimsLogic,
 		lawsuits: initLawsuitLogic,
