@@ -36,6 +36,7 @@ const RegisterService = {
 				password: p1,
 				fio: fio,
 				regDate: new Date().toLocaleDateString('ru-RU') + 'г.',
+				lastLoginTime: 'Первый вход', // <--- Добавляем персональное поле
 				actionsTotal: 0,
 				status: 'Активен'
 			}
