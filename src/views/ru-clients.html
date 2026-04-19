@@ -5,7 +5,175 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Document</title>
 	</head>
-	<body>
-		русские клиенты
-	</body>
+	<div class="russian-clients-view">
+		<div class="view-header-gold">Новые клиенты - Клиенты РФ</div>
+
+		<div class="view-scroll-container">
+			<form id="russianClientForm" class="client-form-full">
+				<div class="input-field">
+					<label>Наименование организации/бренда</label>
+					<input type="text" id="orgName" />
+				</div>
+
+				<div class="input-field">
+					<label>ИНН</label>
+					<input type="text" id="inn" />
+				</div>
+
+				<div class="input-field">
+					<label>ОГРН</label>
+					<input type="text" id="ogrn" />
+				</div>
+
+				<div class="input-field">
+					<label>Юридический адрес</label>
+					<input type="text" id="legalAddress" />
+				</div>
+
+				<div class="input-field">
+					<label>Фактический адрес (если отличается от юридического)</label>
+					<input type="text" id="actualAddress" />
+				</div>
+
+				<div class="input-field">
+					<label>КПП</label>
+					<input type="text" id="kpp" />
+				</div>
+
+				<div class="input-field">
+					<label>Наименование банка</label>
+					<input type="text" id="bankName" />
+				</div>
+
+				<div class="input-field">
+					<label>БИК</label>
+					<input type="text" id="bik" />
+				</div>
+
+				<div class="input-field">
+					<label>Корреспондентный счет</label>
+					<input type="text" id="corrAccount" />
+				</div>
+
+				<div class="input-field">
+					<label>Расчетный счет</label>
+					<input type="text" id="payAccount" />
+				</div>
+
+				<div class="input-field">
+					<label>ФИО руководителя</label>
+					<input type="text" id="directorName" />
+				</div>
+
+				<div class="input-field">
+					<label>Должность руководителя</label>
+					<input type="text" id="directorPost" />
+				</div>
+
+				<div class="input-field">
+					<label>Телефон</label>
+					<input type="text" id="phone" />
+				</div>
+
+				<div class="input-field">
+					<label>Email</label>
+					<input type="email" id="email" />
+				</div>
+
+				<div class="form-actions">
+					<button
+						type="button"
+						id="addRussianClientBtn"
+						class="gold-submit-btn">
+						Добавить клиента
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<style>
+		.russian-clients-view {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			background-color: #f9f6f3;
+			font-family: 'Times New Roman', Times, serif;
+		}
+
+		.view-header-gold {
+			background-color: #c4a484;
+			padding: 10px 20px;
+			color: #2c2c2c;
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		.view-scroll-container {
+			flex-grow: 1;
+			overflow-y: auto;
+			padding: 20px 30px;
+		}
+
+		.client-form-full {
+			width: 100%;
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.input-field {
+			display: flex;
+			flex-direction: column;
+			align-items: start;
+			gap: 5px;
+		}
+
+		.input-field label {
+			font-size: 14px;
+			color: #2c2c2c;
+			margin-left: 5px;
+		}
+
+		.input-field input {
+			width: 100%;
+			height: 38px;
+			padding: 0 12px;
+			border: 1px solid #333;
+			border-radius: 10px;
+			background: #fff;
+			font-family: inherit;
+			font-size: 16px;
+			box-sizing: border-box;
+			transition: all 0.2s;
+		}
+
+		.input-field input.invalid {
+			border: 2px solid #ff0011 !important; /* Наш бордовый цвет */
+			background-color: #fff5f5; /* Легкий красноватый фон для привлечения внимания */
+		}
+
+		.form-actions {
+			display: flex;
+			justify-content: center;
+			margin-top: 30px;
+			padding-bottom: 30px;
+		}
+
+		.gold-submit-btn {
+			background-color: #c4a484;
+			color: #2c2c2c;
+			border: none;
+			padding: 12px 60px;
+			font-size: 26px;
+			border-radius: 12px;
+			cursor: pointer;
+			font-family: inherit;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+		}
+
+		.gold-submit-btn:hover {
+			background-color: #b59373;
+		}
+	</style>
 </html>

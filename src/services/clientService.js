@@ -58,7 +58,57 @@ const ClientService = {
 			)
 
 			showSuccess('Иностранный клиент успешно добавлен!')
-			form.reset()
+		}
+	},
+	// Добавь этот метод в объект ClientService
+	initRussian: function (showError, showSuccess) {
+		const btn = document.getElementById('addRussianClientBtn')
+		if (!btn) return
+
+		btn.onclick = () => {
+			const form = document.getElementById('russianClientForm')
+			const inputs = form.querySelectorAll('input')
+			let isValid = true
+
+			inputs.forEach(input => {
+				input.classList.remove('invalid')
+				if (!input.value.trim()) {
+					input.classList.add('invalid')
+					isValid = false
+				}
+			})
+
+			if (!isValid) {
+				showError('Заполните все поля!')
+				return
+			}
+
+			const clientData = {
+				id: Date.now(),
+				type: 'РФ', // Метка для фильтрации в будущем
+				name: document.getElementById('orgName').value,
+				inn: document.getElementById('inn').value,
+				ogrn: document.getElementById('ogrn').value,
+				address: document.getElementById('legalAddress').value,
+				email: document.getElementById('email').value,
+				phone: document.getElementById('phone').value,
+				createdAt: new Date().toLocaleString('ru-RU')
+			}
+
+			// Сохранение в общую базу
+			const allClients = JSON.parse(
+				localStorage.getItem('all_clients_list') || '[]'
+			)
+			allClients.unshift(clientData)
+			localStorage.setItem('all_clients_list', JSON.stringify(allClients))
+
+			// Журнал активности
+			ActivityService.logAction(
+				'Добавление клиента',
+				`Клиент РФ: ${clientData.name}`
+			)
+
+			showSuccess('Клиент РФ успешно добавлен!')
 		}
 	}
 }

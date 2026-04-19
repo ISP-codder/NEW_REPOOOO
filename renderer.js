@@ -83,7 +83,11 @@ async function loadView(viewName) {
 			const ClientService = require('./src/services/clientService')
 			ClientService.initForeign(window.showError, window.showSuccess)
 		},
-		'ru-clients': () => console.log('Инициализация клиентов РФ'),
+		// Внутри logicMap функции loadView
+		'ru-clients': () => {
+			const ClientService = require('./src/services/clientService')
+			ClientService.initRussian(window.showError, window.showSuccess)
+		},
 		history: () => console.log('Инициализация истории обращений'),
 		charts: () => {
 			const ActivityService = require('./src/services/activityService')
