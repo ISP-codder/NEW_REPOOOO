@@ -6,118 +6,74 @@
 		<title>Document</title>
 	</head>
 	<body>
-		<div class="charts-view">
+		<div class="foreign-clients-view">
 			<div class="view-header-gold">Новые клиенты - Иностранные клиенты</div>
 
-			<div class="charts-content">
-				<form id="foreignClientForm" class="client-form">
-					<div class="form-group">
+			<div class="view-scroll-container">
+				<form id="foreignClientForm" class="foreign-form">
+					<div class="input-field">
 						<label>Наименование компании на языке оригинала</label>
-						<input
-							type="text"
-							id="origName"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="origName" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>Наименование на русском языке</label>
-						<input
-							type="text"
-							id="rusName"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="rusName" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>Регистрационный номер компании</label>
-						<input
-							type="text"
-							id="regNumber"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="regNumber" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>Страна регистрации</label>
-						<input
-							type="text"
-							id="country"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="country" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label
 							>Адрес за рубежом (полностью на английском и в русской
 							транскрипции)</label
 						>
-						<input
-							type="text"
-							id="address"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="address" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>Наименование банка</label>
-						<input
-							type="text"
-							id="bankName"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="bankName" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>БИК</label>
-						<input
-							type="text"
-							id="bik"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="bik" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>Международный номер счета</label>
-						<input
-							type="text"
-							id="iban"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="iban" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>Имя и должность контактного лица</label>
-						<input
-							type="text"
-							id="contactPerson"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="contactPerson" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>Телефон</label>
-						<input
-							type="text"
-							id="phone"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="text" id="phone" />
 					</div>
 
-					<div class="form-group">
+					<div class="input-field">
 						<label>Email</label>
-						<input
-							type="text"
-							id="email"
-							class="chart-date-input"
-							style="width: 100%" />
+						<input type="email" id="email" />
 					</div>
 
-					<div style="text-align: center; margin-top: 30px">
+					<div class="form-actions">
 						<button
 							type="button"
 							id="addForeignClientBtn"
-							class="add-client-btn">
+							class="gold-submit-btn">
 							Добавить клиента
 						</button>
 					</div>
@@ -126,28 +82,103 @@
 		</div>
 
 		<style>
-			.client-form {
+			/* Основной контейнер вьюхи */
+			.foreign-clients-view {
 				display: flex;
 				flex-direction: column;
-				gap: 15px;
+				height: 100%;
+				background-color: #f9f6f3; /* Фирменный кремовый фон */
+				font-family: 'Times New Roman', Times, serif;
 			}
-			.form-group label {
-				display: block;
-				margin-bottom: 5px;
-				font-size: 14px;
-			}
-			.add-client-btn {
+
+			/* Верхняя золотистая плашка */
+			.view-header-gold {
 				background-color: #c4a484;
-				border: none;
-				padding: 15px 50px;
-				font-size: 24px;
+				padding: 10px 20px;
 				color: #2c2c2c;
-				border-radius: 10px;
-				cursor: pointer;
-				font-family: 'Times New Roman', serif;
+				font-size: 18px;
+				font-weight: bold;
+				border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 			}
-			.add-client-btn:hover {
-				background-color: #a38565;
+
+			/* Контейнер для скролла и отступов */
+			.view-scroll-container {
+				flex-grow: 1;
+				overflow-y: auto;
+				padding: 20px 30px; /* Отступы от краев как на макете */
+			}
+
+			/* Форма теперь занимает всю доступную ширину */
+			.foreign-form {
+				width: 100%;
+				display: flex;
+				flex-direction: column;
+				gap: 15px; /* Вертикальный интервал между полями */
+			}
+
+			/* Стили полей ввода */
+			.input-field {
+				display: flex;
+				flex-direction: column;
+				align-items: start;
+				gap: 5px;
+				width: 100%;
+			}
+
+			.input-field label {
+				font-size: 15px;
+				color: #2c2c2c;
+				text-align: left; /* Текст заголовков слева */
+				margin-left: 5px;
+			}
+
+			/* Растягиваем инпуты на всю ширину контейнера */
+			.input-field input {
+				width: 100%;
+				height: 38px;
+				padding: 0 12px;
+				border: 1px solid #333;
+				border-radius: 10px; /* Скругление как на образце */
+				background: #fff;
+				font-family: inherit;
+				font-size: 16px;
+				box-sizing: border-box; /* Чтобы padding не раздувал ширину */
+			}
+			.input-field input.invalid {
+				border: 2px solid #ff0011 !important; /* Наш бордовый цвет */
+				background-color: #fff5f5; /* Легкий красноватый фон для привлечения внимания */
+			}
+
+			/* Плавный переход при убирании ошибки */
+			.input-field input {
+				transition:
+					border-color 0.2s,
+					background-color 0.2s;
+			}
+			/* Секция кнопки */
+			.form-actions {
+				display: flex;
+				justify-content: center;
+				margin-top: 30px;
+				padding-bottom: 30px;
+			}
+
+			/* Большая кнопка по центру */
+			.gold-submit-btn {
+				background-color: #c4a484;
+				color: #2c2c2c;
+				border: none;
+				padding: 12px 60px;
+				font-size: 26px;
+				border-radius: 12px;
+				cursor: pointer;
+				font-family: inherit;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+				transition: background-color 0.2s;
+			}
+
+			.gold-submit-btn:hover {
+				background-color: #b59373;
 			}
 		</style>
 	</body>

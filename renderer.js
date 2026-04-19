@@ -79,7 +79,10 @@ async function loadView(viewName) {
 		},
 		generations: () => console.log('Инициализация генераций'), // Это твоя текущая рабочая вкладка
 		'new-clients': () => console.log('Инициализация новых клиентов'),
-		'foreign-clients': () => console.log('Инициализация иностранных клиентов'),
+		'foreign-clients': () => {
+			const ClientService = require('./src/services/clientService')
+			ClientService.initForeign(window.showError, window.showSuccess)
+		},
 		'ru-clients': () => console.log('Инициализация клиентов РФ'),
 		history: () => console.log('Инициализация истории обращений'),
 		charts: () => {
