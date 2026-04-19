@@ -78,7 +78,10 @@ async function loadView(viewName) {
 			ActivityService.init()
 		},
 		generations: () => console.log('Инициализация генераций'), // Это твоя текущая рабочая вкладка
-		'new-clients': () => console.log('Инициализация новых клиентов'),
+		'new-clients': () => {
+			const ClientListService = require('./src/services/clientListService')
+			ClientListService.init()
+		},
 		'foreign-clients': () => {
 			const ClientService = require('./src/services/clientService')
 			ClientService.initForeign(window.showError, window.showSuccess)

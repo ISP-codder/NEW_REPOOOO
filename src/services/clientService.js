@@ -85,13 +85,21 @@ const ClientService = {
 
 			const clientData = {
 				id: Date.now(),
-				type: 'РФ', // Метка для фильтрации в будущем
+				type: 'РФ',
 				name: document.getElementById('orgName').value,
 				inn: document.getElementById('inn').value,
 				ogrn: document.getElementById('ogrn').value,
-				address: document.getElementById('legalAddress').value,
-				email: document.getElementById('email').value,
+				legalAddress: document.getElementById('legalAddress').value,
+				actualAddress: document.getElementById('actualAddress').value,
+				kpp: document.getElementById('kpp').value,
+				bankName: document.getElementById('bankName').value,
+				bik: document.getElementById('bik').value,
+				corrAccount: document.getElementById('corrAccount').value,
+				payAccount: document.getElementById('payAccount').value,
+				directorName: document.getElementById('directorName').value,
+				directorPost: document.getElementById('directorPost').value,
 				phone: document.getElementById('phone').value,
+				email: document.getElementById('email').value,
 				createdAt: new Date().toLocaleString('ru-RU')
 			}
 
