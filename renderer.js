@@ -33,11 +33,10 @@ function initApp() {
 		AuthService.renderLogin(viewport, initApp, window.showError)
 	}
 }
-
-// --- НАВИГАЦИЯ И ЗАГРУЗКА ВЬЮХ ---
 async function loadView(viewName) {
 	const isAuthFreeView =
 		viewName === 'forgot-password' || viewName === 'register'
+
 	if (!AuthService.check() && !isAuthFreeView) {
 		initApp() // Если не вошел и это не регистрация/пароль — кидаем на логин
 		return
@@ -53,31 +52,30 @@ async function loadView(viewName) {
 
 	container.innerHTML = fs.readFileSync(viewPath, 'utf8')
 
-	// Расширяем карту логики новыми пунктами из макета
+	// Карта инициализации логики для разных страниц
 	const logicMap = {
 		'forgot-password': () => {
 			const RecoveryService = require('./src/services/forgotPassword')
 			RecoveryService.init(window.showError, window.showSuccess)
 		},
 		register: () => {
-			// Добавляем этот блок
 			const RegisterService = require('./src/services/registerService')
 			RegisterService.init(window.showError, window.showSuccess)
 		},
 		profile: () => {
-			// Подключаем логику, которая заполнит поля данными
 			const ProfileService = require('./src/services/profileService')
 			ProfileService.init(window.showError, window.showSuccess)
 
-			// Сразу обновляем букву на случай, если зашли под другим пользователем
 			if (typeof window.updateAvatar === 'function') {
 				window.updateAvatar()
 			}
 		},
 		activity: () => {
+			// Исправлено: добавляем require, если сервис не глобальный
+			const ActivityService = require('./src/services/activityService')
 			ActivityService.init()
 		},
-		generations: () => console.log('Инициализация генераций'), // Это твоя текущая рабочая вкладка
+		generations: () => console.log('Инициализация генераций'),
 		'new-clients': () => {
 			const ClientListService = require('./src/services/clientListService')
 			ClientListService.init()
@@ -86,45 +84,71 @@ async function loadView(viewName) {
 			const ClientService = require('./src/services/clientService')
 			ClientService.initForeign(window.showError, window.showSuccess)
 		},
-		// Внутри logicMap функции loadView
 		'ru-clients': () => {
 			const ClientService = require('./src/services/clientService')
 			ClientService.initRussian(window.showError, window.showSuccess)
 		},
-		history: () => console.log('Инициализация истории обращений'),
 		charts: () => {
 			const ActivityService = require('./src/services/activityService')
 			ActivityService.renderChart()
 
-			// Перерисовываем при изменении даты
 			const input = document.getElementById('chartPeriod')
 			if (input) {
 				input.onchange = () => ActivityService.renderChart()
 			}
 		},
-		// Твои старые вкладки (можно оставить или заменить на новые)
-		claims: initClaimsLogic,
-		lawsuits: initLawsuitLogic,
-		reports: initReportLogic,
-		notices: initNoticeLogic,
-		settlements: initSettlementLogic
+		// Страницы, относящиеся к разделу "Генерации"
+		claims: typeof initClaimsLogic === 'function' ? initClaimsLogic : null,
+		lawsuits: typeof initLawsuitLogic === 'function' ? initLawsuitLogic : null,
+		reports: typeof initReportLogic === 'function' ? initReportLogic : null,
+		notices: typeof initNoticeLogic === 'function' ? initNoticeLogic : null,
+		settlements:
+			typeof initSettlementLogic === 'function' ? initSettlementLogic : null
 	}
 
+	// Запуск логики, если она описана в карте
 	if (logicMap[viewName]) {
 		logicMap[viewName]()
 	}
 
-	// Подсветка активной кнопки (опционально)
+	// Вызываем функцию подсветки активной вкладки
 	updateActiveTab(viewName)
 }
 
-// Функция для визуального выделения нажатой кнопки
+/**
+ * Функция для управления подсветкой кнопок в боковом меню
+ */
 function updateActiveTab(viewName) {
-	document.querySelectorAll('.tab-menu button').forEach(btn => {
-		btn.classList.remove('active')
-		// Извлекаем viewName из атрибута onclick кнопки
-		if (btn.getAttribute('onclick')?.includes(`'${viewName}'`)) {
+	const buttons = document.querySelectorAll('.tab-menu button')
+
+	// Группируем все дочерние страницы генерации под одну кнопку
+	const generationViews = [
+		'claims',
+		'lawsuits',
+		'reports',
+		'notices',
+		'settlements'
+	]
+
+	buttons.forEach(btn => {
+		const onClickAttr = btn.getAttribute('onclick') || ''
+
+		// Проверяем: это кнопка "Генерации"?
+		const isGenerationBtn =
+			onClickAttr.includes("'claims'") || onClickAttr.includes("'generations'")
+		// Мы сейчас в какой-то из вьюх генерации?
+		const isInGenerationProcess = generationViews.includes(viewName)
+
+		// Условие 1: Прямое совпадение (например, 'profile' == 'profile')
+		const isDirectMatch = onClickAttr.includes(`'${viewName}'`)
+
+		// Условие 2: Мы в генерациях, и это кнопка генераций
+		const shouldBeActiveAsGeneration = isInGenerationProcess && isGenerationBtn
+
+		if (isDirectMatch || shouldBeActiveAsGeneration) {
 			btn.classList.add('active')
+		} else {
+			btn.classList.remove('active')
 		}
 	})
 }

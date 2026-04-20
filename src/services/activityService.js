@@ -183,7 +183,30 @@ const ActivityService = {
 	renderChart: function () {
 		const periodInput = document.getElementById('chartPeriod')
 		const container = document.getElementById('barChartContainer')
-		if (!periodInput || !container) return
+		const yAxis = document.getElementById('yAxis')
+		const gridLines = document.getElementById('gridLines')
+
+		if (!periodInput || !container || !yAxis || !gridLines) return
+
+		// 1. Отрисовка оси Y и плотной сетки
+		const maxVal = 140
+		const step = 5 // Твой новый шаг
+		let yHtml = ''
+		let gridHtml = ''
+
+		for (let i = maxVal; i >= 0; i -= step) {
+			// Выводим текст только для десятков (чтобы не частить),
+			// но можно выводить и каждое число, если шрифт мелкий
+			const label = i % 20 === 0 ? i : ''
+			yHtml += `<span>${label}</span>`
+
+			// Линия сетки для каждого шага 5
+			gridHtml += `<div class="grid-line"></div>`
+		}
+		yAxis.innerHTML = yHtml
+		gridLines.innerHTML = gridHtml
+
+		// 2. Отрисовка столбцов (логика расчета не меняется)
 		const stats = this.getStatsForMonth(periodInput.value || '2026-04')
 		const mapping = [
 			{ key: 'Претензия', label: 'Претензии', color: '#e30613' },
@@ -192,10 +215,11 @@ const ActivityService = {
 			{ key: 'Мировое соглашение', label: 'Мировые согл.', color: '#ff00ff' },
 			{ key: 'Отчет', label: 'Отчеты', color: '#000000' }
 		]
+
 		container.innerHTML = mapping
 			.map(item => {
 				const count = stats[item.key] || 0
-				const heightPercent = (count / 140) * 100
+				const heightPercent = Math.min((count / maxVal) * 100, 100)
 				return `
                 <div class="bar-slot">
                     <div class="bar-fill" style="height: ${heightPercent}%; background-color: ${item.color}">

@@ -122,23 +122,8 @@
 			.tab-menu {
 				display: flex;
 				flex-direction: column;
-				width: 100%;
-				padding-left: 25px; /* Единый отступ слева для всех кнопок */
+				width: 100%; /* Единый отступ слева для всех кнопок */
 				box-sizing: border-box;
-			}
-
-			/* Стили для самих кнопок навигации */
-			.tab-menu > button {
-				background-color: transparent; /* Прозрачный фон */
-				cursor: pointer;
-				color: white; /* Белый текст */
-				border: none; /* Убираем рамки */
-				font-size: 16px; /* Размер шрифта как на макете */
-				padding: 12px 0; /* Вертикальные отступы между пунктами */
-				text-align: left; /* Текст по левому краю */
-				font-family: 'Times New Roman', Times, serif;
-				width: auto; /* Ширина по тексту */
-				transition: opacity 0.2s;
 			}
 
 			/* Эффект при наведении на кнопку */
@@ -164,7 +149,46 @@
 				align-items: center;
 				box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 			}
+			/* Состояние активной кнопки */
+			/* Обновленные стили кнопок в index.html */
+			.tab-menu > button {
+				background-color: transparent;
+				cursor: pointer;
+				color: white;
+				border: none;
+				font-size: 16px;
+				padding: 12px 25px; /* Возвращаем стандартный отступ */
+				text-align: left;
+				font-family: 'Times New Roman', Times, serif;
+				width: 100%;
+				box-sizing: border-box;
 
+				/* Добавляем магию плавности */
+				transition:
+					background-color 0.3s ease,
+					border-left 0.3s ease,
+					padding-left 0.3s ease;
+				border-left: 0px solid transparent;
+			}
+
+			/* Эффект при наведении (тоже плавный) */
+			.tab-menu > button:hover {
+				background-color: rgba(255, 255, 255, 0.05);
+			}
+
+			/* Активное состояние с плавным проявлением */
+			.tab-menu > button.active {
+				background-color: rgba(
+					255,
+					255,
+					255,
+					0.15
+				); /* Чуть светлее основного фона #7a1f2b */
+				font-weight: bold;
+				border-left: 5px solid #c9a27a; /* Золотистая полоска */
+				padding-left: 30px; /* Небольшое смещение текста вправо для акцента */
+				opacity: 1;
+			}
 			.user-avatar-initial {
 				font-size: 28px; /* Размер буквы */
 				color: #333; /* Цвет буквы (темный) */
@@ -345,8 +369,6 @@
 
 		// Полный выход из приложения
 		function exitApp() {
-			console.log('Закрытие приложения...')
-			// В Electron для полного закрытия окна вызывается API
 			window.close()
 		}
 	</script>

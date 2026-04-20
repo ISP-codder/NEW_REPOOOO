@@ -46,7 +46,7 @@
 
 			/* Эффект при наведении */
 			.tab-menus button:hover {
-				background-color: rgba(0, 0, 0, 0.05);
+				background-color: #917457;
 			}
 
 			/* АДАПТИВНОСТЬ: если экран совсем узкий (мобилки) */
@@ -181,10 +181,13 @@
 			.btn-main:hover {
 				background-color: #b58f66;
 			}
+			button.active {
+				background-color: #917457;
+			}
 		</style>
 	</head>
 	<div class="tab-menus">
-		<button onclick="loadView('claims')">Претензии</button>
+		<button onclick="loadView('claims')" class="active">Претензии</button>
 		<button onclick="loadView('lawsuits')">Иски</button>
 		<button onclick="loadView('reports')">Отчет</button>
 		<button onclick="loadView('notices')">Уведомления</button>
