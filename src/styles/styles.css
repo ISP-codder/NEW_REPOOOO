@@ -95,10 +95,7 @@ input[type='number'] {
 .btn-main {
 	background-color: #c9a27a;
 	border: none;
-	padding: 15px 80px;
 	border-radius: 10px;
-	font-size: 32px;
-	font-weight: bold;
 	cursor: pointer;
 	transition: background 0.3s;
 }
@@ -169,14 +166,14 @@ input.invalid {
 }
 
 .login-container h1 {
-	font-size: 32px;
+	font-size: 29px;
 	font-weight: bold;
 	margin-bottom: 10px;
-	color: #1a2a3a;
+	color: #333;
 }
 
 .login-form {
-	width: 350px;
+	width: 250px;
 }
 
 .login-form .input-field {
@@ -193,15 +190,15 @@ input.invalid {
 }
 
 .login-footer {
-	text-align: center;
-	margin-top: -10px;
-	margin-left: 120px;
+	text-align: start;
+	display: flex;
+	flex-direction: column;
 }
 
 .forgot-password {
 	text-decoration: none;
-	font-size: 12px;
-	color: #888;
+	font-size: 13px;
+	color: #333;
 	cursor: pointer;
 }
 .forgot-password:hover {
