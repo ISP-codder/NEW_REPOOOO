@@ -20,7 +20,72 @@
 				background-color: #faf7f3;
 				overflow: hidden; /* Скроллим только контент */
 			}
+			/* --- СТИЛИ ДЛЯ ИКОНКИ ПОЛЬЗОВАТЕЛЯ И МЕНЮ --- */
+			.user-footer {
+				padding: 0 0 30px 25px;
+				position: relative; /* Важно для позиционирования выпадающего списка */
+			}
 
+			/* Контейнер аватара (круг) */
+			.user-avatar {
+				width: 50px;
+				height: 50px;
+				background-color: white;
+				border-radius: 50%; /* Всегда круг */
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+				cursor: pointer;
+				transition: transform 0.2s ease;
+			}
+
+			.user-avatar:hover {
+				transform: scale(1.05);
+			}
+
+			.user-avatar-initial {
+				font-size: 24px;
+				color: #7a1f2b; /* Цвет буквы в тон меню */
+				font-weight: bold;
+			}
+
+			/* Выпадающее меню "Выйти" */
+			.user-dropdown-menu {
+				display: none; /* Скрыто по умолчанию */
+				position: absolute;
+				bottom: 90px; /* Смещение вверх над аватаром */
+				left: 25px;
+				background-color: #fdfaf7;
+				border: 1px solid #c4a484;
+				border-radius: 8px;
+				min-width: 150px;
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+				z-index: 10001;
+				overflow: hidden;
+			}
+
+			.user-dropdown-menu.show {
+				display: block; /* Показываем по клику */
+			}
+
+			.dropdown-item {
+				padding: 12px 16px;
+				cursor: pointer;
+				color: #333;
+				font-size: 14px;
+				transition: background 0.2s;
+			}
+
+			.dropdown-item:hover {
+				background-color: #f0f0f0;
+			}
+
+			.dropdown-item.logout-type {
+				color: #7a1f2b;
+				border-top: 1px solid #eee;
+				font-weight: bold;
+			}
 			/* --- СТИЛИ ДЛЯ ВЕРТИКАЛЬНОЙ ПАНЕЛИ НАВИГАЦИИ --- */
 			.full-tab-menu {
 				display: flex;
@@ -129,6 +194,58 @@
 				z-index: 10000;
 				display: none;
 			}
+			/* Используем те же стили, что и для удаления клиента */
+			.confirm-modal {
+				display: none;
+				position: fixed;
+				z-index: 20000; /* Самый высокий слой */
+				left: 0;
+				top: 0;
+				width: 100vw;
+				height: 100vh;
+				background-color: rgba(0, 0, 0, 0.6);
+				backdrop-filter: blur(3px);
+				align-items: center;
+				justify-content: center;
+			}
+
+			.confirm-modal-content {
+				background-color: #fdfaf7;
+				padding: 30px;
+				border-radius: 15px;
+				width: 380px;
+				text-align: center;
+				border: 1px solid #c4a484;
+				box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+				animation: modalFadeIn 0.3s ease;
+			}
+
+			/* Стили заголовка и кнопок как в "Новых клиентах" */
+			.confirm-modal-content h4 {
+				color: #731a20;
+				margin-bottom: 15px;
+			}
+			.confirm-actions {
+				display: flex;
+				justify-content: center;
+				gap: 15px;
+			}
+
+			.cancel-btn {
+				background: #fff;
+				border: 1px solid #ccc;
+				padding: 10px 25px;
+				border-radius: 8px;
+				cursor: pointer;
+			}
+			.confirm-btn {
+				background: #731a20;
+				color: white;
+				border: none;
+				padding: 10px 25px;
+				border-radius: 8px;
+				cursor: pointer;
+			}
 		</style>
 	</head>
 	<body>
@@ -156,11 +273,18 @@
 			</div>
 
 			<div class="user-footer">
+				<div id="userDropdown" class="user-dropdown-menu">
+					<div class="dropdown-item" onclick="loadView('profile')">Профиль</div>
+					<div class="dropdown-item logout-type" onclick="handleLogout()">
+						Выйти
+					</div>
+				</div>
+
 				<div
 					id="userAvatar"
-					class="user-avatar-btn"
-					onclick="loadView('profile')">
-					?
+					class="user-avatar"
+					onclick="toggleUserMenu(event)">
+					<span class="user-avatar-initial">Й</span>
 				</div>
 			</div>
 		</nav>
@@ -175,5 +299,55 @@
 		<div id="errorToast" class="error-toast">
 			Пожалуйста, заполните выделенные поля
 		</div>
+		<div id="logoutModal" class="confirm-modal">
+			<div class="confirm-modal-content">
+				<h4>Завершение работы</h4>
+				<p id="logoutModalText">Вы действительно хотите выйти из приложения?</p>
+				<div class="confirm-actions">
+					<button class="cancel-btn" onclick="closeLogoutModal()">
+						Отмена
+					</button>
+					<button class="confirm-btn" onclick="exitApp()">Выйти</button>
+				</div>
+			</div>
+		</div>
 	</body>
+	<script>
+		// Переключение видимости меню
+		function toggleUserMenu(event) {
+			event.stopPropagation() // Чтобы клик не пробрасывался дальше
+			const menu = document.getElementById('userDropdown')
+			menu.classList.toggle('show')
+		}
+
+		// Закрытие меню при клике в любое другое место экрана
+		window.addEventListener('click', function () {
+			const menu = document.getElementById('userDropdown')
+			if (menu && menu.classList.contains('show')) {
+				menu.classList.remove('show')
+			}
+		})
+
+		// Открыть модалку выхода
+		function handleLogout() {
+			const modal = document.getElementById('logoutModal')
+			if (modal) {
+				modal.style.display = 'flex'
+				// Скрываем выпадающее меню аватара, если оно открыто
+				document.getElementById('userDropdown').classList.remove('show')
+			}
+		}
+
+		// Закрыть модалку (кнопка Отмена)
+		function closeLogoutModal() {
+			document.getElementById('logoutModal').style.display = 'none'
+		}
+
+		// Полный выход из приложения
+		function exitApp() {
+			console.log('Закрытие приложения...')
+			// В Electron для полного закрытия окна вызывается API
+			window.close()
+		}
+	</script>
 </html>
