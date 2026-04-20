@@ -1,8 +1,9 @@
 const ActivityService = {
 	currentPage: 1,
 	rowsPerPage: 10,
+	searchQuery: '',
+	searchTimeout: null, // Переменная для хранения таймера
 
-	// Получаем ключ хранилища для текущего пользователя для изоляции данных
 	_getStorageKey: function () {
 		const currentLogin = localStorage.getItem('user_login') || 'guest'
 		return `activities_${currentLogin}`
@@ -29,11 +30,27 @@ const ActivityService = {
 	},
 
 	init: function () {
-		// Инициализация таблицы или диаграммы в зависимости от активного вью
+		const searchInput = document.getElementById('activitySearch')
+		if (searchInput) {
+			searchInput.oninput = e => {
+				// Очищаем старый таймер при каждом нажатии клавиши
+				clearTimeout(this.searchTimeout)
+
+				// Ставим новый таймер на 1 секунду
+				this.searchTimeout = setTimeout(() => {
+					this.searchQuery = e.target.value.toLowerCase().trim()
+					this.currentPage = 1
+					this.updateAndRender()
+					console.log('Поиск выполнен:', this.searchQuery)
+				}, 1000)
+			}
+		}
+
+		window.onresize = () => this.updateAndRender()
+
 		const tableContainer = document.getElementById('activity-table-body')
 		if (tableContainer) {
-			this.renderTable()
-			this.renderPagination()
+			this.updateAndRender()
 		}
 
 		const chartContainer = document.getElementById('barChartContainer')
@@ -42,19 +59,46 @@ const ActivityService = {
 		}
 	},
 
-	// --- ЛОГИКА ТАБЛИЦЫ ---
+	updateAndRender: function () {
+		this.calculateRowsPerPage()
+		this.renderTable()
+		this.renderPagination()
+	},
+
+	calculateRowsPerPage: function () {
+		const wrapper = document.querySelector('.table-wrapper')
+		if (!wrapper) return
+
+		const headerHeight = 50
+		const rowHeight = 50
+		const availableHeight = wrapper.clientHeight - headerHeight
+
+		this.rowsPerPage = Math.max(1, Math.floor(availableHeight / rowHeight))
+	},
+
 	renderTable: function () {
 		const container = document.getElementById('activity-table-body')
 		if (!container) return
 
-		const activities = JSON.parse(
+		let activities = JSON.parse(
 			localStorage.getItem(this._getStorageKey()) || '[]'
 		)
+
+		if (this.searchQuery) {
+			activities = activities.filter(
+				item =>
+					item.date.toLowerCase().includes(this.searchQuery) ||
+					item.action.toLowerCase().includes(this.searchQuery) ||
+					item.object.toLowerCase().includes(this.searchQuery) ||
+					item.user.toLowerCase().includes(this.searchQuery)
+			)
+		}
+
 		const start = (this.currentPage - 1) * this.rowsPerPage
 		const end = start + this.rowsPerPage
 		const paginatedItems = activities.slice(start, end)
 
-		container.innerHTML = paginatedItems
+		let html = paginatedItems
 			.map(
 				item => `
             <tr>
@@ -66,20 +110,43 @@ const ActivityService = {
         `
 			)
 			.join('')
+
+		const emptyRowsCount = this.rowsPerPage - paginatedItems.length
+		for (let i = 0; i < emptyRowsCount; i++) {
+			html += `
+                <tr class="empty-row">
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>`
+		}
+
+		container.innerHTML = html
 	},
 
 	renderPagination: function () {
 		const paginationContainer = document.querySelector('.pagination')
 		if (!paginationContainer) return
 
-		const activities = JSON.parse(
+		let activities = JSON.parse(
 			localStorage.getItem(this._getStorageKey()) || '[]'
 		)
-		const totalPages = Math.ceil(activities.length / this.rowsPerPage)
+		if (this.searchQuery) {
+			activities = activities.filter(item =>
+				Object.values(item).some(v =>
+					v.toLowerCase().includes(this.searchQuery)
+				)
+			)
+		}
+
+		const totalPages = Math.ceil(activities.length / this.rowsPerPage) || 1
+		if (this.currentPage > totalPages) this.currentPage = totalPages
 
 		let html = ''
 		for (let i = 1; i <= totalPages; i++) {
-			html += `<button class="page-btn ${i === this.currentPage ? 'active' : ''}" onclick="ActivityService.goToPage(${i})">${i}</button>`
+			html += `<button class="page-btn ${i === this.currentPage ? 'active' : ''}" 
+                     onclick="window.ActivityService.goToPage(${i})">${i}</button>`
 		}
 		paginationContainer.innerHTML = html
 	},
@@ -90,7 +157,6 @@ const ActivityService = {
 		this.renderPagination()
 	},
 
-	// --- ЛОГИКА ДИАГРАММЫ ---
 	getStatsForMonth: function (monthYear) {
 		const activities = JSON.parse(
 			localStorage.getItem(this._getStorageKey()) || '[]'
@@ -102,11 +168,10 @@ const ActivityService = {
 			'Мировое соглашение': 0,
 			Отчет: 0
 		}
-
 		activities.forEach(item => {
 			const parts = item.date.split(',')[0].split('.')
 			if (parts.length === 3) {
-				const itemMonthYear = `${parts[2]}-${parts[1]}` // YYYY-MM
+				const itemMonthYear = `${parts[2]}-${parts[1]}`
 				if (itemMonthYear === monthYear && stats.hasOwnProperty(item.object)) {
 					stats[item.object]++
 				}
@@ -118,30 +183,8 @@ const ActivityService = {
 	renderChart: function () {
 		const periodInput = document.getElementById('chartPeriod')
 		const container = document.getElementById('barChartContainer')
-		const yAxis = document.getElementById('yAxis')
-		const gridLines = document.getElementById('gridLines')
-
 		if (!periodInput || !container) return
-
-		if (!periodInput.value) {
-			const now = new Date()
-			periodInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-		}
-
-		// Очищаем и рисуем ось Y и сетку
-		if (yAxis) yAxis.innerHTML = ''
-		if (gridLines) gridLines.innerHTML = ''
-
-		for (let i = 140; i >= 0; i -= 5) {
-			if (yAxis) yAxis.innerHTML += `<span>${i}</span>`
-			if (gridLines) {
-				const line = document.createElement('div')
-				line.className = 'grid-line'
-				gridLines.appendChild(line)
-			}
-		}
-
-		const stats = this.getStatsForMonth(periodInput.value)
+		const stats = this.getStatsForMonth(periodInput.value || '2026-04')
 		const mapping = [
 			{ key: 'Претензия', label: 'Претензии', color: '#e30613' },
 			{ key: 'Исковое заявление', label: 'Иски', color: '#4310e6' },
@@ -149,21 +192,17 @@ const ActivityService = {
 			{ key: 'Мировое соглашение', label: 'Мировые согл.', color: '#ff00ff' },
 			{ key: 'Отчет', label: 'Отчеты', color: '#000000' }
 		]
-
-		// Генерируем только бары и подписи под ними
 		container.innerHTML = mapping
 			.map(item => {
 				const count = stats[item.key] || 0
 				const heightPercent = (count / 140) * 100
-
 				return `
-            <div class="bar-slot">
-                <div class="bar-fill" style="height: ${heightPercent}%; background-color: ${item.color}">
-                    ${count > 0 ? `<span class="bar-value-top">${count}</span>` : ''}
-                </div>
-                <div class="x-label-fixed">${item.label}</div>
-            </div>
-        `
+                <div class="bar-slot">
+                    <div class="bar-fill" style="height: ${heightPercent}%; background-color: ${item.color}">
+                        ${count > 0 ? `<span class="bar-value-top">${count}</span>` : ''}
+                    </div>
+                    <div class="x-label-fixed">${item.label}</div>
+                </div>`
 			})
 			.join('')
 	}
