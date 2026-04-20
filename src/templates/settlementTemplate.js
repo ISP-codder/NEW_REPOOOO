@@ -6,7 +6,6 @@ const {
 	TabStopPosition
 } = require('docx')
 
-
 async function settlementTemplate(data) {
 	const children = []
 
@@ -91,7 +90,7 @@ async function settlementTemplate(data) {
 					size: fontSizeRegular
 				})
 			],
-			spacing: { after: 200 } 
+			spacing: { after: 200 }
 		})
 	)
 
@@ -165,7 +164,7 @@ async function settlementTemplate(data) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: `Стороны договорились урегулировать спор, возникший из факта реализации Ответчиком товара с признаками нарушения исключительного права на товарный знак: ${data.trademark}.`,
+					text: `Стороны договорились урегулировать спор, возникший из факта реализации Ответчиком товара с признаками нарушения исключительного права на товарный знак: ${data.trademark}. Юридический адрес ответчика ${data.respondent}`,
 					size: fontSizeRegular
 				})
 			],

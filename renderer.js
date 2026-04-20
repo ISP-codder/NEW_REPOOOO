@@ -439,9 +439,7 @@ function initNoticeLogic() {
 				purchaseDate: document.getElementById('purchaseDate').value,
 				trademark: document.getElementById('trademark').value,
 				rightHolder: document.getElementById('rightHolder').value,
-				compensationAmount: document.getElementById('compensationAmount').value,
-				preTrialCompensation: document.getElementById('preTrialCompensation')
-					.value
+				compensationAmount: document.getElementById('compensationAmount').value
 			}
 
 			const children = await noticeTemplate(data, {})
@@ -483,6 +481,7 @@ function initSettlementLogic() {
 				defendantName: document.getElementById('defendantName').value,
 				courtAddress: document.getElementById('courtAddress').value,
 				trademark: document.getElementById('trademarkSettlement').value,
+				respondent: document.getElementById('respondentAdress').value,
 				amount: document.getElementById('settlementSum').value,
 				deadline: document.getElementById('paymentDeadline').value,
 				date: document.getElementById('settlementDate').value
