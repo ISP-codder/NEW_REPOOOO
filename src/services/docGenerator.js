@@ -24,7 +24,8 @@ class DocGenerator {
 		if (fs.existsSync(logoPath)) {
 			logoRun = new ImageRun({
 				data: fs.readFileSync(logoPath),
-				transformation: { width: 150, height: 50 },
+				// Увеличен размер логотипа
+				transformation: { width: 170, height: 60 },
 				type: 'png'
 			})
 		}
@@ -43,13 +44,14 @@ class DocGenerator {
 				new TableRow({
 					children: [
 						new TableCell({
-							width: { size: 30, type: WidthType.PERCENTAGE },
+							// Уменьшена ширина ячейки лого, чтобы перегородка была ближе
+							width: { size: 25, type: WidthType.PERCENTAGE },
 							verticalAlign: VerticalAlign.CENTER,
 							borders: {
 								right: {
 									style: BorderStyle.SINGLE,
 									size: 4,
-									color: 'A6A6A6'
+									color: '000000' // Черная перегородка
 								},
 								top: { style: BorderStyle.NONE },
 								bottom: { style: BorderStyle.NONE },
@@ -64,7 +66,8 @@ class DocGenerator {
 							]
 						}),
 						new TableCell({
-							width: { size: 70, type: WidthType.PERCENTAGE },
+							width: { size: 75, type: WidthType.PERCENTAGE },
+							verticalAlign: VerticalAlign.CENTER,
 							children: [
 								new Paragraph({
 									alignment: AlignmentType.CENTER,
@@ -72,21 +75,25 @@ class DocGenerator {
 									children: [
 										new TextRun({
 											text: 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ',
-											size: 20
+											size: 24, // Шрифт 12 (24 твипа)
+											font: 'Times New Roman'
 										}),
 										new TextRun({
 											text: '«ЮРИДИЧЕСКАЯ КОМПАНИЯ «ШЕВЧЕНКО И ПАРТНЕРЫ»',
-											size: 20,
+											size: 24,
+											font: 'Times New Roman',
 											break: 1
 										}),
 										new TextRun({
 											text: 'ИНН 6164118059 КПП 616101001 344082,',
-											size: 20,
+											size: 24,
+											font: 'Times New Roman',
 											break: 1
 										}),
 										new TextRun({
 											text: 'г. Ростов-на-Дону, ул. Максима Горького 44 «б», к. 1',
-											size: 20,
+											size: 24,
+											font: 'Times New Roman',
 											break: 1
 										})
 									]
@@ -100,13 +107,23 @@ class DocGenerator {
 
 		const finalChildren = [
 			headerTable,
-			new Paragraph({ text: '', spacing: { after: 400 } }),
+			new Paragraph({ text: '', spacing: { after: 200 } }),
 			...children
 		]
 
 		const doc = new Document({
 			sections: [
 				{
+					properties: {
+						page: {
+							margin: {
+								top: 1134, // 2 см
+								bottom: 1134, // 2 см
+								left: 1701, // 3 см
+								right: 850 // 1.5 см
+							}
+						}
+					},
 					children: finalChildren
 				}
 			]

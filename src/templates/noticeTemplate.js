@@ -8,96 +8,101 @@ const {
 } = require('docx')
 const fs = require('fs')
 const path = require('path')
-const { processImage } = require('../utils/imageProcessor')
 
-async function notificationTemplate(data, photos) {
+async function notificationTemplate(data) {
 	const children = []
 	const formatDate = dateStr => {
 		if (!dateStr) return ''
 		const [year, month, day] = dateStr.split('-')
 		return `${day}.${month}.${year}`
 	}
+
+	// 2. Блок получателя
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
+			spacing: { before: 400 },
 			children: [
 				new TextRun({
-					text: 'Кому: ',
+					text: `Кому: ${data.sellerName}`,
+					size: 24,
 					bold: true,
-					size: 20,
 					font: 'Times New Roman'
 				}),
-				new TextRun({
-					text: `${data.sellerName}`,
-					bold: false,
-					size: 20,
-					font: 'Times New Roman'
-				}),
-
 				new TextRun({
 					text: `ИНН: ${data.sellerInn}, ОГРН: ${data.sellerOgrn}`,
 					break: 1,
-					size: 20
+					size: 24,
+					font: 'Times New Roman'
 				}),
 				new TextRun({
-					text: `Куда: `,
-					bold: true,
+					text: `Куда: ${data.sellerLegalAddress}`,
 					break: 1,
-					size: 20
-				}),
-				new TextRun({
-					text: `${data.sellerLegalAddress}`,
-					size: 20
+					size: 24,
+					bold: true,
+					font: 'Times New Roman'
 				})
-			],
-			spacing: { after: 400 }
+			]
 		})
 	)
 
+	// 3. Заголовок уведомления
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
+			spacing: { before: 400, after: 400 },
 			children: [
-				new TextRun({ text: 'Уведомление', bold: true, size: 24 }),
+				new TextRun({
+					text: 'Уведомление',
+					bold: true,
+					size: 28,
+					font: 'Times New Roman'
+				}),
 				new TextRun({
 					text: '\nо выявлении факта реализации контрафактного товара',
 					bold: true,
-					size: 20,
-					break: 1
+					break: 1,
+					size: 28,
+					font: 'Times New Roman'
 				})
-			],
-			spacing: { after: 400 }
+			]
 		})
 	)
 
+	// 4. Основной текст
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
 					text: `Уважаемый ${data.sellerName},`,
-					size: 20
+					size: 24,
+					font: 'Times New Roman'
 				}),
 				new TextRun({
 					text: `Уведомляем Вас о том, что в ходе мониторинга рынка/контрольной закупки выявлен факт реализации товара с признаками контрафактности.`,
 					break: 1,
-					size: 20
+					size: 24,
+					font: 'Times New Roman'
 				})
 			],
-			spacing: { line: 360, before: 200 }
+			spacing: { line: 360 }
 		})
 	)
 
+	// 5. Сведения о факте
+	// 5. Сведения о факте
 	children.push(
 		new Paragraph({
+			spacing: { before: 200 },
 			children: [
 				new TextRun({
 					text: 'Сведения о выявленном факте:',
 					bold: true,
-					size: 20
+					size: 24,
+					font: 'Times New Roman'
 				})
-			],
-			spacing: { before: 200 }
+			]
 		})
 	)
 
@@ -112,29 +117,25 @@ async function notificationTemplate(data, photos) {
 	facts.forEach(fact => {
 		children.push(
 			new Paragraph({
-				spacing: { before: 100 },
 				children: [
-					new TextRun({
-						text: fact,
-						size: 20,
-						font: 'Times New Roman'
-					})
+					new TextRun({ text: fact, size: 24, font: 'Times New Roman' })
 				]
 			})
 		)
 	})
 
+	// 6. Законодательство (Тире у левого края)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
+			spacing: { before: 200 },
 			children: [
 				new TextRun({
 					text: 'Реализация указанного товара нарушает исключительные права правообладателя и противоречит законодательству Российской Федерации, в том числе:',
-					break: 1,
-					size: 20
+					size: 24,
+					font: 'Times New Roman'
 				})
-			],
-			spacing: { before: 200 }
+			]
 		})
 	)
 
@@ -143,35 +144,36 @@ async function notificationTemplate(data, photos) {
 		'ст. 1515 ГК РФ (ответственность за незаконное использование товарного знака);',
 		'ст. 1252 ГК РФ (защита исключительных прав);',
 		'ст. 1229 ГК РФ (содержание исключительного права);',
-		'ст. 14.10 КоАП РФ (незаконное использование средств индивидуализации);',
-		'ст. 180 УК РФ (незаконное использование средств индивидуализации — при наличии признаков состава преступления).'
+		'ст. 14.10 КоАП РФ (незаконное использование средств индивидуализации товаров);',
+		'ст. 180 УК РФ (незаконное использование средств индивидуализации товаров, работ, услуг — при наличии признаков состава преступления).'
 	]
 
 	laws.forEach(law => {
 		children.push(
 			new Paragraph({
 				alignment: AlignmentType.JUSTIFY,
-				indent: { left: 360, hanging: 360 },
-				tabStops: [{ type: TabStopType.LEFT, position: 360 }],
+				indent: { left: 440, hanging: 440 }, // Тире встает вровень с текстом
 				spacing: { before: 80 },
 				children: [
-					new TextRun({
-						text: `—\t${law}`,
-						size: 20,
-						font: 'Times New Roman'
-					})
+					new TextRun({ text: `—\t${law}`, size: 24, font: 'Times New Roman' })
 				]
 			})
 		)
 	})
 
+	// 7. Требования
 	children.push(
 		new Paragraph({
-			alignment: HorizontalPositionAlign.CENTER,
+			alignment: AlignmentType.CENTER,
+			spacing: { before: 200 },
 			children: [
-				new TextRun({ text: '\nТРЕБУЕМ:', bold: true, break: 1, size: 24 })
-			],
-			spacing: { before: 200 }
+				new TextRun({
+					text: 'Требуем:',
+					bold: true,
+					size: 28,
+					font: 'Times New Roman'
+				})
+			]
 		})
 	)
 
@@ -180,25 +182,24 @@ async function notificationTemplate(data, photos) {
 		'Изъять из оборота и удалить с витрин/склада/интернет-площадок весь товар, нарушающий права.',
 		'Предоставить письменные пояснения о поставщике товара и копии подтверждающих документов.',
 		'Сообщить о количестве реализованного и находящегося в остатке товара.',
-		`Сумму компенсации (${data.compensationAmount} к.) возможно оплатить посредством перевода по QR-коду, предоставленному правообладателем (его представителем). Оплата по QR-коду признается надлежащим исполнением денежного обязательства при условии поступления средств в полном объеме.`
+		`Оплатить сумму компенсации в размере ${data.compensationAmount} руб. также возможно посредством перевода по QR-коду.`
 	]
 
 	requirements.forEach((req, index) => {
 		children.push(
 			new Paragraph({
 				alignment: AlignmentType.JUSTIFY,
-				spacing: { before: 120, after: 120 },
 				children: [
 					new TextRun({
 						text: `${index + 1}. ${req}`,
-						size: 20,
+						size: 24,
 						font: 'Times New Roman'
 					})
 				]
 			})
 		)
 	})
-
+	// 8. QR-код (сразу после требований на НОВОЙ странице)
 	try {
 		const qrPath = path.join(
 			__dirname,
@@ -214,7 +215,7 @@ async function notificationTemplate(data, photos) {
 					children: [
 						new ImageRun({
 							data: fs.readFileSync(qrPath),
-							transformation: { width: 100, height: 100 },
+							transformation: { width: 120, height: 120 },
 							type: 'png'
 						})
 					],
@@ -226,27 +227,90 @@ async function notificationTemplate(data, photos) {
 		console.error('Ошибка вставки QR-кода:', e)
 	}
 
+	// 9. Контакты (сразу после QR-кода)
 	children.push(
 		new Paragraph({
-			alignment: AlignmentType.JUSTIFY,
+			spacing: { after: 100 },
 			children: [
 				new TextRun({
-					text: 'В случае неисполнения указанных требований в установленный срок мы будем вынуждены обратиться в суд, а также в правоохранительные и контролирующие органы для привлечения виновных лиц к ответственности, включая взыскание компенсации, судебных расходов и иных убытков.',
-					size: 20
+					text: 'По вопросам, связанным с настоящим уведомлением, Вы можете связаться с нами по следующим контактным данным:',
+					size: 24,
+					font: 'Times New Roman'
 				})
-			],
-			spacing: { before: 200 }
+			]
+		}),
+		new Paragraph({
+			spacing: { before: 100 },
+			children: [
+				new TextRun({
+					text: 'E-mail: uk.ship.999@yandex.ru',
+					size: 24,
+					font: 'Times New Roman'
+				}),
+				new TextRun({
+					text: 'Телефон: +7 989 517-54-87',
+					break: 1,
+					size: 24,
+					font: 'Times New Roman'
+				}),
+				new TextRun({
+					text: 'WhatsApp: +7 989 517-54-87',
+					break: 1,
+					size: 24,
+					font: 'Times New Roman'
+				})
+			]
 		})
 	)
 
+	// 10. Рекомендация по WhatsApp
+	children.push(
+		new Paragraph({
+			alignment: AlignmentType.JUSTIFY,
+			spacing: { before: 200 },
+			children: [
+				new TextRun({
+					text: 'Для связи через WhatsApp рекомендуем предварительно сохранить указанный номер в телефонной книжке вашего устройства.',
+					size: 24,
+					font: 'Times New Roman'
+				})
+			]
+		})
+	)
+
+	// 11. Предупреждение о суде
+	children.push(
+		new Paragraph({
+			alignment: AlignmentType.JUSTIFY,
+			spacing: { before: 200 },
+			children: [
+				new TextRun({
+					text: 'В случае неисполнения указанных требований в установленный срок мы будем вынуждены обратиться в суд, а также в правоохранительные и контролирующие органы для привлечения виновных лиц к ответственности, включая взыскание компенсации, судебных расходов и иных убытков.',
+					size: 24,
+					font: 'Times New Roman'
+				})
+			]
+		})
+	)
+
+	// 12. Подпись
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
+			spacing: { before: 400 },
 			children: [
-				new TextRun({ text: 'С уважением,', break: 1, size: 20 }),
-				new TextRun({ text: 'ООО «ЮК ШИП»', break: 1, size: 20 })
-			],
-			spacing: { before: 100 }
+				new TextRun({
+					text: 'С уважением,',
+					size: 24,
+					font: 'Times New Roman'
+				}),
+				new TextRun({
+					text: 'ООО «ЮК ШИП»',
+					break: 1,
+					size: 24,
+					font: 'Times New Roman'
+				})
+			]
 		})
 	)
 
