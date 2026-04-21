@@ -9,8 +9,8 @@ const {
 async function settlementTemplate(data) {
 	const children = []
 
-	const fontSizeRegular = 20
-	const fontSizeHeader = 24
+	const fontSizeRegular = 24
+	const fontSizeHeader = 28
 
 	const formatDate = dateStr => {
 		if (!dateStr) return ''
@@ -90,6 +90,22 @@ async function settlementTemplate(data) {
 					size: fontSizeRegular
 				})
 			],
+			spacing: { after: 20 }
+		}),
+		new Paragraph({
+			alignment: AlignmentType.LEFT,
+			children: [
+				new TextRun({
+					text: 'Юридический адрес: ',
+					bold: true,
+					size: fontSizeRegular
+				}),
+				new TextRun({
+					text: `${data.respondent}`,
+					bold: false,
+					size: fontSizeRegular
+				})
+			],
 			spacing: { after: 200 }
 		})
 	)
@@ -106,7 +122,7 @@ async function settlementTemplate(data) {
 				new TextRun({
 					text: '\nпо делу о нарушении исключительных прав на товарный знак',
 					bold: true,
-					size: fontSizeRegular,
+					size: fontSizeHeader,
 					break: 1
 				})
 			],
@@ -155,7 +171,7 @@ async function settlementTemplate(data) {
 					size: fontSizeRegular
 				})
 			],
-			spacing: { after: 100 }
+			spacing: { after: 200 }
 		})
 	)
 
@@ -164,11 +180,11 @@ async function settlementTemplate(data) {
 			alignment: AlignmentType.JUSTIFY,
 			children: [
 				new TextRun({
-					text: `Стороны договорились урегулировать спор, возникший из факта реализации Ответчиком товара с признаками нарушения исключительного права на товарный знак: ${data.trademark}. Юридический адрес ответчика ${data.respondent}`,
+					text: `Стороны договорились урегулировать спор, возникший из факта реализации Ответчиком товара с признаками нарушения исключительного права на товарный знак: ${data.trademark}`,
 					size: fontSizeRegular
 				})
 			],
-			spacing: { after: 100 }
+			spacing: { after: 200 }
 		})
 	)
 
@@ -195,14 +211,26 @@ async function settlementTemplate(data) {
 	]
 
 	terms.forEach(term => {
+		// 1. Основные пункты 1, 2, 3, 4
 		children.push(
 			new Paragraph({
 				alignment: AlignmentType.JUSTIFY,
-				children: [new TextRun({ text: term.title, size: fontSizeRegular })],
-				spacing: { before: 80, after: 50 }
+				children: [
+					new TextRun({
+						// Разделяем номер и текст табуляцией
+						text: `${term.title.split('. ')[0]}.\t${term.title.split('. ').slice(1).join('. ')}`,
+						size: fontSizeRegular
+					})
+				],
+				// position: 450 — текст после цифры станет в 2 раза ближе
+				tabStops: [{ type: TabStopType.LEFT, position: 450 }],
+				// left: 450 (отступ блока), hanging: 450 (вынос цифры влево к краю)
+				indent: { left: 450, hanging: 450 },
+				spacing: { before: 150, after: 100 }
 			})
 		)
 
+		// 2. Подпункты с длинным тире
 		if (term.subPoints) {
 			term.subPoints.forEach(sub => {
 				children.push(
@@ -214,9 +242,10 @@ async function settlementTemplate(data) {
 								size: fontSizeRegular
 							})
 						],
-						tabStops: [{ type: TabStopType.LEFT, position: 300 }],
-						indent: { left: 300, hanging: 300 },
-						spacing: { after: 20 }
+						// position: 450 — текст после тире станет в 2 раза ближе
+						tabStops: [{ type: TabStopType.LEFT, position: 450 }],
+						indent: { left: 450, hanging: 450 },
+						spacing: { after: 100 }
 					})
 				)
 			})
@@ -232,7 +261,7 @@ async function settlementTemplate(data) {
 					size: fontSizeRegular
 				})
 			],
-			spacing: { before: 150, after: 80 }
+			spacing: { before: 150, after: 150 }
 		}),
 		new Paragraph({
 			alignment: AlignmentType.JUSTIFY,
