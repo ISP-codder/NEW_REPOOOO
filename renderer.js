@@ -327,11 +327,16 @@ function initLawsuitLogic() {
 				sellerInn: document.getElementById('sellerInn').value,
 				sellerOgrn: document.getElementById('sellerOgrn').value,
 				sellerLegalAddress: document.getElementById('sellerLegalAddress').value,
+
+				// Поля из твоей новой сетки (cl-grid)
 				purchaseDate: document.getElementById('purchaseDate').value,
 				productCategory: document.getElementById('productCategory').value,
-				productPrice: document.getElementById('productPrice').value,
+				productCategoryName: document.getElementById('productCategoryName')
+					.value, // Новое поле
 				productCount: document.getElementById('productCount').value,
-				tmNumbers: document.getElementById('trademark').value
+				tmNumbers: document.getElementById('trademark').value, // Связываем с ID "trademark"
+				productPrice: document.getElementById('productPrice').value,
+				compensationAmount: document.getElementById('compensationAmount').value // Новое поле
 			}
 
 			const photos = {}

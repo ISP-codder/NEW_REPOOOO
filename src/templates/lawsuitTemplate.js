@@ -2,23 +2,25 @@ const { Paragraph, TextRun, AlignmentType, ImageRun } = require('docx')
 
 async function lawsuitTemplate(data, photos) {
 	const children = []
+
 	const formatDate = dateStr => {
-		if (!dateStr) return ''
+		if (!dateStr) return '«___» __________ 202___ г.'
 		const [year, month, day] = dateStr.split('-')
 		return `${day}.${month}.${year}`
 	}
-	const SIZE_12 = 20
-	const SIZE_16 = 24
+
+	const SIZE_12 = 24 // В docx 24 = 12pt
+	const SIZE_14 = 28 // В docx 32 = 16pt
 
 	const bodyStyle = {
 		alignment: AlignmentType.JUSTIFY,
-		spacing: { before: 80, after: 80 },
-		indent: { firstLine: 0 }
+		spacing: { before: 120, after: 120 }
 	}
+
+	// Шапка документа
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.LEFT,
-			indent: { firstLine: 0 },
 			children: [
 				new TextRun({
 					text: data.courtName,
@@ -35,10 +37,10 @@ async function lawsuitTemplate(data, photos) {
 				}),
 				new TextRun({
 					text: data.courtAddress,
-					bold: false,
 					size: SIZE_12,
 					font: 'Times New Roman'
 				}),
+
 				new TextRun({
 					text: `Истец: `,
 					bold: true,
@@ -73,7 +75,7 @@ async function lawsuitTemplate(data, photos) {
 					font: 'Times New Roman'
 				}),
 				new TextRun({
-					text: `${data.sellerName}`,
+					text: data.sellerName,
 					size: SIZE_12,
 					font: 'Times New Roman'
 				}),
@@ -92,7 +94,7 @@ async function lawsuitTemplate(data, photos) {
 					font: 'Times New Roman'
 				}),
 				new TextRun({
-					text: `${data.sellerLegalAddress}`,
+					text: data.sellerLegalAddress,
 					size: SIZE_12,
 					font: 'Times New Roman'
 				})
@@ -100,32 +102,38 @@ async function lawsuitTemplate(data, photos) {
 		})
 	)
 
+	// Заголовок
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
-			spacing: { before: 400, after: 200 },
+			spacing: { before: 120, after: 200 },
 			children: [
 				new TextRun({
 					text: 'Исковое заявление',
 					bold: true,
-					size: SIZE_16,
+					size: SIZE_14,
 					font: 'Times New Roman'
 				}),
 				new TextRun({
-					text: 'о пресечении незаконного использования товарного знака и взыскании компенсации',
+					text: 'о пресечении незаконного использования товарного знака',
 					break: 1,
 					bold: true,
-					size: SIZE_12,
+					size: SIZE_14,
 					font: 'Times New Roman'
 				})
 			]
 		})
 	)
 
+	// Основной текст
+	const productInfo = data.productCategoryName
+		? `${data.productCategory} (${data.productCategoryName})`
+		: data.productCategory
+
 	const texts = [
-		`Истец является правообладателем товарный знак ${data.tmNumbers}.`,
-		`Из материалов дела следует, что ${formatDate(data.purchaseDate)} в торговой точке Ответчика ${data.shopName}, адрес: ${data.shopLocation}, ${data.shopStreet} реализовывался товар ${data.productCategory}, в количестве ${data.productCount}, стоимостью ${data.productPrice} рублей с признаками контрафактности. Использование спорного обозначения осуществлялось без разрешения Истца, чем нарушено исключительное право правообладателя.`,
-		`Нарушение подтверждается документами, прилагаемыми к иску. Ранее Истец направлял досудебную претензию, однако требования добровольно не исполнены.`
+		`Истец является правообладателем товарного знака №${data.tmNumbers}.`,
+		`Из материалов дела следует, что ${formatDate(data.purchaseDate)} в торговой точке Ответчика ${data.shopName}, по адресу: ${data.shopLocation}, ${data.shopStreet}) реализовывался товар: категория - ${data.productCategory}, название - ${data.productCategoryName} в количестве ${data.productCount} шт., стоимостью ${data.productPrice} рублей с признаками контрафактности. Использование спорного обозначения осуществлялось без разрешения Истца, чем нарушено исключительное право правообладателя.`,
+		`Нарушение подтверждается документами и видеофиксацией, прилагаемыми к иску. Ранее Истец направлял досудебную претензию, однако требования добровольно не исполнены.`
 	]
 
 	texts.forEach(t => {
@@ -144,7 +152,7 @@ async function lawsuitTemplate(data, photos) {
 			...bodyStyle,
 			children: [
 				new TextRun({
-					text: 'С учетом ст. 1229, 1252, 1484, 1515 ГК РФ, а также процессуальных норм ст. 131–132 ГПК РФ (или ст. 125–126 АПК РФ),',
+					text: 'С учетом ст. 1229, 1252, 1484, 1515 ГК РФ, а также процессуальных норм ст. 131-132 ГПК РФ (или ст. 125-126 АПК РФ),',
 					italic: true,
 					size: SIZE_12,
 					font: 'Times New Roman'
@@ -153,78 +161,99 @@ async function lawsuitTemplate(data, photos) {
 		})
 	)
 
+	// Требования
+	// 6. ТРЕБОВАНИЯ (с исправленным форматированием списков)
 	children.push(
 		new Paragraph({
 			alignment: AlignmentType.CENTER,
-			spacing: { before: 300, after: 200 },
-			indent: { firstLine: 0 },
 			children: [
 				new TextRun({
-					text: 'ТРЕБУЕМ:',
+					text: 'Требуем:',
 					bold: true,
-					size: SIZE_16,
+					size: SIZE_14,
 					font: 'Times New Roman'
 				})
-			]
+			],
+			spacing: { before: 200, after: 200 }
 		})
 	)
 
 	const requests = [
-		'1. Признать действия Ответчика нарушающими исключительные права Истца на товарный знак.',
-		'2. Обязать Ответчика прекратить незаконное использование обозначения.',
-		'3. Изъять из оборота и уничтожить контрафактный товар, а также предъявить доказательство уничтожения товара.',
-		'4. Взыскать компенсацию в сумме (ЦЕНУ УКАЗАТЬ ВРУЧНУЮ)',
-		'5. Взыскать судебные расходы, включая госпошлину и расходы на представителя.'
+		'Признать действия Ответчика нарушающими исключительные права Истца на товарный знак.',
+		'Обязать Ответчика прекратить незаконное использование обозначения.',
+		'Изъять из оборота и уничтожить контрафактный товар, а также предъявить доказательство уничтожения товара.',
+		`Взыскать компенсацию в сумме ${data.compensationAmount || '( )'} руб.`,
+		'Взыскать судебные расходы, включая госпошлину и расходы на представителя.'
 	]
 
-	requests.forEach(text => {
-		const highlightPhrase = '(ЦЕНУ УКАЗАТЬ ВРУЧНУЮ)'
-
-		if (text.includes(highlightPhrase)) {
-			const parts = text.split(highlightPhrase)
-
-			children.push(
-				new Paragraph({
-					...bodyStyle,
-					children: [
-						new TextRun({
-							text: parts[0],
-							size: SIZE_12,
-							font: 'Times New Roman'
-						}),
-						new TextRun({
-							text: highlightPhrase,
-							size: SIZE_12,
-							font: 'Times New Roman',
-							highlight: 'yellow',
-							bold: true
-						}),
-						new TextRun({
-							text: parts[1],
-							size: SIZE_12,
-							font: 'Times New Roman'
-						})
-					]
-				})
-			)
-		} else {
-			children.push(
-				new Paragraph({
-					...bodyStyle,
-					children: [
-						new TextRun({
-							text: text,
-							size: SIZE_12,
-							font: 'Times New Roman'
-						})
-					]
-				})
-			)
-		}
+	requests.forEach((text, index) => {
+		children.push(
+			new Paragraph({
+				alignment: AlignmentType.JUSTIFY,
+				// left: отступ всего текста, hanging: выступ первой строки назад (где будет цифра)
+				indent: { left: 500, hanging: 500 },
+				children: [
+					new TextRun({
+						text: `${index + 1}.`,
+						size: SIZE_12,
+						font: 'Times New Roman'
+					}),
+					new TextRun({
+						text: `\t${text}`, // Табуляция для ровного отступа текста от цифры
+						size: SIZE_12,
+						font: 'Times New Roman'
+					})
+				]
+			})
+		)
 	})
+
+	// 7. КОНТАКТНЫЕ ДАННЫЕ И ДОСУДЕБНОЕ УРЕГУЛИРОВАНИЕ
 	children.push(
 		new Paragraph({
-			...bodyStyle,
+			alignment: AlignmentType.JUSTIFY,
+			spacing: { before: 200 },
+			children: [
+				new TextRun({
+					text: 'По вопросам, связанным с настоящим уведомлением, Вы можете связаться с нами по следующим контактным данным:',
+					size: SIZE_12,
+					font: 'Times New Roman'
+				})
+			]
+		}),
+		new Paragraph({
+			alignment: AlignmentType.LEFT,
+			spacing: { before: 120, after: 120 },
+			children: [
+				new TextRun({
+					text: 'E-mail: ',
+					size: SIZE_12,
+					font: 'Times New Roman'
+				}),
+				new TextRun({
+					text: 'uk.ship.999@yandex.ru',
+					size: SIZE_12,
+					font: 'Times New Roman',
+					color: '0563C1',
+					underline: {}
+				}),
+				new TextRun({
+					text: 'Телефон: +7 989 517-54-87',
+					break: 1,
+					size: SIZE_12,
+					font: 'Times New Roman'
+				}),
+				new TextRun({
+					text: 'WhatsApp: +7 989 517-54-87',
+					break: 1,
+					size: SIZE_12,
+					font: 'Times New Roman'
+				})
+			]
+		}),
+		new Paragraph({
+			alignment: AlignmentType.JUSTIFY,
+			spacing: { before: 120, after: 120 },
 			children: [
 				new TextRun({
 					text: 'Истец предпринимал меры досудебного урегулирования, включая предложение добровольной оплаты (в том числе с использованием QR-кода), что подтверждает добросовестность поведения Истца.',
@@ -235,10 +264,10 @@ async function lawsuitTemplate(data, photos) {
 		})
 	)
 
+	// 8. ПОДПИСЬ
 	children.push(
 		new Paragraph({
-			spacing: { before: 600 },
-			indent: { firstLine: 0 },
+			alignment: AlignmentType.LEFT,
 			children: [
 				new TextRun({
 					text: 'С уважением,',

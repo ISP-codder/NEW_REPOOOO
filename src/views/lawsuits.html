@@ -234,25 +234,68 @@
 					<h2 class="ls-header">Информация о закупке</h2>
 				</div>
 				<div class="ls-grid ls-3-cols">
-					<div class="ls-field">
-						<label>Дата закупки</label>
-						<input type="date" id="purchaseDate" />
-					</div>
-					<div class="ls-field">
-						<label>Категория</label>
-						<input type="text" id="productCategory" />
-					</div>
-					<div class="ls-field">
-						<label>Стоимость</label>
-						<input type="number" id="productPrice" />
-					</div>
-					<div class="ls-field">
-						<label>Количество</label>
-						<input type="number" id="productCount" />
-					</div>
-					<div class="ls-field">
-						<label>Товарный знак</label>
-						<input type="text" id="trademark" />
+					<div class="cl-grid">
+						<div class="cl-field">
+							<label class="cl-label">Дата закупки</label>
+							<input type="date" class="cl-input" id="purchaseDate" value="" />
+						</div>
+						<div class="cl-field">
+							<label class="cl-label">Категория</label>
+							<select class="cl-select" id="productCategory">
+								<option value="" disabled selected>Выберите категорию</option>
+								<option value="одежда">Одежда</option>
+								<option value="пестициды">Пестициды</option>
+								<option value="игрушки">Игрушки</option>
+								<option value="обувь">Обувь</option>
+								<option value="головные уборы">Головные уборы</option>
+								<option value="семена">Семена</option>
+								<option value="открытки">Открытки</option>
+								<option value="сумки">Сумки</option>
+								<option value="маникюрные принадлежности">
+									Маникюрные принадлежности
+								</option>
+								<option value="духи">Духи</option>
+							</select>
+						</div>
+						<div class="cl-field">
+							<label class="cl-label">Название категории</label>
+							<input
+								type="text"
+								class="cl-input"
+								id="productCategoryName"
+								value=""
+								placeholder="Введите название категории" />
+						</div>
+						<div class="cl-field">
+							<label class="cl-label">Количество</label>
+							<input
+								type="number"
+								class="cl-input"
+								id="productCount"
+								value="" />
+						</div>
+						<div class="cl-field">
+							<label class="cl-label">Товарный знак</label>
+							<input type="text" class="cl-input" id="trademark" value="" />
+						</div>
+
+						<div class="cl-field">
+							<label class="cl-label">Стоимость товара</label>
+							<input
+								type="number"
+								class="cl-input"
+								id="productPrice"
+								value="" />
+						</div>
+						<div class="cl-field">
+							<label class="cl-label">Компенсация</label>
+							<input
+								type="number"
+								class="cl-input"
+								id="compensationAmount"
+								value=""
+								placeholder="Например: 50000" />
+						</div>
 					</div>
 				</div>
 			</section>
