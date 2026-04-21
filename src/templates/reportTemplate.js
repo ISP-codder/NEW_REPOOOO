@@ -14,8 +14,8 @@ async function reportTemplate(data) {
 		return `${day}.${month}.${year}`
 	}
 	const font = 'Times New Roman'
-	const sizeTitle = 24
-	const sizeMain = 20
+	const sizeTitle = 28
+	const sizeMain = 24
 	const sizeHeader = 18
 
 	const createPara = (text, options = {}) =>
@@ -38,7 +38,7 @@ async function reportTemplate(data) {
 			alignment: AlignmentType.CENTER,
 			spacing: { before: 400, after: 200 },
 			children: [
-				new TextRun({ text: 'ОТЧЕТ', bold: true, size: sizeTitle, font })
+				new TextRun({ text: 'Отчет', bold: true, size: sizeTitle, font })
 			]
 		})
 	)
@@ -121,7 +121,7 @@ async function reportTemplate(data) {
 
 	children.push(
 		new Paragraph({
-			spacing: { before: 800 },
+			spacing: { before: 600 },
 			children: [
 				new TextRun({ text: 'С уважением,', font, size: sizeMain }),
 				new TextRun({
