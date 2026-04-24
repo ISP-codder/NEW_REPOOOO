@@ -84,7 +84,9 @@
 				grid-template-columns: 1fr 1fr 1fr;
 				gap: 15px;
 			}
-
+			.ls-grids {
+				gap: 15px;
+			}
 			.ls-field {
 				display: flex;
 				flex-direction: column;
@@ -147,6 +149,74 @@
 			}
 			button.active {
 				background-color: #917457;
+			}
+			.cl-section {
+				margin-bottom: 25px;
+			}
+			.cl-title-container {
+				border-bottom: 2px solid black;
+				margin-bottom: 10px;
+			}
+			.cl-title {
+				font-size: 24px;
+				padding-bottom: 5px;
+				color: #333;
+				margin-left: 10px;
+			}
+			.cl-grid {
+				margin-left: 10px;
+				margin-right: 10px;
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: 15px;
+			}
+
+			.cl-field {
+				display: flex;
+				flex-direction: column;
+				margin-bottom: 10px;
+			}
+
+			.cl-label {
+				font-size: 16px;
+				color: #1f2937;
+				margin-left: 10px;
+				margin-bottom: 5px;
+				margin-top: 10px;
+			}
+
+			.cl-input {
+				padding: 10px;
+				border: 2px solid #333;
+				border-radius: 9px;
+				font-size: 14px;
+				width: 100%;
+			}
+
+			.cl-select {
+				padding: 8px;
+				border: 2px solid #333;
+				border-radius: 9px;
+				font-size: 14px;
+				width: 100%;
+				background-color: white;
+				cursor: pointer;
+			}
+
+			.cl-select:focus {
+				border-color: #6d272c;
+				outline: none;
+			}
+
+			/* Состояния валидации */
+			.cl-input.invalid {
+				border: 2px solid #ff0011 !important;
+				background-color: #fff5f5 !important;
+			}
+
+			.cl-input:focus {
+				border-color: #6d272c;
+				outline: none;
 			}
 		</style>
 	</head>
@@ -233,7 +303,7 @@
 				<div class="ls-header-container">
 					<h2 class="ls-header">Информация о закупке</h2>
 				</div>
-				<div class="ls-grid ls-3-cols">
+				<div class="ls-grids ls-3-cols">
 					<div class="cl-grid">
 						<div class="cl-field">
 							<label class="cl-label">Дата закупки</label>
